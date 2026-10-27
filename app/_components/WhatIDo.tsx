@@ -1,0 +1,21 @@
+import Placeholder from "./Placeholder";
+import Section from "./Section";
+import styles from "./WhatIDo.module.css";
+
+const pillars = ["Pillar 1", "Pillar 2", "Pillar 3"];
+
+export default function WhatIDo() {
+  return (
+    <Section id="what-i-do" title="What I do">
+      <ul className={styles.grid}>
+        {pillars.map((pillar) => (
+          <li key={pillar} className={styles.pillar}>
+            <Placeholder label={`${pillar} · icon`} height={48} />
+            <Placeholder label="Title" height={28} />
+            <Placeholder label="One or two lines" height={56} />
+          </li>
+        ))}
+      </ul>
+    </Section>
+  );
+}
