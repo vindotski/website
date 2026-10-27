@@ -1,0 +1,14 @@
+.section {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 80px var(--gutter);
+  /* Keeps the heading clear of the sticky header when jumped to */
+  scroll-margin-top: 64px;
+}
+
+.title {
+  margin: 0 0 32px;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
