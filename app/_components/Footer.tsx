@@ -19,6 +19,7 @@ export default function Footer() {
         <div className={styles.links}>
           <Placeholder label="Social links" height={24} />
         </div>
+        {/* Browsers scroll to the top for #top when no element has that id */}
         <a href="#top" className={styles.top}>
           Back to top
         </a>
