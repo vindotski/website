@@ -2,7 +2,7 @@ import Placeholder from "./Placeholder";
 import { ProjectCard, ProjectGrid } from "./ProjectCards";
 import Section from "./Section";
 
-const samples = ["Dashboard", "Sokobanko", "Openfives"];
+const samples = ["Dashboard", "Sokoban", "Openlifts"];
 
 export default function Samples() {
   return (
