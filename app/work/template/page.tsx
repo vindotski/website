@@ -63,6 +63,20 @@ export default function WorkTemplate() {
           <Placeholder label="What it changed" height={96} />
         </section>
       </div>
+
+      <nav className={styles.next} aria-label="Next project">
+        <Link href="/work/template" className={styles.nextLink}>
+          <span className={styles.nextLabel}>Next</span>
+          <span className={styles.nextName}>Project name →</span>
+        </Link>
+      </nav>
+
+      <section className={styles.contact} aria-label="Contact">
+        <Placeholder label="Short line inviting a conversation" height={48} />
+        <Link href="/#contact" className={styles.cta}>
+          Get in touch
+        </Link>
+      </section>
     </article>
   );
 }
