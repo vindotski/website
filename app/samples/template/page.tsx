@@ -1,8 +1,11 @@
 import Placeholder from "../../_components/Placeholder";
+import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
 import Facts from "../../_components/detail/Facts";
 import styles from "./page.module.css";
+
+const decisions = ["Decision 1", "Decision 2", "Decision 3"];
 
 export default function SampleTemplate() {
   return (
@@ -18,6 +21,30 @@ export default function SampleTemplate() {
       <Facts labels={["Type", "Stack", "Year", "Status"]} />
 
       <Placeholder label="Hero image" height={420} />
+
+      <DetailBody>
+        <DetailBlock title="Why I built it">
+          <Placeholder label="The itch, who it's for" height={96} />
+        </DetailBlock>
+
+        <DetailBlock title="Architecture">
+          <Placeholder label="How the pieces fit together" height={96} />
+          <Placeholder label="Diagram" height={320} />
+        </DetailBlock>
+
+        <DetailBlock title="Key decisions">
+          {decisions.map((decision) => (
+            <div key={decision} className={styles.decision}>
+              <h3>{decision}</h3>
+              <Placeholder label="The choice and its trade-off" height={72} />
+            </div>
+          ))}
+        </DetailBlock>
+
+        <DetailBlock title="What I'd do next">
+          <Placeholder label="Next steps, open questions" height={96} />
+        </DetailBlock>
+      </DetailBody>
     </DetailPage>
   );
 }
