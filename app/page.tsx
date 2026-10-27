@@ -11,10 +11,10 @@ export default function Home() {
     <>
       <Hero />
       <Work />
-      <Services />
       <Samples />
-      <Process />
       <About />
+      <Services />
+      <Process />
       <Contact />
     </>
   );
