@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Footer from "./_components/Footer";
 import Header from "./_components/Header";
 import "./globals.css";
+import styles from "./layout.module.css";
 
 export const metadata: Metadata = {
   title: "Ivan Vinski · Software Engineer",
@@ -13,7 +14,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en">
       <body>
         <Header />
-        {children}
+        <main className={styles.content}>{children}</main>
         <Footer />
       </body>
     </html>

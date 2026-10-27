@@ -7,13 +7,13 @@ import Work from "./_components/Work";
 
 export default function Home() {
   return (
-    <main>
+    <>
       <Hero />
       <Work />
       <WhatIDo />
       <Samples />
       <About />
       <Contact />
-    </main>
+    </>
   );
 }
