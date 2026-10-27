@@ -1,4 +1,5 @@
 import About from "./_components/About";
+import Blog from "./_components/Blog";
 import Contact from "./_components/Contact";
 import Hero from "./_components/Hero";
 import Process from "./_components/Process";
@@ -15,6 +16,7 @@ export default function Home() {
       <About />
       <Services />
       <Process />
+      <Blog />
       <Contact />
     </>
   );
