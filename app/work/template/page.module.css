@@ -15,16 +15,3 @@
   letter-spacing: 0.06em;
   color: var(--color-muted);
 }
-
-.highlight {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.highlight h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
