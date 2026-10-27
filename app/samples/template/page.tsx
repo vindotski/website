@@ -1,8 +1,10 @@
 import Placeholder from "../../_components/Placeholder";
+import ContactPrompt from "../../_components/detail/ContactPrompt";
 import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
 import Facts from "../../_components/detail/Facts";
+import NextLink from "../../_components/detail/NextLink";
 import styles from "./page.module.css";
 
 const decisions = ["Decision 1", "Decision 2", "Decision 3"];
@@ -45,6 +47,10 @@ export default function SampleTemplate() {
           <Placeholder label="Next steps, open questions" height={96} />
         </DetailBlock>
       </DetailBody>
+
+      <NextLink href="/samples/template" name="Sample name" />
+
+      <ContactPrompt />
     </DetailPage>
   );
 }
