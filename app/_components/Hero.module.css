@@ -1,0 +1,28 @@
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 120px var(--gutter);
+  text-align: center;
+}
+
+.intro {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.headline {
+  width: 100%;
+  max-width: 720px;
+}
+
+.cta {
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: var(--color-text);
+  color: var(--color-background);
+  text-decoration: none;
+}
