@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Placeholder from "./Placeholder";
 import Section from "./Section";
 import styles from "./Blog.module.css";
@@ -9,12 +10,19 @@ export default function Blog() {
     <Section id="blog" title="Blog">
       <ul className={styles.posts}>
         {posts.map((post) => (
-          <li key={post} className={styles.post}>
-            <Placeholder label={`${post} · title`} height={28} />
-            <div className={styles.meta}>
-              <time>Date</time>
-              <span className={styles.tags}>#tag #tag</span>
-            </div>
+          <li key={post}>
+            <Link href="/blog/template" className={styles.post}>
+              <div className={styles.text}>
+                <Placeholder label={`${post} · title`} height={28} />
+                <div className={styles.meta}>
+                  <time>Date</time>
+                  <span className={styles.tags}>#tag #tag</span>
+                </div>
+              </div>
+              <span className={styles.arrow} aria-hidden="true">
+                →
+              </span>
+            </Link>
           </li>
         ))}
       </ul>
