@@ -2,7 +2,7 @@ import About from "./_components/About";
 import Contact from "./_components/Contact";
 import Hero from "./_components/Hero";
 import Samples from "./_components/Samples";
-import WhatIDo from "./_components/WhatIDo";
+import Services from "./_components/Services";
 import Work from "./_components/Work";
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
     <>
       <Hero />
       <Work />
-      <WhatIDo />
+      <Services />
       <Samples />
       <About />
       <Contact />

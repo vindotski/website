@@ -1,12 +1,12 @@
 import Placeholder from "./Placeholder";
 import Section from "./Section";
-import styles from "./WhatIDo.module.css";
+import styles from "./Services.module.css";
 
 const pillars = ["Pillar 1", "Pillar 2", "Pillar 3"];
 
-export default function WhatIDo() {
+export default function Services() {
   return (
-    <Section id="what-i-do" title="What I do">
+    <Section id="services" title="Services">
       <ul className={styles.grid}>
         {pillars.map((pillar) => (
           <li key={pillar} className={styles.pillar}>
