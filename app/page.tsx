@@ -1,5 +1,6 @@
 import About from "./_components/About";
 import Contact from "./_components/Contact";
+import Footer from "./_components/Footer";
 import Header from "./_components/Header";
 import Hero from "./_components/Hero";
 import WhatIDo from "./_components/WhatIDo";
@@ -16,6 +17,7 @@ export default function Home() {
         <About />
         <Contact />
       </main>
+      <Footer />
     </>
   );
 }
