@@ -1,63 +1,3 @@
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 48px var(--gutter) 80px;
-}
-
-.back {
-  align-self: flex-start;
-  font-size: 14px;
-  color: var(--color-muted);
-  text-decoration: none;
-}
-
-.back:hover {
-  color: var(--color-text);
-}
-
-.intro {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 720px;
-}
-
-.title {
-  margin: 0;
-  font-size: 48px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-
-.facts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 24px;
-  margin: 0;
-  padding: 24px 0;
-  border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.fact {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.fact dt {
-  font-size: 14px;
-  color: var(--color-muted);
-}
-
-.fact dd {
-  margin: 0;
-}
-
 .impact {
   display: flex;
   flex-direction: column;
@@ -67,24 +7,13 @@
   border-left: 3px solid var(--color-text);
 }
 
-.body {
-  display: flex;
-  flex-direction: column;
-  gap: 56px;
-  max-width: 720px;
-}
-
-.block {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.block h2 {
+.impactLabel {
   margin: 0;
-  font-size: 28px;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
 }
 
 .highlight {
@@ -98,57 +27,4 @@
   margin: 0;
   font-size: 20px;
   font-weight: 600;
-}
-
-.next {
-  padding-top: 32px;
-  border-top: 1px solid var(--color-border);
-}
-
-.nextLink {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 4px;
-  text-decoration: none;
-}
-
-.nextLabel {
-  font-size: 14px;
-  color: var(--color-muted);
-}
-
-.nextName {
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.nextLink:hover .nextName {
-  text-decoration: underline;
-}
-
-.contact {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding: 48px var(--gutter);
-  border-radius: 18px;
-  background: var(--color-placeholder);
-  text-align: center;
-}
-
-.contact > :first-child {
-  width: 100%;
-  max-width: 480px;
-  background: var(--color-background);
-}
-
-.impactLabel {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-muted);
 }

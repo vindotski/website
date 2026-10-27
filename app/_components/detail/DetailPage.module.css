@@ -1,0 +1,19 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 48px var(--gutter) 80px;
+}
+
+.back {
+  align-self: flex-start;
+  font-size: 14px;
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--color-text);
+}

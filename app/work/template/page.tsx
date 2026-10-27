@@ -1,34 +1,23 @@
-import Link from "next/link";
-import ButtonLink from "../../_components/ButtonLink";
 import Placeholder from "../../_components/Placeholder";
+import ContactPrompt from "../../_components/detail/ContactPrompt";
+import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
+import DetailIntro from "../../_components/detail/DetailIntro";
+import DetailPage from "../../_components/detail/DetailPage";
+import Facts from "../../_components/detail/Facts";
+import NextLink from "../../_components/detail/NextLink";
 import styles from "./page.module.css";
 
-const facts = ["Role", "Company", "Years", "Stack"];
 const highlights = ["Highlight 1", "Highlight 2", "Highlight 3"];
 
 export default function WorkTemplate() {
   return (
-    <article className={styles.page}>
-      <Link href="/#work" className={styles.back}>
-        ← Work
-      </Link>
-
-      <header className={styles.intro}>
-        <h1 className={styles.title}>Project name</h1>
+    <DetailPage backHref="/#work" backLabel="Work">
+      <DetailIntro title="Project name">
         <Placeholder label="One-line summary" height={32} />
         <Placeholder label="Visit product ↗" height={24} />
-      </header>
+      </DetailIntro>
 
-      <dl className={styles.facts}>
-        {facts.map((fact) => (
-          <div key={fact} className={styles.fact}>
-            <dt>{fact}</dt>
-            <dd>
-              <Placeholder label="Value" height={24} />
-            </dd>
-          </div>
-        ))}
-      </dl>
+      <Facts labels={["Role", "Company", "Years", "Stack"]} />
 
       <Placeholder label="Hero image" height={420} />
 
@@ -37,19 +26,16 @@ export default function WorkTemplate() {
         <Placeholder label="One or two lines on what it changed" height={72} />
       </aside>
 
-      <div className={styles.body}>
-        <section className={styles.block}>
-          <h2>Context</h2>
+      <DetailBody>
+        <DetailBlock title="Context">
           <Placeholder label="The product, its users, the problem" height={120} />
-        </section>
+        </DetailBlock>
 
-        <section className={styles.block}>
-          <h2>My role</h2>
+        <DetailBlock title="My role">
           <Placeholder label="What I owned, the team around me" height={96} />
-        </section>
+        </DetailBlock>
 
-        <section className={styles.block}>
-          <h2>What I built</h2>
+        <DetailBlock title="What I built">
           {highlights.map((highlight) => (
             <div key={highlight} className={styles.highlight}>
               <h3>{highlight}</h3>
@@ -57,25 +43,16 @@ export default function WorkTemplate() {
               <Placeholder label="Image" height={280} />
             </div>
           ))}
-        </section>
+        </DetailBlock>
 
-        <section className={styles.block}>
-          <h2>Outcome</h2>
+        <DetailBlock title="Outcome">
           <Placeholder label="What it changed" height={96} />
-        </section>
-      </div>
+        </DetailBlock>
+      </DetailBody>
 
-      <nav className={styles.next} aria-label="Next project">
-        <Link href="/work/template" className={styles.nextLink}>
-          <span className={styles.nextLabel}>Next</span>
-          <span className={styles.nextName}>Project name →</span>
-        </Link>
-      </nav>
+      <NextLink href="/work/template" name="Project name" />
 
-      <section className={styles.contact} aria-label="Contact">
-        <Placeholder label="Short line inviting a conversation" height={48} />
-        <ButtonLink href="/#contact">Get in touch</ButtonLink>
-      </section>
-    </article>
+      <ContactPrompt />
+    </DetailPage>
   );
 }
