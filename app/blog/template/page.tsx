@@ -17,6 +17,11 @@ export default function BlogTemplate() {
           <Placeholder label="Demo ↗" height={24} />
         </div>
       </DetailIntro>
+
+      <aside className={styles.tldr} aria-label="Summary">
+        <p className={styles.tldrLabel}>TL;DR</p>
+        <Placeholder label="What I tried and what came of it, in 2–3 lines" height={72} />
+      </aside>
     </DetailPage>
   );
 }
