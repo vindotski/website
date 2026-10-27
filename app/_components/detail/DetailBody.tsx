@@ -5,13 +5,14 @@ export function DetailBody({ children }: { children: React.ReactNode }) {
 }
 
 type DetailBlockProps = {
+  id?: string;
   title: string;
   children: React.ReactNode;
 };
 
-export function DetailBlock({ title, children }: DetailBlockProps) {
+export function DetailBlock({ id, title, children }: DetailBlockProps) {
   return (
-    <section className={styles.block}>
+    <section id={id} className={styles.block}>
       <h2>{title}</h2>
       {children}
     </section>

@@ -9,6 +9,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /* Keeps the heading clear of the sticky header when jumped to */
+  scroll-margin-top: 80px;
 }
 
 .block h2 {
