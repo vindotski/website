@@ -1,0 +1,18 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr 2fr;
+    align-items: start;
+  }
+}
