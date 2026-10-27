@@ -29,6 +29,11 @@ export default function WorkTemplate() {
       </dl>
 
       <Placeholder label="Hero image" height={420} />
+
+      <aside className={styles.impact} aria-label="Impact">
+        <p className={styles.impactLabel}>Impact</p>
+        <Placeholder label="One or two lines on what it changed" height={72} />
+      </aside>
     </article>
   );
 }
