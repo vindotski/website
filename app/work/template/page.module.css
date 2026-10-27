@@ -67,6 +67,39 @@
   border-left: 3px solid var(--color-text);
 }
 
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  max-width: 720px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.block h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.highlight h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
 .impactLabel {
   margin: 0;
   font-size: 14px;

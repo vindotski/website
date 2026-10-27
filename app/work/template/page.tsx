@@ -3,6 +3,7 @@ import Placeholder from "../../_components/Placeholder";
 import styles from "./page.module.css";
 
 const facts = ["Role", "Company", "Years", "Stack"];
+const highlights = ["Highlight 1", "Highlight 2", "Highlight 3"];
 
 export default function WorkTemplate() {
   return (
@@ -34,6 +35,34 @@ export default function WorkTemplate() {
         <p className={styles.impactLabel}>Impact</p>
         <Placeholder label="One or two lines on what it changed" height={72} />
       </aside>
+
+      <div className={styles.body}>
+        <section className={styles.block}>
+          <h2>Context</h2>
+          <Placeholder label="The product, its users, the problem" height={120} />
+        </section>
+
+        <section className={styles.block}>
+          <h2>My role</h2>
+          <Placeholder label="What I owned, the team around me" height={96} />
+        </section>
+
+        <section className={styles.block}>
+          <h2>What I built</h2>
+          {highlights.map((highlight) => (
+            <div key={highlight} className={styles.highlight}>
+              <h3>{highlight}</h3>
+              <Placeholder label="What and why" height={72} />
+              <Placeholder label="Image" height={280} />
+            </div>
+          ))}
+        </section>
+
+        <section className={styles.block}>
+          <h2>Outcome</h2>
+          <Placeholder label="What it changed" height={96} />
+        </section>
+      </div>
     </article>
   );
 }
