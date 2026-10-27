@@ -3,6 +3,7 @@ import styles from "./Header.module.css";
 const links = [
   { href: "#work", label: "Work" },
   { href: "#what-i-do", label: "What I do" },
+  { href: "#samples", label: "Samples" },
   { href: "#about", label: "About" },
   { href: "#contact", label: "Contact" },
 ];
