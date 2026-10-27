@@ -18,11 +18,3 @@
   width: 100%;
   max-width: 720px;
 }
-
-.cta {
-  padding: 10px 22px;
-  border-radius: 999px;
-  background: var(--color-text);
-  color: var(--color-background);
-  text-decoration: none;
-}

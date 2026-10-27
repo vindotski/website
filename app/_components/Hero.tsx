@@ -1,3 +1,4 @@
+import ButtonLink from "./ButtonLink";
 import Placeholder from "./Placeholder";
 import styles from "./Hero.module.css";
 
@@ -8,9 +9,7 @@ export default function Hero() {
       <div className={styles.headline}>
         <Placeholder label="Headline" height={160} />
       </div>
-      <a href="#contact" className={styles.cta}>
-        Get in touch
-      </a>
+      <ButtonLink href="#contact">Get in touch</ButtonLink>
     </section>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ButtonLink from "../../_components/ButtonLink";
 import Placeholder from "../../_components/Placeholder";
 import styles from "./page.module.css";
 
@@ -73,9 +74,7 @@ export default function WorkTemplate() {
 
       <section className={styles.contact} aria-label="Contact">
         <Placeholder label="Short line inviting a conversation" height={48} />
-        <Link href="/#contact" className={styles.cta}>
-          Get in touch
-        </Link>
+        <ButtonLink href="/#contact">Get in touch</ButtonLink>
       </section>
     </article>
   );
