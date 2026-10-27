@@ -12,6 +12,7 @@ export default function Samples() {
           <ProjectCard
             key={sample}
             name={sample}
+            href="/samples/template"
             image={<Placeholder label="Image" height={180} />}
           >
             <Placeholder label="Type · stack" height={24} />

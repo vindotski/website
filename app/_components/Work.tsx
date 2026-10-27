@@ -12,6 +12,7 @@ export default function Work() {
           <ProjectCard
             key={project}
             name={project}
+            href="/work/template"
             image={<Placeholder label="Image" height={180} />}
           >
             <Placeholder label="Company · role · years" height={24} />
