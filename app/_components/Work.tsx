@@ -2,7 +2,7 @@ import Placeholder from "./Placeholder";
 import { ProjectCard, ProjectGrid } from "./ProjectCards";
 import Section from "./Section";
 
-const projects = ["HuddleOS", "Odjeca.hr", "Sokobanko"];
+const projects = ["HuddleOS", "Odjeca.hr", "Kalistenio"];
 
 export default function Work() {
   return (
