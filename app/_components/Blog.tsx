@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Placeholder from "./Placeholder";
 import Section from "./Section";
+import Tags from "./Tags";
 import styles from "./Blog.module.css";
 
 const posts = ["Post 1", "Post 2", "Post 3"];
@@ -16,7 +17,7 @@ export default function Blog() {
                 <Placeholder label={`${post} · title`} height={28} />
                 <div className={styles.meta}>
                   <time>Date</time>
-                  <span className={styles.tags}>#tag #tag</span>
+                  <Tags tags={["tag", "tag"]} />
                 </div>
               </div>
               <span className={styles.arrow} aria-hidden="true">

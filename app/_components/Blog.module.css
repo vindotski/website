@@ -55,7 +55,3 @@
 .post:focus-visible .meta {
   color: var(--color-text);
 }
-
-.tags {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-}
