@@ -1,8 +1,10 @@
 import Placeholder from "../../_components/Placeholder";
 import Tags from "../../_components/Tags";
+import ContactPrompt from "../../_components/detail/ContactPrompt";
 import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
+import NextLink from "../../_components/detail/NextLink";
 import styles from "./page.module.css";
 
 const sections = {
@@ -68,6 +70,10 @@ export default function BlogTemplate() {
           <Placeholder label="When I'd use it, what's next" height={96} />
         </DetailBlock>
       </DetailBody>
+
+      <NextLink href="/blog/template" name="Post title" />
+
+      <ContactPrompt />
     </DetailPage>
   );
 }
