@@ -13,7 +13,7 @@ export default async function Blog() {
       <ul className={styles.posts}>
         {posts.map((post) => (
           <li key={post.slug}>
-            <Link href="/blog/template" className={styles.post}>
+            <Link href={`/blog/${post.slug}`} className={styles.post}>
               <div className={styles.text}>
                 <h3 className={styles.title}>{post.title}</h3>
                 <div className={styles.meta}>

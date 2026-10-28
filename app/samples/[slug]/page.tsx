@@ -10,6 +10,10 @@ import Facts from "../../_components/detail/Facts";
 import NextLink from "../../_components/detail/NextLink";
 import styles from "./page.module.css";
 
+// Every page is prebuilt, so a navigation that waits for it is still quick.
+// Opts out of instant-navigation checks rather than streaming it behind Suspense
+export const instant = false;
+
 export async function generateStaticParams() {
   const samples = await getSamples();
   return samples.map((sample) => ({ slug: sample.slug }));

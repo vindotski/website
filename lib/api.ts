@@ -1,3 +1,4 @@
+import type { MDXContent } from "mdx/types";
 import { cacheLife } from "next/cache";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
@@ -68,6 +69,12 @@ export async function getPosts(): Promise<PostMeta[]> {
 
 export async function getPostBySlug(slug: string): Promise<PostMeta | null> {
   return findBySlug(await loadPosts(), slug);
+}
+
+// The post's body as a component; front matter comes from getPostBySlug
+export async function getPostContent(slug: string): Promise<MDXContent> {
+  const { default: Content } = await import(`@/content/posts/${slug}.mdx`);
+  return Content;
 }
 
 // Follows the newest-first order, so "next" is the next older post
