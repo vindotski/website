@@ -15,8 +15,12 @@
 }
 
 .fact dt {
-  font-size: 14px;
+  font-size: var(--text-label);
   color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .fact dd {

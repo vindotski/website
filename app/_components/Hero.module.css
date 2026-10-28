@@ -42,7 +42,7 @@
   margin: 0;
   padding: 6px 14px;
   border: 1px solid var(--color-border);
-  font-size: 14px;
+  font-size: var(--text-small);
   color: var(--color-muted);
 }
 
@@ -55,9 +55,9 @@
 .headline {
   max-width: 16ch;
   margin: 0;
-  font-size: 40px;
+  font-size: var(--text-display);
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   line-height: 1.1;
   /* Keeps the two sentences from leaving a single word on the last line */
   text-wrap: balance;
@@ -76,7 +76,7 @@
   left: 50%;
   translate: -50% 0;
   padding: 8px;
-  font-size: 20px;
+  font-size: var(--text-lead);
   color: var(--color-muted);
   text-decoration: none;
   animation: nudge 2s ease-in-out infinite;
@@ -95,12 +95,6 @@
 @media (prefers-reduced-motion: reduce) {
   .cue {
     animation: none;
-  }
-}
-
-@media (min-width: 768px) {
-  .headline {
-    font-size: 56px;
   }
 }
 

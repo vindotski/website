@@ -11,7 +11,7 @@
   max-width: var(--content-width);
   margin: 0 auto;
   padding: 32px var(--gutter);
-  font-size: 14px;
+  font-size: var(--text-small);
   color: var(--color-muted);
 }
 

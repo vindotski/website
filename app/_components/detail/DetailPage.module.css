@@ -9,7 +9,7 @@
 
 .back {
   align-self: flex-start;
-  font-size: 14px;
+  font-size: var(--text-small);
   color: var(--color-muted);
   text-decoration: none;
 }

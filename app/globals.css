@@ -10,11 +10,25 @@
     Roboto, Helvetica, Arial, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
     Consolas, monospace;
+  /* Type scale: every font size on the site is one of these */
+  --text-label: 12px; /* Geist Mono capitals: card labels, fact labels */
+  --text-small: 14px; /* meta, tags, nav, footer */
+  --text-body: 17px;
+  --text-lead: 22px; /* intros and small headings */
+  --text-title: 28px; /* headings inside a page */
+  --text-section: 40px; /* section headings */
+  --text-display: 44px; /* hero and page titles; 64px on wider screens */
   --content-width: 1080px;
   --gutter: 16px;
   /* Height of the sticky header, including its border. The hero fills the
      screen below it, and jumped-to headings stop just under it */
   --header-height: 52px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --text-display: 64px;
+  }
 }
 
 *,
@@ -33,7 +47,8 @@ body {
   min-height: 100dvh;
   margin: 0;
   font-family: var(--font-sans);
-  line-height: 1.5;
+  font-size: var(--text-body);
+  line-height: 1.6;
   color: var(--color-text);
   background: var(--color-background);
   -webkit-font-smoothing: antialiased;
