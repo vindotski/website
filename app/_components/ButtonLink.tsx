@@ -3,21 +3,29 @@ import styles from "./ButtonLink.module.css";
 
 type ButtonLinkProps = {
   href: string;
+  // Primary is the filled pill; secondary is outlined, for a second action
+  variant?: "primary" | "secondary";
   children: React.ReactNode;
 };
 
-export default function ButtonLink({ href, children }: ButtonLinkProps) {
+export default function ButtonLink({
+  href,
+  variant = "primary",
+  children,
+}: ButtonLinkProps) {
+  const className = `${styles.button} ${styles[variant]}`;
+
   // Links that leave the site (mailto:, https:) don't go through the router
   if (/^[a-z]+:/i.test(href)) {
     return (
-      <a href={href} className={styles.button}>
+      <a href={href} className={className}>
         {children}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={styles.button}>
+    <Link href={href} className={className}>
       {children}
     </Link>
   );

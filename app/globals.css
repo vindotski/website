@@ -4,8 +4,19 @@
   --color-background: #ffffff;
   --color-placeholder: #e8e8ed;
   --color-border: #d2d2d7;
+  --color-available: #30d158;
   --content-width: 1080px;
   --gutter: 16px;
+  /* Height of the sticky header, so the hero can fill the screen below it.
+     Estimated from the current header; exact once the phone header is redesigned */
+  --header-height: 49px;
+}
+
+/* Below ~600px the nav links wrap under the name onto two lines */
+@media (max-width: 599px) {
+  :root {
+    --header-height: 104px;
+  }
 }
 
 *,

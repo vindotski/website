@@ -1,7 +1,16 @@
 .button {
   padding: 10px 22px;
+  border: 1px solid var(--color-text);
   border-radius: 999px;
+  text-decoration: none;
+}
+
+.primary {
   background: var(--color-text);
   color: var(--color-background);
-  text-decoration: none;
+}
+
+.secondary {
+  background: transparent;
+  color: var(--color-text);
 }

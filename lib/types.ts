@@ -1,3 +1,9 @@
+export type Hero = {
+  // Shown above the headline
+  availability: string;
+  headline: string;
+};
+
 export type About = {
   intro: string;
   paragraphs: string[];

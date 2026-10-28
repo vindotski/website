@@ -1,6 +1,7 @@
 import type {
   About,
   Contact,
+  Hero,
   Sample,
   Service,
   Social,
@@ -8,6 +9,11 @@ import type {
 } from "./types";
 
 // Fields marked TODO are generated placeholders, to be replaced with real content
+
+export const hero: Hero = {
+  availability: "Available for frontend and product work",
+  headline: "I build the part you see. And the parts you don't.",
+};
 
 export const about: About = {
   intro:

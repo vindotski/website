@@ -1,20 +1,143 @@
 .hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  max-width: var(--content-width);
+  /* At least the screen below the header. svh is the height with the phone
+     toolbars showing, so the hero never hides under them or jumps on scroll */
+  min-height: calc(100svh - var(--header-height));
+  margin: 0 auto;
+  /* Bottom padding leaves room for the scroll cue */
+  padding: 48px var(--gutter) 80px;
+}
+
+.text {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 24px;
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 120px var(--gutter);
   text-align: center;
 }
 
-.intro {
+/* Phones: the transparent cut-out above the text (it comes after the text in the HTML) */
+.cutout {
+  order: -1;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  /* Shows through the transparent background, so the circle is visible */
+  background: var(--color-placeholder);
+}
+
+.portrait {
+  display: none;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
+  padding: 6px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 14px;
   color: var(--color-muted);
 }
 
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-available);
+  /* Soft ring so the dot reads as a live status */
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-available) 25%, transparent);
+}
+
 .headline {
-  width: 100%;
-  max-width: 720px;
+  max-width: 16ch;
+  margin: 0;
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  /* Keeps the two sentences from leaving a single word on the last line */
+  text-wrap: balance;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.cue {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  translate: -50% 0;
+  padding: 8px;
+  font-size: 20px;
+  color: var(--color-muted);
+  text-decoration: none;
+  animation: nudge 2s ease-in-out infinite;
+}
+
+.cue:hover {
+  color: var(--color-text);
+}
+
+@keyframes nudge {
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cue {
+    animation: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .headline {
+    font-size: 56px;
+  }
+}
+
+/* Wider than 768px so the 56px headline has room beside the photo */
+@media (min-width: 900px) {
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .text {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .actions {
+    justify-content: flex-start;
+  }
+
+  .cutout {
+    display: none;
+  }
+
+  /* The photo is square, so the 4:5 crop trims the sides */
+  .portrait {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 18px;
+  }
 }

@@ -2,10 +2,19 @@ import type { MDXContent } from "mdx/types";
 import { cacheLife } from "next/cache";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
-import { about, contact, samples, services, socials, work } from "./data";
+import {
+  about,
+  contact,
+  hero,
+  samples,
+  services,
+  socials,
+  work,
+} from "./data";
 import type {
   About,
   Contact,
+  Hero,
   PostMeta,
   ResolvedService,
   Sample,
@@ -43,6 +52,10 @@ function nextAfter<T extends { slug: string }>(items: T[], slug: string) {
   const index = items.findIndex((item) => item.slug === slug);
   if (index === -1 || items.length < 2) return null;
   return items[(index + 1) % items.length];
+}
+
+export async function getHero(): Promise<Hero> {
+  return hero;
 }
 
 export async function getAbout(): Promise<About> {
