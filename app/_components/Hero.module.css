@@ -52,9 +52,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--color-available);
-  /* Soft ring so the dot reads as a live status */
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-available) 25%, transparent);
+  background: var(--color-text);
 }
 
 .headline {

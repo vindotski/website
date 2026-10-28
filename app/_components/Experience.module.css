@@ -51,10 +51,10 @@
   background: var(--color-background);
 }
 
-/* The current role gets the green of the availability pill */
+/* The current role's dot is filled */
 .role[data-current="true"]::before {
-  border-color: var(--color-available);
-  background: var(--color-available);
+  border-color: var(--color-text);
+  background: var(--color-text);
 }
 
 /* Line from this dot down to the next one */
