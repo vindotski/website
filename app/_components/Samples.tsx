@@ -19,7 +19,7 @@ export default async function Samples() {
           <ProjectCard
             key={sample.slug}
             name={sample.name}
-            href="/samples/template"
+            href={`/samples/${sample.slug}`}
             image={<Placeholder label={sample.image.alt} height={180} />}
           >
             <ProjectMeta>

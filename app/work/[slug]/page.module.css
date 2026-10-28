@@ -1,13 +1,3 @@
-.summary {
-  margin: 0;
-  font-size: 20px;
-  color: var(--color-muted);
-}
-
-.product {
-  align-self: flex-start;
-}
-
 .impact {
   display: flex;
   flex-direction: column;

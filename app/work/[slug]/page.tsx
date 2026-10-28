@@ -34,19 +34,15 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
 
   return (
     <DetailPage backHref="/#work" backLabel="Work">
-      <DetailIntro title={item.name}>
-        <p className={styles.summary}>{item.summary}</p>
-        {item.productUrl && (
-          <a
-            href={item.productUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.product}
-          >
-            Visit product ↗
-          </a>
-        )}
-      </DetailIntro>
+      <DetailIntro
+        title={item.name}
+        summary={item.summary}
+        links={
+          item.productUrl
+            ? [{ href: item.productUrl, label: "Visit product" }]
+            : []
+        }
+      />
 
       <Facts
         facts={[

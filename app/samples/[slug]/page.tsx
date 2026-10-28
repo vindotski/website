@@ -1,0 +1,89 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getNextSample, getSampleBySlug, getSamples } from "@/lib/api";
+import Placeholder from "../../_components/Placeholder";
+import ContactPrompt from "../../_components/detail/ContactPrompt";
+import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
+import DetailIntro from "../../_components/detail/DetailIntro";
+import DetailPage from "../../_components/detail/DetailPage";
+import Facts from "../../_components/detail/Facts";
+import NextLink from "../../_components/detail/NextLink";
+import styles from "./page.module.css";
+
+export async function generateStaticParams() {
+  const samples = await getSamples();
+  return samples.map((sample) => ({ slug: sample.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/samples/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const sample = await getSampleBySlug(slug);
+  if (!sample) return {};
+  return { title: `${sample.name} · Ivan Vinski`, description: sample.summary };
+}
+
+export default async function SamplePage({
+  params,
+}: PageProps<"/samples/[slug]">) {
+  const { slug } = await params;
+  const sample = await getSampleBySlug(slug);
+  if (!sample) notFound();
+
+  const next = await getNextSample(slug);
+
+  return (
+    <DetailPage backHref="/#samples" backLabel="Samples">
+      <DetailIntro
+        title={sample.name}
+        summary={sample.summary}
+        links={[
+          { href: sample.demoUrl, label: "Live demo" },
+          ...(sample.sourceUrl
+            ? [{ href: sample.sourceUrl, label: "Source" }]
+            : []),
+        ]}
+      />
+
+      <Facts
+        facts={[
+          { label: "Type", value: sample.type },
+          { label: "Stack", value: sample.stack.join(" · ") },
+          { label: "Year", value: sample.year },
+          { label: "Status", value: sample.status },
+        ]}
+      />
+
+      <Placeholder label={sample.image.alt} height={420} />
+
+      <DetailBody>
+        <DetailBlock title="Why I built it">
+          <p>{sample.why}</p>
+        </DetailBlock>
+
+        <DetailBlock title="Architecture">
+          <p>{sample.architecture}</p>
+          <Placeholder label={sample.diagram.alt} height={320} />
+        </DetailBlock>
+
+        <DetailBlock title="Key decisions">
+          {sample.decisions.map((decision) => (
+            <div key={decision.title} className={styles.decision}>
+              <h3>{decision.title}</h3>
+              <p>{decision.body}</p>
+            </div>
+          ))}
+        </DetailBlock>
+
+        <DetailBlock title="What I'd do next">
+          <p>{sample.next}</p>
+        </DetailBlock>
+      </DetailBody>
+
+      {next && <NextLink href={`/samples/${next.slug}`} name={next.name} />}
+
+      <ContactPrompt />
+    </DetailPage>
+  );
+}
