@@ -54,7 +54,7 @@
   color: var(--color-muted);
 }
 
-.post:hover .meta,
-.post:focus-visible .meta {
-  color: var(--color-text);
+.post:hover .title,
+.post:focus-visible .title {
+  text-decoration: underline;
 }

@@ -39,6 +39,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Every underline looks the same: thin and clear of the letters */
 a {
   color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
 }

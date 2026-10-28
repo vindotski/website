@@ -30,8 +30,7 @@
   transform: translateY(-3.75px) rotate(-45deg);
 }
 
-/* Absolute, not fixed: the header's backdrop-filter would trap a fixed panel
-   inside the header box. The header is sticky, so this sits right under it */
+/* Positioned from the sticky header, so it always sits right under it */
 .panel {
   position: absolute;
   top: 100%;

@@ -2,11 +2,20 @@
   padding: 10px 22px;
   border: 1px solid var(--color-text);
   text-decoration: none;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
+/* Each variant swaps its fill and text colour on hover */
 .primary {
   background: var(--color-text);
   color: var(--color-background);
+}
+
+.primary:hover {
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 .secondary {
@@ -14,8 +23,23 @@
   color: var(--color-text);
 }
 
+.secondary:hover {
+  background: var(--color-text);
+  color: var(--color-background);
+}
+
+/* For dark backgrounds */
 .inverse {
   border-color: var(--color-background);
   background: var(--color-background);
   color: var(--color-text);
+}
+
+.inverse:hover {
+  background: transparent;
+  color: var(--color-background);
+}
+
+.inverse:focus-visible {
+  outline-color: var(--color-background);
 }

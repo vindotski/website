@@ -3,8 +3,7 @@
   top: 0;
   z-index: 10;
   border-bottom: 1px solid var(--color-border);
-  background: rgb(255 255 255 / 0.8);
-  backdrop-filter: saturate(180%) blur(20px);
+  background: var(--color-background);
 }
 
 /* Three columns keep the middle item centred on the page.
@@ -55,21 +54,29 @@
 }
 
 .links a {
-  color: var(--color-muted);
   text-decoration: none;
 }
 
 .links a:hover {
-  color: var(--color-text);
+  text-decoration: underline;
 }
 
-/* A compact version of the dark button, sized for the header */
+/* A compact version of the dark button, sized for the header; inverts on hover */
 .cta {
   padding: 6px 14px;
+  border: 1px solid var(--color-text);
   background: var(--color-text);
   color: var(--color-background);
   font-size: 14px;
   text-decoration: none;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.cta:hover {
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 /* Wide screens: name left, links centred, contact button right */

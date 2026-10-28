@@ -92,6 +92,10 @@
   text-decoration: none;
 }
 
+.card:hover .link {
+  text-decoration: underline;
+}
+
 .link:focus-visible {
   outline: none;
 }
