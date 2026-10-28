@@ -3,8 +3,9 @@ import styles from "./ButtonLink.module.css";
 
 type ButtonLinkProps = {
   href: string;
-  // Primary is the filled pill; secondary is outlined, for a second action
-  variant?: "primary" | "secondary";
+  // Primary is the filled pill; secondary is outlined, for a second action;
+  // inverse is the filled pill for dark backgrounds
+  variant?: "primary" | "secondary" | "inverse";
   children: React.ReactNode;
 };
 

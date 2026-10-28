@@ -8,7 +8,9 @@ export default async function ContactPrompt() {
   return (
     <section className={styles.contact} aria-label="Contact">
       <p className={styles.prompt}>{contact.prompt}</p>
-      <ButtonLink href={`mailto:${contact.email}`}>Get in touch</ButtonLink>
+      <ButtonLink href={`mailto:${contact.email}`} variant="inverse">
+        Get in touch
+      </ButtonLink>
     </section>
   );
 }

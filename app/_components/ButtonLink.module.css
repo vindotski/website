@@ -14,3 +14,9 @@
   background: transparent;
   color: var(--color-text);
 }
+
+.inverse {
+  border-color: var(--color-background);
+  background: var(--color-background);
+  color: var(--color-text);
+}
