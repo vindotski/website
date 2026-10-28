@@ -1,23 +1,32 @@
+import { getWork } from "@/lib/api";
+import { formatYears } from "@/lib/format";
 import Placeholder from "./Placeholder";
-import { ProjectCard, ProjectGrid } from "./ProjectCards";
+import {
+  ProjectCard,
+  ProjectGrid,
+  ProjectMeta,
+  ProjectSummary,
+} from "./ProjectCards";
 import Section from "./Section";
 
-const projects = ["HuddleOS", "Odjeca.hr", "Kalistenio"];
+export default async function Work() {
+  const work = await getWork();
 
-export default function Work() {
   return (
     <Section id="work" title="Work">
       <ProjectGrid>
-        {projects.map((project) => (
+        {work.map((item) => (
           <ProjectCard
-            key={project}
-            name={project}
+            key={item.slug}
+            name={item.name}
             href="/work/template"
-            image={<Placeholder label="Image" height={180} />}
+            image={<Placeholder label={item.image.alt} height={180} />}
           >
-            <Placeholder label="Company · role · years" height={24} />
-            <Placeholder label="Summary" height={72} />
-            <Placeholder label="Stack" height={24} />
+            <ProjectMeta>
+              {item.company} · {item.role} · {formatYears(item.years)}
+            </ProjectMeta>
+            <ProjectSummary>{item.summary}</ProjectSummary>
+            <ProjectMeta>{item.stack.join(" · ")}</ProjectMeta>
           </ProjectCard>
         ))}
       </ProjectGrid>

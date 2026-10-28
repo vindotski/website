@@ -29,6 +29,17 @@
   font-weight: 600;
 }
 
+.meta {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.summary {
+  flex: 1;
+  margin: 0;
+}
+
 .link {
   text-decoration: none;
 }

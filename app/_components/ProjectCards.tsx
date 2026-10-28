@@ -12,6 +12,14 @@ type ProjectCardProps = {
   children: React.ReactNode;
 };
 
+export function ProjectMeta({ children }: { children: React.ReactNode }) {
+  return <p className={styles.meta}>{children}</p>;
+}
+
+export function ProjectSummary({ children }: { children: React.ReactNode }) {
+  return <p className={styles.summary}>{children}</p>;
+}
+
 export function ProjectCard({ name, href, image, children }: ProjectCardProps) {
   return (
     <li className={styles.card}>
