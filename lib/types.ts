@@ -10,6 +10,13 @@ export type Contact = {
   prompt: string;
 };
 
+export type SocialName = "GitHub" | "LinkedIn" | "Figma";
+
+export type Social = {
+  name: SocialName;
+  href: string;
+};
+
 export type Image = {
   src: string;
   alt: string;

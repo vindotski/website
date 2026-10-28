@@ -19,8 +19,28 @@
   margin: 0;
 }
 
-.links {
-  min-width: 200px;
+.socials {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.social {
+  display: flex;
+  color: var(--color-muted);
+  transition: color 0.2s;
+}
+
+.social:hover,
+.social:focus-visible {
+  color: var(--color-text);
+}
+
+.social svg {
+  width: 20px;
+  height: 20px;
 }
 
 .top {

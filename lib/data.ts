@@ -1,4 +1,11 @@
-import type { About, Contact, Sample, Service, Work } from "./types";
+import type {
+  About,
+  Contact,
+  Sample,
+  Service,
+  Social,
+  Work,
+} from "./types";
 
 // Fields marked TODO are generated placeholders, to be replaced with real content
 
@@ -16,6 +23,13 @@ export const contact: Contact = {
   email: "ivan@vin.ski",
   prompt: "Have a role or a product in mind? Let's talk.",
 };
+
+// Order: code first (proof behind the samples), then roles and contact, then design
+export const socials: Social[] = [
+  { name: "GitHub", href: "https://github.com/vindotski" },
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/vindotski" },
+  { name: "Figma", href: "https://www.figma.com/@vindotski" },
+];
 
 export const services: Service[] = [
   {

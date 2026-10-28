@@ -2,13 +2,14 @@ import type { MDXContent } from "mdx/types";
 import { cacheLife } from "next/cache";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
-import { about, contact, samples, services, work } from "./data";
+import { about, contact, samples, services, socials, work } from "./data";
 import type {
   About,
   Contact,
   PostMeta,
   ResolvedService,
   Sample,
+  Social,
   Work,
 } from "./types";
 
@@ -50,6 +51,10 @@ export async function getAbout(): Promise<About> {
 
 export async function getContact(): Promise<Contact> {
   return contact;
+}
+
+export async function getSocials(): Promise<Social[]> {
+  return socials;
 }
 
 // Proof slugs become links; any that no longer match a project are dropped,
