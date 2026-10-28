@@ -41,6 +41,23 @@ export type SampleType = "Frontend" | "Fullstack" | "Product";
 
 export type SampleStatus = "Live" | "In progress" | "Archived";
 
+// The services are the same three kinds of work as the sample types
+export type ServiceName = SampleType;
+
+// Points at a work item or sample by slug, resolved to a link by the api
+export type ProofLink = { kind: "work" | "samples"; slug: string };
+
+export type Service = {
+  name: ServiceName;
+  headline: string;
+  line: string;
+  proof: ProofLink[];
+};
+
+export type ResolvedService = Omit<Service, "proof"> & {
+  proof: { name: string; href: string }[];
+};
+
 export type Decision = {
   title: string;
   body: string;

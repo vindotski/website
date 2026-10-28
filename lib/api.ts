@@ -2,8 +2,15 @@ import type { MDXContent } from "mdx/types";
 import { cacheLife } from "next/cache";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
-import { about, contact, samples, work } from "./data";
-import type { About, Contact, PostMeta, Sample, Work } from "./types";
+import { about, contact, samples, services, work } from "./data";
+import type {
+  About,
+  Contact,
+  PostMeta,
+  ResolvedService,
+  Sample,
+  Work,
+} from "./types";
 
 // Async so callers stay the same when content moves out of local data
 
@@ -43,6 +50,21 @@ export async function getAbout(): Promise<About> {
 
 export async function getContact(): Promise<Contact> {
   return contact;
+}
+
+// Proof slugs become links; any that no longer match a project are dropped,
+// so renaming or removing a project can't leave a broken link
+export async function getServices(): Promise<ResolvedService[]> {
+  return services.map((service) => ({
+    ...service,
+    proof: service.proof.flatMap(({ kind, slug }) => {
+      const item = findBySlug<Work | Sample>(
+        kind === "work" ? work : samples,
+        slug,
+      );
+      return item ? [{ name: item.name, href: `/${kind}/${slug}` }] : [];
+    }),
+  }));
 }
 
 export async function getWork(): Promise<Work[]> {

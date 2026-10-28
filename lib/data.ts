@@ -1,4 +1,4 @@
-import type { About, Contact, Sample, Work } from "./types";
+import type { About, Contact, Sample, Service, Work } from "./types";
 
 // Fields marked TODO are generated placeholders, to be replaced with real content
 
@@ -16,6 +16,36 @@ export const contact: Contact = {
   email: "ivan@vin.ski",
   prompt: "Have a role or a product in mind? Let's talk.",
 };
+
+export const services: Service[] = [
+  {
+    name: "Frontend",
+    headline: "Interfaces that keep up.",
+    line: "Real-time, data-heavy UIs with complex state, fast and built to last.",
+    proof: [
+      { kind: "work", slug: "huddleos" },
+      { kind: "samples", slug: "dashboard" },
+    ],
+  },
+  {
+    name: "Fullstack",
+    headline: "From the screen to the database.",
+    line: "UI, API and data, built as one piece.",
+    proof: [
+      { kind: "work", slug: "odjeca-hr" },
+      { kind: "samples", slug: "sokoban" },
+    ],
+  },
+  {
+    name: "Product",
+    headline: "From idea to MVP.",
+    line: "Scope, trade-offs, shipping and measuring, the way the Process below works.",
+    proof: [
+      { kind: "work", slug: "kalistenio" },
+      { kind: "samples", slug: "website" },
+    ],
+  },
+];
 
 export const work: Work[] = [
   {
