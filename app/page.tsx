@@ -1,6 +1,6 @@
-import About from "./_components/About";
 import Blog from "./_components/Blog";
 import Contact from "./_components/Contact";
+import Experience from "./_components/Experience";
 import Hero from "./_components/Hero";
 import Process from "./_components/Process";
 import Samples from "./_components/Samples";
@@ -14,7 +14,7 @@ export default function Home() {
       <Work />
       <Samples />
       <Blog />
-      <About />
+      <Experience />
       <Services />
       <Process />
       <Contact />

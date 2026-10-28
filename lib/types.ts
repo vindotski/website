@@ -6,8 +6,6 @@ export type Hero = {
 
 export type About = {
   intro: string;
-  paragraphs: string[];
-  closing: string;
 };
 
 export type Contact = {
