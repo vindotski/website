@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import { toTag } from "@/lib/format";
+import type { Image as ContentImage } from "@/lib/types";
 import Tags from "./Tags";
 import styles from "./ProjectCards.module.css";
 
@@ -14,7 +16,7 @@ type ProjectCardProps = {
   eyebrow?: string;
   name: string;
   href: string;
-  image: React.ReactNode;
+  image: ContentImage;
   children: React.ReactNode;
 };
 
@@ -45,7 +47,15 @@ export function ProjectCard({
         <span>{label.start}</span>
         <span>{label.end}</span>
       </p>
-      <div className={styles.image}>{image}</div>
+      {/* Fixed 16:10 frame, so cards line up whatever size the real images are */}
+      <div className={styles.image}>
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          sizes="(min-width: 1080px) 344px, (min-width: 640px) 50vw, 100vw"
+        />
+      </div>
       <div className={styles.content}>
         {eyebrow && <p className={styles.eyebrow}>{eyebrow}</p>}
         <h3 className={styles.name}>

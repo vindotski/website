@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getNextSample, getSampleBySlug, getSamples } from "@/lib/api";
-import Placeholder from "../../_components/Placeholder";
 import ContactPrompt from "../../_components/detail/ContactPrompt";
 import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
+import DetailImage from "../../_components/detail/DetailImage";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
 import Facts from "../../_components/detail/Facts";
@@ -59,7 +59,7 @@ export default async function SamplePage({
         ]}
       />
 
-      <Placeholder label={sample.image.alt} height={420} />
+      <DetailImage image={sample.image} sizes="(min-width: 1080px) 1048px, 100vw" />
 
       <DetailBody>
         <DetailBlock title="Why I built it">
@@ -68,7 +68,7 @@ export default async function SamplePage({
 
         <DetailBlock title="Architecture">
           <p>{sample.architecture}</p>
-          <Placeholder label={sample.diagram.alt} height={320} />
+          <DetailImage image={sample.diagram} sizes="(min-width: 752px) 720px, 100vw" />
         </DetailBlock>
 
         <DetailBlock title="Key decisions">

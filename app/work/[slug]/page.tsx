@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getNextWork, getWork, getWorkBySlug } from "@/lib/api";
 import { formatYears } from "@/lib/format";
-import Placeholder from "../../_components/Placeholder";
 import ContactPrompt from "../../_components/detail/ContactPrompt";
 import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
+import DetailImage from "../../_components/detail/DetailImage";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
 import Facts from "../../_components/detail/Facts";
@@ -57,7 +57,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
         ]}
       />
 
-      <Placeholder label={item.image.alt} height={420} />
+      <DetailImage image={item.image} sizes="(min-width: 1080px) 1048px, 100vw" />
 
       <aside className={styles.impact} aria-label="Impact">
         <p className={styles.impactLabel}>Impact</p>

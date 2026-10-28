@@ -1,6 +1,5 @@
 import { getWork } from "@/lib/api";
 import { formatYears } from "@/lib/format";
-import Placeholder from "./Placeholder";
 import {
   ProjectCard,
   ProjectGrid,
@@ -22,7 +21,7 @@ export default async function Work() {
             eyebrow={item.company}
             name={item.name}
             href={`/work/${item.slug}`}
-            image={<Placeholder label={item.image.alt} height={180} />}
+            image={item.image}
           >
             <ProjectSummary>{item.summary}</ProjectSummary>
             <ProjectTags stack={item.stack} />

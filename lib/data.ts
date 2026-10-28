@@ -78,7 +78,7 @@ export const work: Work[] = [
     years: { start: 2022, end: 2025 }, // TODO
     stack: ["Vue", "GraphQL", "WebSockets"],
     productUrl: "https://huddle.tech/products/huddle-os/",
-    image: { src: "/images/work/huddleos.png", alt: "HuddleOS dashboard" }, // TODO
+    image: { src: "/images/work/huddleos.svg", alt: "HuddleOS dashboard" }, // TODO
     impact:
       "Presented on stage in Las Vegas. Helped close a major investment.",
     // TODO
@@ -98,7 +98,7 @@ export const work: Work[] = [
     years: { start: 2021, end: 2022 }, // TODO
     stack: ["Node.js", "React", "Handlebars", "MongoDB"],
     productUrl: "https://odjeca.hr/zene",
-    image: { src: "/images/work/odjeca-hr.png", alt: "Odjeca.hr search results" }, // TODO
+    image: { src: "/images/work/odjeca-hr.svg", alt: "Odjeca.hr search results" }, // TODO
     impact: "Thousands of shops. One search.", // TODO
     // TODO
     context:
@@ -116,7 +116,7 @@ export const work: Work[] = [
     type: "Product",
     years: { start: 2025 }, // TODO
     stack: ["React Native", "Supabase"],
-    image: { src: "/images/work/kalistenio.png", alt: "Kalistenio workout screen" }, // TODO
+    image: { src: "/images/work/kalistenio.svg", alt: "Kalistenio workout screen" }, // TODO
     impact: "From idea to app store, on my own.", // TODO
     // TODO
     context:
@@ -138,13 +138,13 @@ export const samples: Sample[] = [
     status: "Live",
     demoUrl: "https://example.com/dashboard", // TODO
     sourceUrl: "https://github.com/example/dashboard", // TODO
-    image: { src: "/images/samples/dashboard.png", alt: "Dashboard overview" }, // TODO
+    image: { src: "/images/samples/dashboard.svg", alt: "Dashboard overview" }, // TODO
     // TODO
     why: "To see how far TanStack's query, table and router libraries go together on a data-heavy screen.",
     // TODO
     architecture:
       "A React app with TanStack Router for routing, TanStack Query for server state and TanStack Table for the data grids.",
-    diagram: { src: "/images/samples/dashboard-diagram.png", alt: "Dashboard architecture" }, // TODO
+    diagram: { src: "/images/samples/dashboard-diagram.svg", alt: "Dashboard architecture" }, // TODO
     // TODO
     decisions: [
       {
@@ -169,13 +169,13 @@ export const samples: Sample[] = [
     status: "Live",
     demoUrl: "https://example.com/sokoban", // TODO
     sourceUrl: "https://github.com/example/sokoban", // TODO
-    image: { src: "/images/samples/sokoban.png", alt: "Sokoban level in play" }, // TODO
+    image: { src: "/images/samples/sokoban.svg", alt: "Sokoban level in play" }, // TODO
     // TODO
     why: "To build a complete game end to end: rendering, game logic, and a backend for players and progress.",
     // TODO
     architecture:
       "A Nuxt app renders the game with Pixi. Game logic is plain TypeScript, separate from rendering. Supabase stores players and their progress.",
-    diagram: { src: "/images/samples/sokoban-diagram.png", alt: "Sokoban architecture" }, // TODO
+    diagram: { src: "/images/samples/sokoban-diagram.svg", alt: "Sokoban architecture" }, // TODO
     // TODO
     decisions: [
       {
@@ -199,11 +199,11 @@ export const samples: Sample[] = [
     year: 2026,
     status: "In progress",
     demoUrl: "https://example.com", // TODO
-    image: { src: "/images/samples/website.png", alt: "Portfolio home page" }, // TODO
+    image: { src: "/images/samples/website.svg", alt: "Portfolio home page" }, // TODO
     why: "Two audiences need different things from me. Employers hiring full time look for a frontend engineer. Freelance clients look for someone who can build a whole product.",
     architecture:
       "Next.js 16 with the App Router and Cache Components, so pages are built ahead of time. Styling is CSS Modules. Pages are built from small shared components.",
-    diagram: { src: "/images/samples/website-diagram.png", alt: "Website architecture" }, // TODO
+    diagram: { src: "/images/samples/website-diagram.svg", alt: "Website architecture" }, // TODO
     decisions: [
       {
         title: "One story, not two",

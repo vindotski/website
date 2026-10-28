@@ -1,5 +1,4 @@
 import { getSamples } from "@/lib/api";
-import Placeholder from "./Placeholder";
 import {
   ProjectCard,
   ProjectGrid,
@@ -20,7 +19,7 @@ export default async function Samples() {
             label={{ start: sample.type, end: String(sample.year) }}
             name={sample.name}
             href={`/samples/${sample.slug}`}
-            image={<Placeholder label={sample.image.alt} height={180} />}
+            image={sample.image}
           >
             <ProjectSummary>{sample.summary}</ProjectSummary>
             <ProjectTags stack={sample.stack} />
