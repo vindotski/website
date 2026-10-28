@@ -3,9 +3,8 @@ import Placeholder from "./Placeholder";
 import {
   ProjectCard,
   ProjectGrid,
-  ProjectLinks,
-  ProjectMeta,
   ProjectSummary,
+  ProjectTags,
 } from "./ProjectCards";
 import Section from "./Section";
 
@@ -18,22 +17,13 @@ export default async function Samples() {
         {samples.map((sample) => (
           <ProjectCard
             key={sample.slug}
+            label={{ start: sample.type, end: String(sample.year) }}
             name={sample.name}
             href={`/samples/${sample.slug}`}
             image={<Placeholder label={sample.image.alt} height={180} />}
           >
-            <ProjectMeta>
-              {[sample.type, ...sample.stack].join(" · ")}
-            </ProjectMeta>
             <ProjectSummary>{sample.summary}</ProjectSummary>
-            <ProjectLinks
-              links={[
-                { href: sample.demoUrl, label: "Demo" },
-                ...(sample.sourceUrl
-                  ? [{ href: sample.sourceUrl, label: "Source" }]
-                  : []),
-              ]}
-            />
+            <ProjectTags stack={sample.stack} />
           </ProjectCard>
         ))}
       </ProjectGrid>

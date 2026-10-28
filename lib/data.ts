@@ -68,6 +68,7 @@ export const work: Work[] = [
     summary: "Live data. Live events. No lag.",
     company: "Huddle Tech",
     role: "Frontend Engineer",
+    type: "Frontend",
     years: { start: 2022, end: 2025 }, // TODO
     stack: ["Vue", "GraphQL", "WebSockets"],
     productUrl: "https://huddle.tech/products/huddle-os/",
@@ -87,6 +88,7 @@ export const work: Work[] = [
     summary: "Fashion search for a whole region.",
     company: "Interproactive",
     role: "Software Engineer",
+    type: "Fullstack",
     years: { start: 2021, end: 2022 }, // TODO
     stack: ["Node.js", "React", "Handlebars", "MongoDB"],
     productUrl: "https://odjeca.hr/zene",
@@ -103,8 +105,9 @@ export const work: Work[] = [
     slug: "kalistenio",
     name: "Kalistenio",
     summary: "Calisthenics training, in your pocket.", // TODO
-    company: "Independent product",
+    company: "Independent",
     role: "Product Engineer", // TODO
+    type: "Product",
     years: { start: 2025 }, // TODO
     stack: ["React Native", "Supabase"],
     image: { src: "/images/work/kalistenio.png", alt: "Kalistenio workout screen" }, // TODO

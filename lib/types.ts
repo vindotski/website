@@ -28,13 +28,18 @@ export type YearRange = {
   end?: number;
 };
 
+// The three kinds of work, shared by work items, samples and services
+export type ProjectType = "Frontend" | "Fullstack" | "Product";
+
 // Display order is the order of the data array; "Next" is the following item
 export type Work = {
   slug: string;
   name: string;
   summary: string;
   company: string;
+  // Job title, shown on the work page; `type` is the kind of work, on the card
   role: string;
+  type: ProjectType;
   years: YearRange;
   stack: string[];
   productUrl?: string;
@@ -44,12 +49,9 @@ export type Work = {
   myRole: string;
 };
 
-export type SampleType = "Frontend" | "Fullstack" | "Product";
-
 export type SampleStatus = "Live" | "In progress" | "Archived";
 
-// The services are the same three kinds of work as the sample types
-export type ServiceName = SampleType;
+export type ServiceName = ProjectType;
 
 // Points at a work item or sample by slug, resolved to a link by the api
 export type ProofLink = { kind: "work" | "samples"; slug: string };
@@ -74,7 +76,7 @@ export type Sample = {
   slug: string;
   name: string;
   summary: string;
-  type: SampleType;
+  type: ProjectType;
   stack: string[];
   year: number;
   status: SampleStatus;

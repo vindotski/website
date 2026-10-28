@@ -7,6 +7,11 @@ export function formatYears({ start, end }: YearRange) {
   return `${start}–${end}`;
 }
 
+// Stack name as a tag: "React Native" → "react-native", "Node.js" → "node.js"
+export function toTag(name: string) {
+  return name.toLowerCase().replace(/\s+/g, "-");
+}
+
 // "Nov 10, 2026"; UTC so the day doesn't shift with the server's time zone
 export function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
