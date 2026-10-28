@@ -1,4 +1,4 @@
-import type { PostMeta, Sample, Work } from "./types";
+import type { Sample, Work } from "./types";
 
 // Fields marked TODO are generated placeholders, to be replaced with real content
 
@@ -151,30 +151,5 @@ export const samples: Sample[] = [
       },
     ],
     next: "Real content, then launch, then watching where people get in touch from.",
-  },
-];
-
-// Moves to MDX front matter once posts are written
-export const posts: PostMeta[] = [
-  {
-    slug: "new-date-broke-my-build",
-    title: "new Date() broke my build",
-    date: "2026-11-10", // TODO
-    tags: ["nextjs", "caching", "react"],
-    tldr: "Next.js 16 refused to build a page because the footer showed the current year. Caching that one value for a day kept the page pre-built and the year correct.",
-  },
-  {
-    slug: "wireframing-in-code",
-    title: "Wireframing in code before content",
-    date: "2026-11-17", // TODO
-    tags: ["wireframing", "nextjs", "process"],
-    tldr: "I skipped the design tool and wireframed this site in code with grey boxes, one section per commit. Changing the structure stayed cheap, and it changed a lot.",
-  },
-  {
-    slug: "ai-pair-one-commit-at-a-time",
-    title: "Building a site with an AI pair, one commit at a time",
-    date: "2026-11-24", // TODO
-    tags: ["ai", "claudecode", "workflow"],
-    tldr: "I built this site with Claude Code writing the code and me reviewing and committing every small step. Keeping the steps small kept me in control.",
   },
 ];

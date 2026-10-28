@@ -1,7 +1,29 @@
-import { posts, samples, work } from "./data";
+import { cacheLife } from "next/cache";
+import { readdir } from "node:fs/promises";
+import path from "node:path";
+import { samples, work } from "./data";
 import type { PostMeta, Sample, Work } from "./types";
 
 // Async so callers stay the same when content moves out of local data
+
+const postsDir = path.join(process.cwd(), "content/posts");
+
+// Reads each post's front matter. Posts only change on deploy, so cache for as
+// long as possible (the default profile would refresh every 15 minutes)
+async function loadPosts(): Promise<PostMeta[]> {
+  "use cache";
+  cacheLife("max");
+  const files = (await readdir(postsDir)).filter((file) =>
+    file.endsWith(".mdx"),
+  );
+  return Promise.all(
+    files.map(async (file) => {
+      const slug = file.replace(/\.mdx$/, "");
+      const { frontmatter } = await import(`@/content/posts/${slug}.mdx`);
+      return { slug, ...(frontmatter as Omit<PostMeta, "slug">) };
+    }),
+  );
+}
 
 function findBySlug<T extends { slug: string }>(items: T[], slug: string) {
   return items.find((item) => item.slug === slug) ?? null;
@@ -40,11 +62,12 @@ export async function getNextSample(slug: string): Promise<Sample | null> {
 
 // Newest first; ISO dates sort correctly as strings
 export async function getPosts(): Promise<PostMeta[]> {
+  const posts = await loadPosts();
   return [...posts].sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export async function getPostBySlug(slug: string): Promise<PostMeta | null> {
-  return findBySlug(posts, slug);
+  return findBySlug(await loadPosts(), slug);
 }
 
 // Follows the newest-first order, so "next" is the next older post
