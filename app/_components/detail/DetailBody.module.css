@@ -10,7 +10,7 @@
   flex-direction: column;
   gap: 16px;
   /* Keeps the heading clear of the sticky header when jumped to */
-  scroll-margin-top: 80px;
+  scroll-margin-top: calc(var(--header-height) + 16px);
 }
 
 .block h2 {

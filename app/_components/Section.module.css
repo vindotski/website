@@ -3,7 +3,7 @@
   margin: 0 auto;
   padding: 80px var(--gutter);
   /* Keeps the heading clear of the sticky header when jumped to */
-  scroll-margin-top: 64px;
+  scroll-margin-top: var(--header-height);
 }
 
 .title {
