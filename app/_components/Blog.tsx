@@ -1,23 +1,24 @@
 import Link from "next/link";
-import Placeholder from "./Placeholder";
+import { getPosts } from "@/lib/api";
+import { formatDate } from "@/lib/format";
 import Section from "./Section";
 import Tags from "./Tags";
 import styles from "./Blog.module.css";
 
-const posts = ["Post 1", "Post 2", "Post 3"];
+export default async function Blog() {
+  const posts = await getPosts();
 
-export default function Blog() {
   return (
     <Section id="blog" title="Blog">
       <ul className={styles.posts}>
         {posts.map((post) => (
-          <li key={post}>
+          <li key={post.slug}>
             <Link href="/blog/template" className={styles.post}>
               <div className={styles.text}>
-                <Placeholder label={`${post} · title`} height={28} />
+                <h3 className={styles.title}>{post.title}</h3>
                 <div className={styles.meta}>
-                  <time>Date</time>
-                  <Tags tags={["tag", "tag"]} />
+                  <time dateTime={post.date}>{formatDate(post.date)}</time>
+                  <Tags tags={post.tags} />
                 </div>
               </div>
               <span className={styles.arrow} aria-hidden="true">
