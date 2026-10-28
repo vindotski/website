@@ -1,6 +1,16 @@
-import type { Sample, Work } from "./types";
+import type { About, Sample, Work } from "./types";
 
 // Fields marked TODO are generated placeholders, to be replaced with real content
+
+export const about: About = {
+  intro:
+    "Five years of professional frontend engineering steadily expanding into product roles for larger ownership.",
+  paragraphs: [
+    "I spent nearly four years at Huddle Tech building a B2B sportsbook with live match data and odds. It was presented in Las Vegas and helped close a major investment. Then I worked across the stack of Odjeca.hr, a fashion search engine, at Interproactive. Today I work in production at Rimac Technology, and I'm building Kalistenio, an app for the calisthenics I train, from scratch with a senior product designer.",
+  ],
+  closing:
+    "I'm open to full-time frontend roles, on-site or hybrid, and to freelance product work. Let's talk.",
+};
 
 export const work: Work[] = [
   {

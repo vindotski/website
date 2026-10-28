@@ -2,8 +2,8 @@ import type { MDXContent } from "mdx/types";
 import { cacheLife } from "next/cache";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
-import { samples, work } from "./data";
-import type { PostMeta, Sample, Work } from "./types";
+import { about, samples, work } from "./data";
+import type { About, PostMeta, Sample, Work } from "./types";
 
 // Async so callers stay the same when content moves out of local data
 
@@ -35,6 +35,10 @@ function nextAfter<T extends { slug: string }>(items: T[], slug: string) {
   const index = items.findIndex((item) => item.slug === slug);
   if (index === -1 || items.length < 2) return null;
   return items[(index + 1) % items.length];
+}
+
+export async function getAbout(): Promise<About> {
+  return about;
 }
 
 export async function getWork(): Promise<Work[]> {

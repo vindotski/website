@@ -1,3 +1,9 @@
+export type About = {
+  intro: string;
+  paragraphs: string[];
+  closing: string;
+};
+
 export type Image = {
   src: string;
   alt: string;
