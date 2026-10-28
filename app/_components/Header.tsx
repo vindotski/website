@@ -5,10 +5,10 @@ import styles from "./Header.module.css";
 const links = [
   { href: "/#work", label: "Work" },
   { href: "/#samples", label: "Samples" },
+  { href: "/#blog", label: "Blog" },
   { href: "/#about", label: "About" },
   { href: "/#services", label: "Services" },
   { href: "/#process", label: "Process" },
-  { href: "/#blog", label: "Blog" },
   { href: "/#contact", label: "Contact" },
 ];
 
