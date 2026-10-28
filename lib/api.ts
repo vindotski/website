@@ -1,5 +1,5 @@
-import { work } from "./data";
-import type { Work } from "./types";
+import { samples, work } from "./data";
+import type { Sample, Work } from "./types";
 
 // Async so callers stay the same when content moves out of local data
 
@@ -24,4 +24,16 @@ export async function getWorkBySlug(slug: string): Promise<Work | null> {
 
 export async function getNextWork(slug: string): Promise<Work | null> {
   return nextAfter(work, slug);
+}
+
+export async function getSamples(): Promise<Sample[]> {
+  return samples;
+}
+
+export async function getSampleBySlug(slug: string): Promise<Sample | null> {
+  return findBySlug(samples, slug);
+}
+
+export async function getNextSample(slug: string): Promise<Sample | null> {
+  return nextAfter(samples, slug);
 }
