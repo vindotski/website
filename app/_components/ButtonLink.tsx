@@ -7,6 +7,15 @@ type ButtonLinkProps = {
 };
 
 export default function ButtonLink({ href, children }: ButtonLinkProps) {
+  // Links that leave the site (mailto:, https:) don't go through the router
+  if (/^[a-z]+:/i.test(href)) {
+    return (
+      <a href={href} className={styles.button}>
+        {children}
+      </a>
+    );
+  }
+
   return (
     <Link href={href} className={styles.button}>
       {children}

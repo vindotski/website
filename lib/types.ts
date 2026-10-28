@@ -4,6 +4,12 @@ export type About = {
   closing: string;
 };
 
+export type Contact = {
+  email: string;
+  // One line shown above the "Get in touch" button
+  prompt: string;
+};
+
 export type Image = {
   src: string;
   alt: string;

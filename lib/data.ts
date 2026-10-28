@@ -1,4 +1,4 @@
-import type { About, Sample, Work } from "./types";
+import type { About, Contact, Sample, Work } from "./types";
 
 // Fields marked TODO are generated placeholders, to be replaced with real content
 
@@ -10,6 +10,11 @@ export const about: About = {
   ],
   closing:
     "I'm open to full-time frontend roles, on-site or hybrid, and to freelance product work. Let's talk.",
+};
+
+export const contact: Contact = {
+  email: "ivan@vin.ski",
+  prompt: "Have a role or a product in mind? Let's talk.",
 };
 
 export const work: Work[] = [
