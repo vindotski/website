@@ -20,6 +20,21 @@ export function ProjectSummary({ children }: { children: React.ReactNode }) {
   return <p className={styles.summary}>{children}</p>;
 }
 
+type ExternalLink = { href: string; label: string };
+
+// Sit above the card's stretched link so they stay clickable on their own
+export function ProjectLinks({ links }: { links: ExternalLink[] }) {
+  return (
+    <p className={styles.links}>
+      {links.map((link) => (
+        <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer">
+          {link.label} ↗
+        </a>
+      ))}
+    </p>
+  );
+}
+
 export function ProjectCard({ name, href, image, children }: ProjectCardProps) {
   return (
     <li className={styles.card}>

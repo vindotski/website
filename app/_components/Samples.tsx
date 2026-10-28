@@ -1,23 +1,39 @@
+import { getSamples } from "@/lib/api";
 import Placeholder from "./Placeholder";
-import { ProjectCard, ProjectGrid } from "./ProjectCards";
+import {
+  ProjectCard,
+  ProjectGrid,
+  ProjectLinks,
+  ProjectMeta,
+  ProjectSummary,
+} from "./ProjectCards";
 import Section from "./Section";
 
-const samples = ["Dashboard", "Sokoban", "Website"];
+export default async function Samples() {
+  const samples = await getSamples();
 
-export default function Samples() {
   return (
     <Section id="samples" title="Samples">
       <ProjectGrid>
         {samples.map((sample) => (
           <ProjectCard
-            key={sample}
-            name={sample}
+            key={sample.slug}
+            name={sample.name}
             href="/samples/template"
-            image={<Placeholder label="Image" height={180} />}
+            image={<Placeholder label={sample.image.alt} height={180} />}
           >
-            <Placeholder label="Type · stack" height={24} />
-            <Placeholder label="Summary" height={72} />
-            <Placeholder label="Live demo · Source" height={24} />
+            <ProjectMeta>
+              {[sample.type, ...sample.stack].join(" · ")}
+            </ProjectMeta>
+            <ProjectSummary>{sample.summary}</ProjectSummary>
+            <ProjectLinks
+              links={[
+                { href: sample.demoUrl, label: "Demo" },
+                ...(sample.sourceUrl
+                  ? [{ href: sample.sourceUrl, label: "Source" }]
+                  : []),
+              ]}
+            />
           </ProjectCard>
         ))}
       </ProjectGrid>

@@ -40,6 +40,18 @@
   margin: 0;
 }
 
+.links {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.links a {
+  position: relative;
+  z-index: 1;
+}
+
 .link {
   text-decoration: none;
 }
