@@ -1,5 +1,5 @@
-import { samples, work } from "./data";
-import type { Sample, Work } from "./types";
+import { posts, samples, work } from "./data";
+import type { PostMeta, Sample, Work } from "./types";
 
 // Async so callers stay the same when content moves out of local data
 
@@ -36,4 +36,18 @@ export async function getSampleBySlug(slug: string): Promise<Sample | null> {
 
 export async function getNextSample(slug: string): Promise<Sample | null> {
   return nextAfter(samples, slug);
+}
+
+// Newest first; ISO dates sort correctly as strings
+export async function getPosts(): Promise<PostMeta[]> {
+  return [...posts].sort((a, b) => b.date.localeCompare(a.date));
+}
+
+export async function getPostBySlug(slug: string): Promise<PostMeta | null> {
+  return findBySlug(posts, slug);
+}
+
+// Follows the newest-first order, so "next" is the next older post
+export async function getNextPost(slug: string): Promise<PostMeta | null> {
+  return nextAfter(await getPosts(), slug);
 }
