@@ -2,7 +2,6 @@
   position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  border-radius: 18px;
   background: var(--color-placeholder);
 }
 

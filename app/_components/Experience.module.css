@@ -8,7 +8,6 @@
   width: 100%;
   max-width: 360px;
   height: auto;
-  border-radius: 18px;
 }
 
 .intro {
@@ -47,7 +46,6 @@
   width: 11px;
   height: 11px;
   border: 2px solid var(--color-muted);
-  border-radius: 50%;
   background: var(--color-background);
 }
 

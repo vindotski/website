@@ -66,14 +66,13 @@
 /* A compact version of the dark button, sized for the header */
 .cta {
   padding: 6px 14px;
-  border-radius: 999px;
   background: var(--color-text);
   color: var(--color-background);
   font-size: 14px;
   text-decoration: none;
 }
 
-/* Wide screens: name left, links centred, contact pill right */
+/* Wide screens: name left, links centred, contact button right */
 @media (min-width: 900px) {
   .inner {
     grid-template-columns: 1fr auto 1fr;

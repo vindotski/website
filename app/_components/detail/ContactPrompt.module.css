@@ -4,7 +4,6 @@
   align-items: center;
   gap: 20px;
   padding: 48px var(--gutter);
-  border-radius: 18px;
   background: var(--color-text);
   color: var(--color-background);
   text-align: center;
