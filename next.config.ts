@@ -1,3 +1,4 @@
+import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -15,4 +16,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Plugins are named as strings so Turbopack can load them
+const withMDX = createMDX({
+  options: {
+    // Front matter becomes an exported `frontmatter` object
+    remarkPlugins: ["remark-frontmatter", "remark-mdx-frontmatter"],
+    // Headings get ids, so the table of contents can link to them
+    rehypePlugins: ["rehype-slug"],
+  },
+});
+
+export default withMDX(nextConfig);
