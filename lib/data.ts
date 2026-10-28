@@ -2,6 +2,7 @@ import type {
   About,
   Contact,
   Hero,
+  Role,
   Sample,
   Service,
   Social,
@@ -24,6 +25,17 @@ export const about: About = {
   closing:
     "I'm open to full-time frontend roles, on-site or hybrid, and to freelance product work. Let's talk.",
 };
+
+// Newest first
+export const experience: Role[] = [
+  { title: "Production", company: "Rimac Technology", years: { start: 2025 } },
+  { title: "Software Engineer", company: "Interproactive", years: { start: 2024, end: 2025 } },
+  { title: "Frontend Engineer", company: "Huddle Tech", years: { start: 2020, end: 2024 } },
+  { title: "Frontend Developer", company: "Ulix travel", years: { start: 2020, end: 2020 } },
+  { title: "Web Developer", company: "Pro Contact", years: { start: 2019, end: 2020 } },
+  { title: "Software Developer", company: "Centar MCS", years: { start: 2018, end: 2019 } },
+  { title: "Software Developer", company: "4th Dimension", years: { start: 2018, end: 2018 } },
+];
 
 export const contact: Contact = {
   email: "ivan@vin.ski",
@@ -75,7 +87,7 @@ export const work: Work[] = [
     company: "Huddle Tech",
     role: "Frontend Engineer",
     type: "Frontend",
-    years: { start: 2022, end: 2025 }, // TODO
+    years: { start: 2020, end: 2024 },
     stack: ["Vue", "GraphQL", "WebSockets"],
     productUrl: "https://huddle.tech/products/huddle-os/",
     image: { src: "/images/work/huddleos.svg", alt: "HuddleOS dashboard" }, // TODO
@@ -95,7 +107,7 @@ export const work: Work[] = [
     company: "Interproactive",
     role: "Software Engineer",
     type: "Fullstack",
-    years: { start: 2021, end: 2022 }, // TODO
+    years: { start: 2024, end: 2025 },
     stack: ["Node.js", "React", "Handlebars", "MongoDB"],
     productUrl: "https://odjeca.hr/zene",
     image: { src: "/images/work/odjeca-hr.svg", alt: "Odjeca.hr search results" }, // TODO

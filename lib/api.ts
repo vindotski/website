@@ -5,6 +5,7 @@ import path from "node:path";
 import {
   about,
   contact,
+  experience,
   hero,
   samples,
   services,
@@ -17,6 +18,7 @@ import type {
   Hero,
   PostMeta,
   ResolvedService,
+  Role,
   Sample,
   Social,
   Work,
@@ -56,6 +58,10 @@ function nextAfter<T extends { slug: string }>(items: T[], slug: string) {
 
 export async function getHero(): Promise<Hero> {
   return hero;
+}
+
+export async function getExperience(): Promise<Role[]> {
+  return experience;
 }
 
 export async function getAbout(): Promise<About> {

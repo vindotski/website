@@ -34,6 +34,13 @@ export type YearRange = {
   end?: number;
 };
 
+// One line of the experience timeline
+export type Role = {
+  title: string;
+  company: string;
+  years: YearRange;
+};
+
 // The three kinds of work, shared by work items, samples and services
 export type ProjectType = "Frontend" | "Fullstack" | "Product";
 
