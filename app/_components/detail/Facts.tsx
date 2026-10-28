@@ -1,15 +1,17 @@
-import Placeholder from "../Placeholder";
 import styles from "./Facts.module.css";
 
-export default function Facts({ labels }: { labels: string[] }) {
+type Fact = {
+  label: string;
+  value: React.ReactNode;
+};
+
+export default function Facts({ facts }: { facts: Fact[] }) {
   return (
     <dl className={styles.facts}>
-      {labels.map((label) => (
-        <div key={label} className={styles.fact}>
-          <dt>{label}</dt>
-          <dd>
-            <Placeholder label="Value" height={24} />
-          </dd>
+      {facts.map((fact) => (
+        <div key={fact.label} className={styles.fact}>
+          <dt>{fact.label}</dt>
+          <dd>{fact.value}</dd>
         </div>
       ))}
     </dl>

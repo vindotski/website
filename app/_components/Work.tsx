@@ -19,7 +19,7 @@ export default async function Work() {
           <ProjectCard
             key={item.slug}
             name={item.name}
-            href="/work/template"
+            href={`/work/${item.slug}`}
             image={<Placeholder label={item.image.alt} height={180} />}
           >
             <ProjectMeta>

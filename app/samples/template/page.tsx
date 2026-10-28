@@ -20,7 +20,12 @@ export default function SampleTemplate() {
         </div>
       </DetailIntro>
 
-      <Facts labels={["Type", "Stack", "Year", "Status"]} />
+      <Facts
+        facts={["Type", "Stack", "Year", "Status"].map((label) => ({
+          label,
+          value: <Placeholder label="Value" height={24} />,
+        }))}
+      />
 
       <Placeholder label="Hero image" height={420} />
 
