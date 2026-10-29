@@ -114,24 +114,6 @@ export const work: Work[] = [
       "Everything: product decisions, design, the React Native app and the Supabase backend.",
   },
   {
-    slug: "vindotski",
-    name: "Vindotski",
-    summary: "This site, built as a product.",
-    company: "Independent",
-    role: "Product Engineer", // TODO
-    type: "Frontend", // TODO
-    years: { start: 2026 },
-    stack: ["Next.js", "React", "TypeScript"],
-    // TODO: productUrl once the domain is set
-    image: { src: "/images/work/vindotski.svg", alt: "Portfolio home page" }, // TODO
-    impact: "Two audiences. One story.", // TODO
-    context:
-      "Two audiences need different things from me. Employers hiring full time look for a frontend engineer. Freelance clients look for someone who can build a whole product.",
-    // TODO
-    myRole:
-      "Everything: positioning, structure, copy and code. Next.js 16 with the App Router and Cache Components, so pages are built ahead of time, styled with CSS Modules.",
-  },
-  {
     slug: "odjeca-hr",
     name: "Odjeca.hr",
     summary: "Fashion search for a whole region.",
