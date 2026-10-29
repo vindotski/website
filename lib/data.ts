@@ -60,7 +60,7 @@ export const services: Service[] = [
     line: "UI, API and data, built as one piece.",
     proof: [
       { kind: "work", slug: "odjeca-hr" },
-      { kind: "samples", slug: "sokoban" },
+      { kind: "samples", slug: "sokobanko" },
     ],
   },
   {
@@ -69,7 +69,7 @@ export const services: Service[] = [
     line: "Real-time, data-heavy UIs with complex state, fast and built to last.",
     proof: [
       { kind: "work", slug: "huddleos" },
-      { kind: "samples", slug: "dashboard" },
+      { kind: "samples", slug: "spotcraft" },
     ],
   },
 ];
@@ -180,22 +180,22 @@ export const samples: Sample[] = [
     next: "More components, and docs for each framework.",
   },
   {
-    slug: "sokoban",
-    name: "Sokoban",
+    slug: "sokobanko",
+    name: "Sokobanko",
     summary: "A classic puzzle game, rebuilt from scratch.",
-    type: "Fullstack",
+    type: "Product",
     stack: ["TypeScript", "Vue", "Nuxt", "Pixi", "Supabase"],
     year: 2026, // TODO
     status: "Live",
     demoUrl: "https://example.com/sokoban", // TODO
     sourceUrl: "https://github.com/example/sokoban", // TODO
-    image: { src: "/images/samples/sokoban.svg", alt: "Sokoban level in play" }, // TODO
+    image: { src: "/images/samples/sokobanko.svg", alt: "Sokobanko level in play" }, // TODO
     // TODO
     why: "To build a complete game end to end: rendering, game logic, and a backend for players and progress.",
     // TODO
     architecture:
       "A Nuxt app renders the game with Pixi. Game logic is plain TypeScript, separate from rendering. Supabase stores players and their progress.",
-    diagram: { src: "/images/samples/sokoban-diagram.svg", alt: "Sokoban architecture" }, // TODO
+    diagram: { src: "/images/samples/sokobanko-diagram.svg", alt: "Sokobanko architecture" }, // TODO
     // TODO
     decisions: [
       {
@@ -211,22 +211,22 @@ export const samples: Sample[] = [
     next: "A level editor, and sharing levels with other players.",
   },
   {
-    slug: "dashboard",
-    name: "Dashboard",
+    slug: "spotcraft",
+    name: "Spotcraft",
     summary: "A data dashboard that stays fast.", // TODO
-    type: "Frontend",
+    type: "Product",
     stack: ["React", "TanStack"],
     year: 2026, // TODO
     status: "Live",
     demoUrl: "https://example.com/dashboard", // TODO
     sourceUrl: "https://github.com/example/dashboard", // TODO
-    image: { src: "/images/samples/dashboard.svg", alt: "Dashboard overview" }, // TODO
+    image: { src: "/images/samples/spotcraft.svg", alt: "Spotcraft overview" }, // TODO
     // TODO
     why: "To see how far TanStack's query, table and router libraries go together on a data-heavy screen.",
     // TODO
     architecture:
       "A React app with TanStack Router for routing, TanStack Query for server state and TanStack Table for the data grids.",
-    diagram: { src: "/images/samples/dashboard-diagram.svg", alt: "Dashboard architecture" }, // TODO
+    diagram: { src: "/images/samples/spotcraft-diagram.svg", alt: "Spotcraft architecture" }, // TODO
     // TODO
     decisions: [
       {
