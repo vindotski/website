@@ -9,7 +9,7 @@ export default async function Experience() {
   const [about, roles] = await Promise.all([getAbout(), getExperience()]);
 
   return (
-    <Section id="experience" title="Experience">
+    <Section id="about" title="About">
       <div className={styles.layout}>
         {/* Phones only; wide screens already show the portrait in the hero */}
         <Image
