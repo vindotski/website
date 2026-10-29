@@ -6,7 +6,7 @@ import styles from "./Header.module.css";
 // Paths include "/" so the links also work from project pages
 const links = [
   { href: "/#work", label: "Work" },
-  { href: "/#samples", label: "Samples" },
+  { href: "/#play", label: "Play" },
   { href: "/#experience", label: "Experience" },
   { href: "/#services", label: "Services" },
   { href: "/#process", label: "Process" },

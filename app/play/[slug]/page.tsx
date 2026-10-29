@@ -21,7 +21,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: PageProps<"/samples/[slug]">): Promise<Metadata> {
+}: PageProps<"/play/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const sample = await getSampleBySlug(slug);
   if (!sample) return {};
@@ -30,7 +30,7 @@ export async function generateMetadata({
 
 export default async function SamplePage({
   params,
-}: PageProps<"/samples/[slug]">) {
+}: PageProps<"/play/[slug]">) {
   const { slug } = await params;
   const sample = await getSampleBySlug(slug);
   if (!sample) notFound();
@@ -38,7 +38,7 @@ export default async function SamplePage({
   const next = await getNextSample(slug);
 
   return (
-    <DetailPage backHref="/#samples" backLabel="Samples">
+    <DetailPage backHref="/#play" backLabel="Play">
       <DetailIntro
         title={sample.name}
         summary={sample.summary}
@@ -85,7 +85,7 @@ export default async function SamplePage({
         </DetailBlock>
       </DetailBody>
 
-      {next && <NextLink href={`/samples/${next.slug}`} name={next.name} />}
+      {next && <NextLink href={`/play/${next.slug}`} name={next.name} />}
 
       <ContactPrompt />
     </DetailPage>

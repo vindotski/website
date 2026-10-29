@@ -10,7 +10,10 @@ const nextConfig: NextConfig = {
     // Temporary until the URL structure settles, since browsers cache 308s.
     return [
       { source: "/work", destination: "/#work", permanent: false },
-      { source: "/samples", destination: "/#samples", permanent: false },
+      { source: "/play", destination: "/#play", permanent: false },
+      // Old Samples URLs, from before the section was renamed to Play
+      { source: "/samples", destination: "/#play", permanent: false },
+      { source: "/samples/:slug", destination: "/play/:slug", permanent: false },
       { source: "/blog", destination: "/#blog", permanent: false },
     ];
   },

@@ -86,7 +86,8 @@ export async function getServices(): Promise<ResolvedService[]> {
         kind === "work" ? work : samples,
         slug,
       );
-      return item ? [{ name: item.name, href: `/${kind}/${slug}` }] : [];
+      const path = kind === "work" ? "work" : "play";
+      return item ? [{ name: item.name, href: `/${path}/${slug}` }] : [];
     }),
   }));
 }

@@ -11,14 +11,14 @@ export default async function Samples() {
   const samples = await getSamples();
 
   return (
-    <Section id="samples" title="Samples">
+    <Section id="play" title="Play">
       <ProjectGrid>
         {samples.map((sample) => (
           <ProjectCard
             key={sample.slug}
             label={{ start: sample.type, end: String(sample.year) }}
             name={sample.name}
-            href={`/samples/${sample.slug}`}
+            href={`/play/${sample.slug}`}
             image={sample.image}
           >
             <ProjectSummary>{sample.summary}</ProjectSummary>
