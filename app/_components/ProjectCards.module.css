@@ -107,3 +107,76 @@
   position: absolute;
   inset: 0;
 }
+
+.impact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.impactLabel {
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+}
+
+.impactText {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Featured: a row of its own, with bigger type */
+.featured {
+  grid-column: 1 / -1;
+}
+
+.featured .name {
+  font-size: var(--text-title);
+  letter-spacing: -0.02em;
+}
+
+.featured .summary {
+  flex: none;
+  font-size: var(--text-lead);
+}
+
+.featured .content {
+  gap: 16px;
+}
+
+/* Wider screens: image on the left, label and text centred on the right.
+   The empty first and last rows share the spare height, centring the text */
+@media (min-width: 768px) {
+  .featured {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 1fr auto auto 1fr;
+    grid-template-areas:
+      "image ."
+      "image label"
+      "image content"
+      "image .";
+    column-gap: 40px;
+    row-gap: 0;
+  }
+
+  .featured .image {
+    grid-area: image;
+  }
+
+  .featured .label {
+    grid-area: label;
+    margin-bottom: 16px;
+  }
+
+  .featured .content {
+    grid-area: content;
+    padding: 0;
+  }
+}

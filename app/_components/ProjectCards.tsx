@@ -17,11 +17,23 @@ type ProjectCardProps = {
   name: string;
   href: string;
   image: ContentImage;
+  // Takes a whole row, image beside the text on wider screens
+  featured?: boolean;
   children: React.ReactNode;
 };
 
 export function ProjectSummary({ children }: { children: React.ReactNode }) {
   return <p className={styles.summary}>{children}</p>;
+}
+
+// A result worth calling out, for the featured card
+export function ProjectImpact({ children }: { children: React.ReactNode }) {
+  return (
+    <div className={styles.impact}>
+      <p className={styles.impactLabel}>Impact</p>
+      <p className={styles.impactText}>{children}</p>
+    </div>
+  );
 }
 
 // The stack as #tags, matching the blog list
@@ -39,10 +51,11 @@ export function ProjectCard({
   name,
   href,
   image,
+  featured = false,
   children,
 }: ProjectCardProps) {
   return (
-    <li className={styles.card}>
+    <li className={featured ? `${styles.card} ${styles.featured}` : styles.card}>
       <p className={styles.label}>
         <span>{label.start}</span>
         <span>{label.end}</span>
@@ -53,7 +66,11 @@ export function ProjectCard({
           src={image.src}
           alt={image.alt}
           fill
-          sizes="(min-width: 1080px) 344px, (min-width: 640px) 50vw, 100vw"
+          sizes={
+            featured
+              ? "(min-width: 1080px) 620px, (min-width: 768px) 60vw, 100vw"
+              : "(min-width: 1080px) 344px, (min-width: 640px) 50vw, 100vw"
+          }
         />
       </div>
       <div className={styles.content}>

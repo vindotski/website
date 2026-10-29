@@ -3,6 +3,7 @@ import { formatYears } from "@/lib/format";
 import {
   ProjectCard,
   ProjectGrid,
+  ProjectImpact,
   ProjectSummary,
   ProjectTags,
 } from "./ProjectCards";
@@ -14,7 +15,8 @@ export default async function Work() {
   return (
     <Section id="work" title="Work">
       <ProjectGrid>
-        {work.map((item) => (
+        {/* The first item gets a row of its own */}
+        {work.map((item, index) => (
           <ProjectCard
             key={item.slug}
             label={{ start: item.type, end: formatYears(item.years) }}
@@ -22,8 +24,10 @@ export default async function Work() {
             name={item.name}
             href={`/work/${item.slug}`}
             image={item.image}
+            featured={index === 0}
           >
             <ProjectSummary>{item.summary}</ProjectSummary>
+            {index === 0 && <ProjectImpact>{item.impact}</ProjectImpact>}
             <ProjectTags stack={item.stack} />
           </ProjectCard>
         ))}
