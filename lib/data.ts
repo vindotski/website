@@ -76,6 +76,26 @@ export const services: Service[] = [
 
 export const work: Work[] = [
   {
+    slug: "huddleos",
+    name: "HuddleOS",
+    summary: "Live data. Live events. No lag.",
+    company: "Huddle Tech",
+    role: "Frontend Engineer",
+    type: "Frontend",
+    years: { start: 2020, end: 2024 },
+    stack: ["Vue", "GraphQL", "WebSockets"],
+    productUrl: "https://huddle.tech/products/huddle-os/",
+    image: { src: "/images/work/huddleos.svg", alt: "HuddleOS dashboard" }, // TODO
+    impact:
+      "Presented on stage in Las Vegas. Helped close a major investment.",
+    // TODO
+    context:
+      "HuddleOS runs live events in real time. Organisers watch data change as it happens and act on it straight away, so the interface has to keep up without getting in the way.",
+    // TODO
+    myRole:
+      "I built the real-time frontend: the live views, the data layer over GraphQL and WebSockets, and the components the rest of the team built on.",
+  },
+  {
     slug: "kalistenio",
     name: "Kalistenio",
     summary: "Calisthenics training, in your pocket.", // TODO
@@ -92,6 +112,24 @@ export const work: Work[] = [
     // TODO
     myRole:
       "Everything: product decisions, design, the React Native app and the Supabase backend.",
+  },
+  {
+    slug: "vindotski",
+    name: "Vindotski",
+    summary: "This site, built as a product.",
+    company: "Independent",
+    role: "Product Engineer", // TODO
+    type: "Frontend", // TODO
+    years: { start: 2026 },
+    stack: ["Next.js", "React", "TypeScript"],
+    // TODO: productUrl once the domain is set
+    image: { src: "/images/work/vindotski.svg", alt: "Portfolio home page" }, // TODO
+    impact: "Two audiences. One story.", // TODO
+    context:
+      "Two audiences need different things from me. Employers hiring full time look for a frontend engineer. Freelance clients look for someone who can build a whole product.",
+    // TODO
+    myRole:
+      "Everything: positioning, structure, copy and code. Next.js 16 with the App Router and Cache Components, so pages are built ahead of time, styled with CSS Modules.",
   },
   {
     slug: "odjeca-hr",
@@ -111,26 +149,6 @@ export const work: Work[] = [
     // TODO
     myRole:
       "I worked across the stack: search pages in React and Handlebars, and the Node.js and MongoDB services behind them.",
-  },
-  {
-    slug: "huddleos",
-    name: "HuddleOS",
-    summary: "Live data. Live events. No lag.",
-    company: "Huddle Tech",
-    role: "Frontend Engineer",
-    type: "Frontend",
-    years: { start: 2020, end: 2024 },
-    stack: ["Vue", "GraphQL", "WebSockets"],
-    productUrl: "https://huddle.tech/products/huddle-os/",
-    image: { src: "/images/work/huddleos.svg", alt: "HuddleOS dashboard" }, // TODO
-    impact:
-      "Presented on stage in Las Vegas. Helped close a major investment.",
-    // TODO
-    context:
-      "HuddleOS runs live events in real time. Organisers watch data change as it happens and act on it straight away, so the interface has to keep up without getting in the way.",
-    // TODO
-    myRole:
-      "I built the real-time frontend: the live views, the data layer over GraphQL and WebSockets, and the components the rest of the team built on.",
   },
 ];
 
