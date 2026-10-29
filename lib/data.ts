@@ -43,10 +43,11 @@ export const contact: Contact = {
   ],
 };
 
-// Order: code first (proof behind the samples), then roles and contact, then design
+// Order: roles and contact first, then the code behind the projects, then
+// design
 export const socials: Social[] = [
-  { name: "GitHub", href: "https://github.com/vindotski" },
   { name: "LinkedIn", href: "https://www.linkedin.com/in/vindotski" },
+  { name: "GitHub", href: "https://github.com/vindotski" },
   { name: "Figma", href: "https://www.figma.com/@vindotski" },
 ];
 

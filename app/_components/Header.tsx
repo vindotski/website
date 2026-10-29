@@ -1,5 +1,7 @@
 import Link from "next/link";
-import MobileMenu from "./MobileMenu";
+import { Suspense } from "react";
+import { getPosts, getSamples, getWork } from "@/lib/api";
+import SectionMenu, { SectionMenuFallback } from "./SectionMenu";
 import styles from "./Header.module.css";
 
 // Paths include "/" so the links also work from project pages
@@ -11,23 +13,30 @@ const links = [
   { href: "/#blog", label: "Blog" },
 ];
 
-export default function Header() {
+export default async function Header() {
+  const [work, samples, posts] = await Promise.all([
+    getWork(),
+    getSamples(),
+    getPosts(),
+  ]);
+  // Names for the header trail on project and blog pages
+  const pageNames = Object.fromEntries([
+    ...work.map((item) => [`/work/${item.slug}`, item.name]),
+    ...samples.map((item) => [`/play/${item.slug}`, item.name]),
+    ...posts.map((post) => [`/blog/${post.slug}`, post.title]),
+  ]);
+
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <MobileMenu links={links} />
-        <Link href="/" className={styles.name}>
-          Ivan Vinski
-        </Link>
-        <nav aria-label="Sections" className={styles.nav}>
-          <ul className={styles.links}>
-            {links.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href}>{link.label}</Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* The name, the current section and the menu */}
+        <div className={styles.brand}>
+          {/* Reads the URL, which waits on pages with dynamic params; the
+              rest of the header stays prerendered */}
+          <Suspense fallback={<SectionMenuFallback />}>
+            <SectionMenu links={links} pageNames={pageNames} />
+          </Suspense>
+        </div>
         {/* Leads to the contact prompt in the footer, on any page */}
         <Link href="#contact" className={styles.cta}>
           {/* Speech bubble: talk, by call or email */}
@@ -40,7 +49,7 @@ export default function Header() {
           >
             <path d="M3 4h18v13H10l-5 4v-4H3z" />
           </svg>
-          Get in touch
+          <span className={styles.ctaText}>Get in touch</span>
         </Link>
       </div>
     </header>

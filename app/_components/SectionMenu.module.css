@@ -1,0 +1,230 @@
+/* The name and the section, one button: both sit on one baseline */
+.trigger {
+  display: inline-flex;
+  flex: none;
+  align-items: baseline;
+  gap: 8px;
+  /* A taller tap area that doesn't push the header: padding grows it, the
+     negative margin takes it back, so the text stays centred */
+  margin: -12px 0;
+  padding: 12px 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  /* One weight for both, so only the colour tells them apart; bold next to
+     regular made the name look a size bigger */
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Between the name and the section, like a path */
+.separator {
+  color: var(--color-muted);
+  font-weight: 400;
+}
+
+/* Project and blog pages: the page's name after the section, cut short with
+   an ellipsis when it doesn't fit */
+.page {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.pageName {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+
+/* The section in the name's font and size, grey, with the chevron centred
+   on it; the text keeps the baseline for the row */
+.where {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-muted);
+}
+
+/* The name goes home. Phones: the menu icon sits at the right; tablets and
+   up: it sits before the name */
+.homeName {
+  flex: none;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Phones show the initials on project and blog pages; tablets and up have
+   room for the full name */
+.fullName {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .initials {
+    display: none;
+  }
+
+  .fullName {
+    display: inline;
+  }
+}
+
+.trigger[data-empty="true"] {
+  display: none;
+}
+
+/* Two lines that turn into an X while the menu is open */
+.menuButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 44px;
+  height: 44px;
+  margin: -12px -12px -12px auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.line {
+  width: 18px;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 0.3s ease;
+}
+
+.menuButton[aria-expanded="true"] .line:first-child {
+  transform: translateY(3.75px) rotate(45deg);
+}
+
+.menuButton[aria-expanded="true"] .line:last-child {
+  transform: translateY(-3.75px) rotate(-45deg);
+}
+
+@media (min-width: 640px) {
+  /* Before the name, lined up with the page edge */
+  .menuButton {
+    order: -1;
+    margin: -12px 0 -12px -12px;
+  }
+}
+
+.trigger:hover .where,
+.trigger[aria-expanded="true"] .where {
+  color: var(--color-text);
+}
+
+/* Slides up when the section changes */
+.label {
+  animation: enter 0.15s ease-out;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  transition: rotate 0.2s ease;
+}
+
+.trigger[aria-expanded="true"] .chevron {
+  rotate: 180deg;
+}
+
+/* Positioned from the sticky header, so it always sits right under it.
+   Phones: fills the screen below the header */
+.panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: calc(100svh - var(--header-height));
+  padding: 24px 0;
+  overflow-y: auto;
+  background: var(--color-background);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s;
+}
+
+.panel[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.links {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  list-style: none;
+}
+
+.links li {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.panel[data-open="true"] .links li {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i) * 40ms + 60ms);
+}
+
+.links a {
+  display: block;
+  padding: 8px 0;
+  font-size: var(--text-title);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.links a:hover,
+.links a[aria-current="true"] {
+  color: var(--color-text);
+}
+
+/* Tablets and up: only as tall as the links, with a line under it, and the
+   page stays scrollable */
+@media (min-width: 640px) {
+  .panel {
+    height: auto;
+    border-bottom: 1px solid var(--color-border);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .label {
+    animation: none;
+  }
+
+  .chevron,
+  .line,
+  .panel,
+  .links li {
+    transition: none;
+  }
+
+  .panel[data-open="true"] .links li {
+    transition-delay: 0s;
+  }
+}
