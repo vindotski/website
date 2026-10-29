@@ -46,6 +46,15 @@ export const socials: Social[] = [
 
 export const services: Service[] = [
   {
+    name: "Frontend",
+    headline: "Interfaces that keep up.",
+    line: "Real-time, data-heavy UIs with complex state, fast and built to last.",
+    proof: [
+      { kind: "work", slug: "huddleos" },
+      { kind: "samples", slug: "spotcraft" },
+    ],
+  },
+  {
     name: "Product",
     headline: "From idea to MVP.",
     line: "Scope, trade-offs, shipping and measuring, the way I work, step by step.", // TODO
@@ -61,15 +70,6 @@ export const services: Service[] = [
     proof: [
       { kind: "work", slug: "odjeca-hr" },
       { kind: "samples", slug: "sokobanko" },
-    ],
-  },
-  {
-    name: "Frontend",
-    headline: "Interfaces that keep up.",
-    line: "Real-time, data-heavy UIs with complex state, fast and built to last.",
-    proof: [
-      { kind: "work", slug: "huddleos" },
-      { kind: "samples", slug: "spotcraft" },
     ],
   },
 ];
