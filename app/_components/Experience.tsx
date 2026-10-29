@@ -1,7 +1,5 @@
-import Image from "next/image";
 import { getAbout, getExperience } from "@/lib/api";
 import { formatYears } from "@/lib/format";
-import portrait from "@/public/images/portrait.jpg";
 import Section from "./Section";
 import styles from "./Experience.module.css";
 
@@ -11,15 +9,6 @@ export default async function Experience() {
   return (
     <Section id="experience" title="Experience">
       <div className={styles.layout}>
-        {/* Phones only; wide screens already show the portrait in the hero */}
-        <Image
-          src={portrait}
-          alt="Ivan Vinski"
-          placeholder="blur"
-          // Never wider than 360px (see .portrait)
-          sizes="360px"
-          className={styles.portrait}
-        />
         <p className={styles.intro}>{about.intro}</p>
         <ol className={styles.timeline}>
           {roles.map((role) => {

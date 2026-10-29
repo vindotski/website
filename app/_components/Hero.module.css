@@ -14,26 +14,59 @@
   padding: 48px var(--gutter) 80px;
 }
 
+/* Phones: one left edge for everything under the photo */
 .text {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  text-align: center;
+  align-self: stretch;
+  align-items: flex-start;
+  gap: 16px;
+  text-align: left;
 }
 
+/* Phones: the photo area sits on top of the text (it comes after it in the
+   HTML) and takes only the height the text leaves, so the whole hero fits
+   the screen */
+.photo {
+  order: -1;
+  flex: 1 1 0;
+  min-height: 160px;
+  align-self: stretch;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  /* Up to the header line, out to the screen edges, and into the gap above
+     the text */
+  margin: -48px calc(-1 * var(--gutter)) -24px;
+  /* Lets the photo size itself to this area */
+  container-type: size;
+}
+
+/* A square as big as the area allows (max 480px), so the photo never zooms
+   in. Fades to white at the bottom and sides */
 .portrait {
-  display: none;
+  --size: min(100cqw, 100cqh, 480px);
+  width: var(--size);
+  height: var(--size);
+  object-fit: cover;
+  filter: grayscale(1);
+  mask-image:
+    linear-gradient(to bottom, #000 65%, transparent),
+    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-composite: intersect;
 }
 
+/* Phones: a small mono label, like the card labels */
 .status {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   margin: 0;
-  padding: 6px 14px;
-  border: 1px solid var(--color-border);
-  font-size: var(--text-small);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--color-muted);
 }
 
@@ -46,7 +79,8 @@
 .headline {
   max-width: 16ch;
   margin: 0;
-  font-size: var(--text-display);
+  /* One step smaller on phones, so the photo keeps its room */
+  font-size: var(--text-section);
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.1;
@@ -54,23 +88,27 @@
   text-wrap: balance;
 }
 
+/* Phones: two equal buttons, gutter to gutter */
 .actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
+  align-self: stretch;
 }
 
-/* Label above an arrow that nudges down */
+.actions > * {
+  justify-content: center;
+}
+
+/* Phones: arrow then label in a row, at the left edge; the arrow nudges down.
+   Offset by the padding so the arrow lines up with the page gutter */
 .cue {
   position: absolute;
   bottom: 16px;
-  left: 50%;
-  translate: -50% 0;
+  left: calc(var(--gutter) - 8px);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   padding: 8px;
   font-family: var(--font-mono);
   font-size: var(--text-label);
@@ -82,6 +120,8 @@
 }
 
 .arrow {
+  /* After the label in the HTML, before it on phones */
+  order: -1;
   font-family: var(--font-sans);
   font-size: var(--text-lead);
   line-height: 1;
@@ -104,30 +144,119 @@
   }
 }
 
-/* Wider than 768px so the 56px headline has room beside the photo */
-@media (min-width: 900px) {
+/* Tablets and up, and phones turned sideways: text left, photo right. The
+   photo column is narrower here so the headline keeps room */
+@media (min-width: 768px), (orientation: landscape) and (min-width: 560px) {
   .hero {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 280px;
     align-items: center;
-    gap: 48px;
+    gap: 32px;
   }
 
   .text {
-    align-items: flex-start;
-    text-align: left;
+    align-self: auto;
+    gap: 24px;
+  }
+
+  /* A boxed pill beside the photo */
+  .status {
+    padding: 6px 14px;
+    border: 1px solid var(--color-border);
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    font-weight: 400;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  .headline {
+    font-size: var(--text-display);
+  }
+
+  /* Centred, label above the arrow */
+  .cue {
+    left: 50%;
+    translate: -50% 0;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .arrow {
+    order: 0;
   }
 
   .actions {
-    justify-content: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    align-self: auto;
   }
 
-  /* The photo is square, so the 4:5 crop trims the sides */
+  /* The photo becomes the grid item itself */
+  .photo {
+    display: contents;
+  }
+
+  /* Beside the text, without the phone fade. The photo is square, so the 4:5
+     crop trims the sides */
   .portrait {
-    display: block;
+    filter: none;
+    mask-image: none;
     width: 100%;
     height: auto;
     aspect-ratio: 4 / 5;
     object-fit: cover;
+  }
+}
+
+/* Phones turned sideways: the tablet layout, squeezed to fit the short
+   screen, with the phone's compact status line and scroll cue */
+@media (orientation: landscape) and (min-width: 560px) and (max-width: 767px) {
+  .hero {
+    grid-template-columns: 1fr 200px;
+    /* Bottom padding leaves room for the one-line cue */
+    padding: 16px var(--gutter) 56px;
+  }
+
+  .text {
+    gap: 12px;
+  }
+
+  .status {
+    padding: 0;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Scales with the screen height, so three lines always fit */
+  .headline {
+    font-size: min(var(--text-section), 9svh);
+  }
+
+  /* As tall as the hero allows */
+  .portrait {
+    max-height: calc(100svh - var(--header-height) - 72px);
+  }
+
+  .cue {
+    left: calc(var(--gutter) - 8px);
+    translate: none;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .arrow {
+    order: -1;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr 380px;
+    gap: 48px;
   }
 }

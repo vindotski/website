@@ -19,14 +19,17 @@ export default async function Hero() {
           <ContactActions tone="light" />
         </div>
       </div>
-      {/* Wide screens only; phones see the portrait in About */}
-      <Image
-        src={portrait}
-        alt="Ivan Vinski"
-        placeholder="blur"
-        sizes="380px"
-        className={styles.portrait}
-      />
+      {/* On top of the text on phones, fading into it; beside it from tablets
+          up, where the wrapper steps aside */}
+      <div className={styles.photo}>
+        <Image
+          src={portrait}
+          alt="Ivan Vinski"
+          placeholder="blur"
+          sizes="(min-width: 900px) 380px, (min-width: 768px) 280px, 100vw"
+          className={styles.portrait}
+        />
+      </div>
       <a href="#work" className={styles.cue}>
         See work
         <span className={styles.arrow} aria-hidden="true">
