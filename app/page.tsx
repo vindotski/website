@@ -1,5 +1,4 @@
 import Blog from "./_components/Blog";
-import Contact from "./_components/Contact";
 import Experience from "./_components/Experience";
 import Hero from "./_components/Hero";
 import Process from "./_components/Process";
@@ -15,7 +14,6 @@ export default function Home() {
       <Experience />
       <Process />
       <Blog />
-      <Contact />
     </>
   );
 }

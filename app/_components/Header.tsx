@@ -28,8 +28,8 @@ export default function Header() {
             ))}
           </ul>
         </nav>
-        {/* Leads to the contact prompt at the bottom of the home page */}
-        <Link href="/#contact" className={styles.cta}>
+        {/* Leads to the contact prompt in the footer, on any page */}
+        <Link href="#contact" className={styles.cta}>
           {/* Speech bubble: talk, by call or email */}
           <svg
             viewBox="0 0 24 24"

@@ -36,6 +36,11 @@ export const contact: Contact = {
   email: "ivan@vin.ski",
   prompt: "Have a role or a product in mind?",
   callUrl: "https://calendly.com/vindotski/30min",
+  details: [
+    { label: "Based in", value: "Samobor, Croatia", timeZone: "Europe/Zagreb" },
+    { label: "Available for", value: "Frontend and product work" },
+    { label: "Work setup", value: "On-site, hybrid or remote" },
+  ],
 };
 
 // Order: code first (proof behind the samples), then roles and contact, then design

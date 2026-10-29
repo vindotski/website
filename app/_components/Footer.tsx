@@ -1,5 +1,9 @@
 import { cacheLife } from "next/cache";
-import { getSocials } from "@/lib/api";
+import Image from "next/image";
+import { getContact, getSocials } from "@/lib/api";
+import portrait from "@/public/images/portrait.jpg";
+import ContactActions from "./ContactActions";
+import LocalTime from "./LocalTime";
 import SocialIcon from "./SocialIcon";
 import styles from "./Footer.module.css";
 
@@ -10,12 +14,40 @@ async function CurrentYear() {
   return new Date().getFullYear();
 }
 
+// Ends every page: the contact prompt, then the small print.
+// Every "Get in touch" link lands here
 export default async function Footer() {
-  const socials = await getSocials();
+  const [contact, socials] = await Promise.all([getContact(), getSocials()]);
 
   return (
-    <footer className={styles.footer}>
-      <div className={styles.inner}>
+    <footer id="contact" className={styles.footer}>
+      <section className={styles.contact} aria-label="Contact">
+        {/* I ask the question; the buttons are the answers */}
+        <div className={styles.chat}>
+          <Image
+            src={portrait}
+            alt="Ivan Vinski"
+            sizes="64px"
+            className={styles.avatar}
+          />
+          <p className={styles.bubble}>{contact.prompt}</p>
+          <div className={styles.actions}>
+            <ContactActions tone="dark" />
+          </div>
+        </div>
+        <dl className={styles.details}>
+          {contact.details.map((detail) => (
+            <div key={detail.label}>
+              <dt className={styles.detailLabel}>{detail.label}</dt>
+              <dd className={styles.detailValue}>
+                {detail.value}
+                {detail.timeZone && <LocalTime timeZone={detail.timeZone} />}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+      <div className={styles.bottom}>
         <p className={styles.copyright}>
           © <CurrentYear /> Ivan Vinski
         </p>

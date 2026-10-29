@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getNextSample, getSampleBySlug, getSamples } from "@/lib/api";
-import ContactPrompt from "../../_components/detail/ContactPrompt";
 import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
 import DetailImage from "../../_components/detail/DetailImage";
 import DetailIntro from "../../_components/detail/DetailIntro";
@@ -86,8 +85,6 @@ export default async function SamplePage({
       </DetailBody>
 
       {next && <NextLink href={`/play/${next.slug}`} name={next.name} />}
-
-      <ContactPrompt />
     </DetailPage>
   );
 }

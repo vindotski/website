@@ -8,7 +8,6 @@ import {
 } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import Tags from "../../_components/Tags";
-import ContactPrompt from "../../_components/detail/ContactPrompt";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
 import NextLink from "../../_components/detail/NextLink";
@@ -86,8 +85,6 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
       </div>
 
       {next && <NextLink href={`/blog/${next.slug}`} name={next.title} />}
-
-      <ContactPrompt />
     </DetailPage>
   );
 }

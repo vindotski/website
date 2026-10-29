@@ -1,8 +1,0 @@
-/* Matches the detail pages, where the prompt closes the page */
-.contact {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 0 var(--gutter) 80px;
-  /* Keeps the panel clear of the sticky header when jumped to */
-  scroll-margin-top: calc(var(--header-height) + 16px);
-}

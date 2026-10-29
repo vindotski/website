@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getNextWork, getWork, getWorkBySlug } from "@/lib/api";
 import { formatYears } from "@/lib/format";
-import ContactPrompt from "../../_components/detail/ContactPrompt";
 import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
 import DetailImage from "../../_components/detail/DetailImage";
 import DetailIntro from "../../_components/detail/DetailIntro";
@@ -75,8 +74,6 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
       </DetailBody>
 
       {next && <NextLink href={`/work/${next.slug}`} name={next.name} />}
-
-      <ContactPrompt />
     </DetailPage>
   );
 }

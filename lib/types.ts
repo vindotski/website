@@ -14,6 +14,9 @@ export type Contact = {
   prompt: string;
   // Booking page for a call
   callUrl: string;
+  // Shown beside the prompt in the footer
+  // A time zone adds the live local time after the value
+  details: { label: string; value: string; timeZone?: string }[];
 };
 
 export type SocialName = "GitHub" | "LinkedIn" | "Figma";
