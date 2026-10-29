@@ -48,7 +48,7 @@ export const services: Service[] = [
   {
     name: "Product",
     headline: "From idea to MVP.",
-    line: "Scope, trade-offs, shipping and measuring, the way the Process below works.",
+    line: "Scope, trade-offs, shipping and measuring, the way I work, step by step.", // TODO
     proof: [
       { kind: "work", slug: "kalistenio" },
       { kind: "samples", slug: "vinui" },
