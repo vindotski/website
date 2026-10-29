@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { getContact, getHero } from "@/lib/api";
-import portraitCutout from "@/public/images/portrait-cutout.png";
 import portrait from "@/public/images/portrait.jpg";
 import ButtonLink from "./ButtonLink";
 import styles from "./Hero.module.css";
@@ -23,14 +22,7 @@ export default async function Hero() {
           </ButtonLink>
         </div>
       </div>
-      {/* Phones show the cut-out above the text, wide screens the photo beside
-          it. Each loads lazily, so only the one on screen is downloaded */}
-      <Image
-        src={portraitCutout}
-        alt="Ivan Vinski"
-        sizes="112px"
-        className={styles.cutout}
-      />
+      {/* Wide screens only; phones see the portrait in About */}
       <Image
         src={portrait}
         alt="Ivan Vinski"
