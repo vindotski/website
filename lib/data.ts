@@ -165,7 +165,7 @@ export const samples: Sample[] = [
     slug: "spotcraft",
     name: "Spotcraft",
     summary: "A data dashboard that stays fast.", // TODO
-    type: "Product",
+    type: "Fullstack",
     stack: ["React", "TanStack"],
     year: 2026, // TODO
     status: "Live",
@@ -196,7 +196,7 @@ export const samples: Sample[] = [
     slug: "sokobanko",
     name: "Sokobanko",
     summary: "A classic puzzle game, rebuilt from scratch.",
-    type: "Product",
+    type: "Fullstack",
     stack: ["TypeScript", "Vue", "Nuxt", "Pixi", "Supabase"],
     year: 2026, // TODO
     status: "Live",
@@ -227,7 +227,7 @@ export const samples: Sample[] = [
     slug: "strongfives",
     name: "Strongfives",
     summary: "Five by five strength training.", // TODO
-    type: "Product",
+    type: "Fullstack",
     stack: ["React Native"],
     year: 2026, // TODO
     status: "In progress", // TODO
