@@ -136,37 +136,6 @@ export const work: Work[] = [
 
 export const samples: Sample[] = [
   {
-    slug: "sokobanko",
-    name: "Sokobanko",
-    summary: "A classic puzzle game, rebuilt from scratch.",
-    type: "Product",
-    stack: ["TypeScript", "Vue", "Nuxt", "Pixi", "Supabase"],
-    year: 2026, // TODO
-    status: "Live",
-    demoUrl: "https://example.com/sokoban", // TODO
-    sourceUrl: "https://github.com/example/sokoban", // TODO
-    image: { src: "/images/samples/sokobanko.svg", alt: "Sokobanko level in play" }, // TODO
-    // TODO
-    why: "To build a complete game end to end: rendering, game logic, and a backend for players and progress.",
-    // TODO
-    architecture:
-      "A Nuxt app renders the game with Pixi. Game logic is plain TypeScript, separate from rendering. Supabase stores players and their progress.",
-    diagram: { src: "/images/samples/sokobanko-diagram.svg", alt: "Sokobanko architecture" }, // TODO
-    // TODO
-    decisions: [
-      {
-        title: "Game logic separate from rendering",
-        body: "The rules run without Pixi, so they're easy to test and reason about.",
-      },
-      {
-        title: "Supabase for the backend",
-        body: "Auth and storage out of the box, so the time went into the game.",
-      },
-    ],
-    // TODO
-    next: "A level editor, and sharing levels with other players.",
-  },
-  {
     slug: "vinui",
     name: "VinUI",
     summary: "One component API, cross-framework and cross-platform.",
@@ -222,6 +191,37 @@ export const samples: Sample[] = [
     ],
     // TODO
     next: "Virtualised rows for very large tables, and saved views.",
+  },
+  {
+    slug: "sokobanko",
+    name: "Sokobanko",
+    summary: "A classic puzzle game, rebuilt from scratch.",
+    type: "Product",
+    stack: ["TypeScript", "Vue", "Nuxt", "Pixi", "Supabase"],
+    year: 2026, // TODO
+    status: "Live",
+    demoUrl: "https://example.com/sokoban", // TODO
+    sourceUrl: "https://github.com/example/sokoban", // TODO
+    image: { src: "/images/samples/sokobanko.svg", alt: "Sokobanko level in play" }, // TODO
+    // TODO
+    why: "To build a complete game end to end: rendering, game logic, and a backend for players and progress.",
+    // TODO
+    architecture:
+      "A Nuxt app renders the game with Pixi. Game logic is plain TypeScript, separate from rendering. Supabase stores players and their progress.",
+    diagram: { src: "/images/samples/sokobanko-diagram.svg", alt: "Sokobanko architecture" }, // TODO
+    // TODO
+    decisions: [
+      {
+        title: "Game logic separate from rendering",
+        body: "The rules run without Pixi, so they're easy to test and reason about.",
+      },
+      {
+        title: "Supabase for the backend",
+        body: "Auth and storage out of the box, so the time went into the game.",
+      },
+    ],
+    // TODO
+    next: "A level editor, and sharing levels with other players.",
   },
   {
     slug: "openfives",
