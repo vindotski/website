@@ -1,6 +1,6 @@
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: 1fr;
   gap: 24px;
   margin: 0;
   padding: 0;
@@ -150,33 +150,46 @@
   gap: 16px;
 }
 
-/* Wider screens: image on the left, label and text centred on the right.
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(var(--columns, 3), 1fr);
+  }
+}
+
+/* Wider screens: the featured card shares the columns of the cards below.
+   The image spans all but the last column, the text takes the last one.
    The empty first and last rows share the spare height, centring the text */
 @media (min-width: 768px) {
   .featured {
     display: grid;
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: subgrid;
     grid-template-rows: 1fr auto auto 1fr;
-    grid-template-areas:
-      "image ."
-      "image label"
-      "image content"
-      "image .";
-    column-gap: 40px;
     row-gap: 0;
   }
 
   .featured .image {
-    grid-area: image;
+    grid-column: 1 / -2;
+    grid-row: 1 / -1;
+  }
+
+  .featured .label,
+  .featured .content {
+    grid-column: -2 / -1;
   }
 
   .featured .label {
-    grid-area: label;
+    grid-row: 2;
     margin-bottom: 16px;
   }
 
   .featured .content {
-    grid-area: content;
+    grid-row: 3;
     padding: 0;
   }
 }

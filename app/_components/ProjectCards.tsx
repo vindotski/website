@@ -5,8 +5,22 @@ import type { Image as ContentImage } from "@/lib/types";
 import Tags from "./Tags";
 import styles from "./ProjectCards.module.css";
 
-export function ProjectGrid({ children }: { children: React.ReactNode }) {
-  return <ul className={styles.grid}>{children}</ul>;
+// Columns on wide screens; a featured card lines up with the same columns
+export function ProjectGrid({
+  columns = 3,
+  children,
+}: {
+  columns?: 2 | 3;
+  children: React.ReactNode;
+}) {
+  return (
+    <ul
+      className={styles.grid}
+      style={{ "--columns": columns } as React.CSSProperties}
+    >
+      {children}
+    </ul>
+  );
 }
 
 type ProjectCardProps = {
@@ -19,6 +33,8 @@ type ProjectCardProps = {
   image: ContentImage;
   // Takes a whole row, image beside the text on wider screens
   featured?: boolean;
+  // In a 2-column grid, so the image is shown larger
+  wide?: boolean;
   children: React.ReactNode;
 };
 
@@ -52,6 +68,7 @@ export function ProjectCard({
   href,
   image,
   featured = false,
+  wide = false,
   children,
 }: ProjectCardProps) {
   return (
@@ -68,8 +85,10 @@ export function ProjectCard({
           fill
           sizes={
             featured
-              ? "(min-width: 1080px) 620px, (min-width: 768px) 60vw, 100vw"
-              : "(min-width: 1080px) 344px, (min-width: 640px) 50vw, 100vw"
+              ? "(min-width: 1080px) 700px, (min-width: 768px) 60vw, 100vw"
+              : wide
+                ? "(min-width: 1080px) 528px, (min-width: 640px) 50vw, 100vw"
+                : "(min-width: 1080px) 344px, (min-width: 640px) 50vw, 100vw"
           }
         />
       </div>

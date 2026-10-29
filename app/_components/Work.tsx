@@ -14,7 +14,7 @@ export default async function Work() {
 
   return (
     <Section id="work" title="Work">
-      <ProjectGrid>
+      <ProjectGrid columns={2}>
         {/* The first item gets a row of its own */}
         {work.map((item, index) => (
           <ProjectCard
@@ -25,6 +25,7 @@ export default async function Work() {
             href={`/work/${item.slug}`}
             image={item.image}
             featured={index === 0}
+            wide
           >
             <ProjectSummary>{item.summary}</ProjectSummary>
             {index === 0 && <ProjectImpact>{item.impact}</ProjectImpact>}
