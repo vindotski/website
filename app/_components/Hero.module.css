@@ -1,3 +1,15 @@
+/* Flips the site's colours for everything inside, so the text, buttons,
+   lines and focus outlines all turn white on black */
+.band {
+  --color-text: #fff;
+  --color-background: #000;
+  --color-border: #fff;
+  /* #555 is unreadable on black */
+  --color-muted: rgb(255 255 255 / 70%);
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
 .hero {
   position: relative;
   display: flex;
@@ -43,16 +55,18 @@
 }
 
 /* A square as big as the area allows (max 480px), so the photo never zooms
-   in. Fades to white at the bottom and sides */
+   in */
 .portrait {
   --size: min(100cqw, 100cqh, 480px);
   width: var(--size);
   height: var(--size);
   object-fit: cover;
   filter: grayscale(1);
+  /* The shoulders run into the bottom and side edges of the image; fade them
+     into the page so it has no hard edges (at every width) */
   mask-image:
-    linear-gradient(to bottom, #000 65%, transparent),
-    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+    linear-gradient(to bottom, #000 60%, transparent),
+    linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
   mask-composite: intersect;
 }
 
@@ -197,11 +211,9 @@
     display: contents;
   }
 
-  /* Beside the text, without the phone fade. The photo is square, so the 4:5
-     crop trims the sides */
+  /* Beside the text. The photo is square, so the 4:5 crop trims the sides */
   .portrait {
     filter: none;
-    mask-image: none;
     width: 100%;
     height: auto;
     aspect-ratio: 4 / 5;
