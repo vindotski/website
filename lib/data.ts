@@ -14,7 +14,7 @@ import type {
 export const hero: Hero = {
   title: "Product Engineer",
   availability: "Available for frontend and product work",
-  headline: "I build the part you see. And the parts you don't.",
+  headline: "Frontend by trade, full-stack by habit, product by focus.",
 };
 
 export const about: About = {

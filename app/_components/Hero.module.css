@@ -92,7 +92,6 @@
   background: var(--color-text);
 }
 
-
 .headline {
   max-width: 16ch;
   margin: 0;
@@ -130,12 +129,30 @@
   justify-content: center;
 }
 
-/* Phones: arrow then label in a row, at the left edge; the arrow nudges down.
-   Offset by the padding so the arrow lines up with the page gutter */
-.cue {
+/* From tablet width the buttons keep their natural width instead of
+   stretching across the row */
+@media (min-width: 640px) {
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+/* The scroll cue and GitHub, at the bottom of the hero. Phones: the cue at
+   the left edge and GitHub at the right, offset by the links' padding so
+   they line up with the gutters */
+.bottom {
   position: absolute;
+  right: calc(var(--gutter) - 8px);
   bottom: 16px;
   left: calc(var(--gutter) - 8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Phones: arrow then label in a row; the arrow nudges down */
+.cue {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -160,6 +177,30 @@
 
 .cue:hover {
   color: var(--color-text);
+}
+
+/* GitHub, in the cue's small mono style */
+.github {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.github:hover {
+  color: var(--color-text);
+}
+
+.github svg {
+  width: 16px;
+  height: 16px;
 }
 
 @keyframes nudge {
@@ -193,10 +234,20 @@
     font-size: var(--text-display);
   }
 
-  /* Centred, label above the arrow */
-  .cue {
+  /* Centred, label above the arrow, GitHub right beside it */
+  .bottom {
+    right: auto;
     left: 50%;
     translate: -50% 0;
+  }
+
+  /* The links' padding (8px each) minus 4px leaves the same 12px gap as
+     between the buttons */
+  .github {
+    margin-left: -4px;
+  }
+
+  .cue {
     flex-direction: column;
     gap: 4px;
   }
@@ -249,9 +300,12 @@
     max-height: calc(100svh - var(--header-height) - 72px);
   }
 
-  .cue {
+  .bottom {
     left: calc(var(--gutter) - 8px);
     translate: none;
+  }
+
+  .cue {
     flex-direction: row;
     gap: 8px;
   }
@@ -265,5 +319,21 @@
   .hero {
     grid-template-columns: 1fr 380px;
     gap: 48px;
+  }
+}
+
+/* GitHub as an icon button with the others only once the cue is centred
+   (768px up); below that it sits by the cue. Last, so it wins over .github */
+.actions > :nth-child(3) {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .actions > :nth-child(3) {
+    display: inline-flex;
+  }
+
+  .github {
+    display: none;
   }
 }
