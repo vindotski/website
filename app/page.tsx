@@ -14,9 +14,9 @@ export default function Home() {
       <Work />
       <Samples />
       <Experience />
-      <Blog />
       <Services />
       <Process />
+      <Blog />
       <Contact />
     </>
   );
