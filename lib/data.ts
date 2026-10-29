@@ -37,11 +37,6 @@ export const contact: Contact = {
   email: "ivan@vin.ski",
   prompt: "Have a role or a product in mind?",
   callUrl: "https://calendly.com/vindotski/30min",
-  details: [
-    { label: "Based in", value: "Samobor, Croatia", timeZone: "Europe/Zagreb" },
-    { label: "Stack", value: "TypeScript, React, Vue, Supabase" },
-    { label: "Work setup", value: "On-site, hybrid or remote" },
-  ],
 };
 
 // Order: roles and contact first, then the code behind the projects, then

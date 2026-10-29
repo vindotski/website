@@ -1,9 +1,9 @@
 import { cacheLife } from "next/cache";
 import Image from "next/image";
-import { getContact, getHero, getSocials } from "@/lib/api";
+import { getContact, getSocials } from "@/lib/api";
 import portrait from "@/public/images/portrait.jpg";
 import ContactActions from "./ContactActions";
-import LocalTime from "./LocalTime";
+import { PersonIcon } from "./ContactIcons";
 import SocialIcon from "./SocialIcon";
 import styles from "./Footer.module.css";
 
@@ -17,17 +17,15 @@ async function CurrentYear() {
 // Ends every page: the contact prompt, then the small print.
 // Every "Get in touch" link lands here
 export default async function Footer() {
-  const [contact, hero, socials] = await Promise.all([
-    getContact(),
-    getHero(),
-    getSocials(),
-  ]);
+  const [contact, socials] = await Promise.all([getContact(), getSocials()]);
 
   return (
     <footer id="contact" className={styles.footer} data-hides-contact>
       <section className={styles.contact} aria-label="Contact">
         {/* I ask the question; the buttons are the answers */}
+        {/* Ivan asks; the visitor's answer is the buttons */}
         <div className={styles.chat}>
+          <span className={styles.who}>Ivan</span>
           <Image
             src={portrait}
             alt="Ivan Vinski"
@@ -35,23 +33,19 @@ export default async function Footer() {
             className={styles.avatar}
           />
           <p className={styles.bubble}>{contact.prompt}</p>
-          <div className={styles.actions}>
-            <ContactActions tone="dark" />
-          </div>
-          {/* Same line as under the hero's headline on phones */}
-          <p className={styles.subline}>{hero.availability}</p>
-        </div>
-        <dl className={styles.details}>
-          {contact.details.map((detail) => (
-            <div key={detail.label}>
-              <dt className={styles.detailLabel}>{detail.label}</dt>
-              <dd className={styles.detailValue}>
-                {detail.value}
-                {detail.timeZone && <LocalTime timeZone={detail.timeZone} />}
-              </dd>
+          <div className={styles.reply}>
+            <div className={styles.actions}>
+              <ContactActions tone="dark" />
             </div>
-          ))}
-        </dl>
+          </div>
+          {/* The visitor, with "You" right under the avatar */}
+          <span className={styles.visitorWrap}>
+            <span className={styles.visitor} aria-hidden="true">
+              <PersonIcon />
+            </span>
+            <span className={styles.whoYou}>You</span>
+          </span>
+        </div>
       </section>
       <div className={styles.bottom}>
         <p className={styles.copyright}>
