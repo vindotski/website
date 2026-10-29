@@ -241,4 +241,30 @@ export const samples: Sample[] = [
     // TODO
     next: "Virtualised rows for very large tables, and saved views.",
   },
+  {
+    slug: "openfives",
+    name: "Openfives",
+    summary: "Five by five strength training, open source.", // TODO
+    type: "Product",
+    stack: ["React Native"],
+    year: 2026, // TODO
+    status: "In progress", // TODO
+    demoUrl: "https://example.com/openfives", // TODO
+    image: { src: "/images/samples/openfives.svg", alt: "Openfives workout screen" }, // TODO
+    // TODO
+    why: "A StrongLifts-style 5×5 tracker of my own: a simple workout plan, logged set by set, with the weights going up over time.",
+    // TODO
+    architecture:
+      "A React Native app. Workout logic, the sets, reps and next weights, sits apart from the screens, and progress is saved after every set.",
+    diagram: { src: "/images/samples/openfives-diagram.svg", alt: "Openfives architecture" }, // TODO
+    // TODO
+    decisions: [
+      {
+        title: "Logic apart from the screens",
+        body: "The rules for sets and weight increases run without the UI, so they're easy to test.",
+      },
+    ],
+    // TODO
+    next: "Charts for progress over time, and more programs than 5×5.",
+  },
 ];
