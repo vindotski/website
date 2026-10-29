@@ -46,12 +46,12 @@ export const socials: Social[] = [
 
 export const services: Service[] = [
   {
-    name: "Frontend",
-    headline: "Interfaces that keep up.",
-    line: "Real-time, data-heavy UIs with complex state, fast and built to last.",
+    name: "Product",
+    headline: "From idea to MVP.",
+    line: "Scope, trade-offs, shipping and measuring, the way the Process below works.",
     proof: [
-      { kind: "work", slug: "huddleos" },
-      { kind: "samples", slug: "dashboard" },
+      { kind: "work", slug: "kalistenio" },
+      { kind: "samples", slug: "vinui" },
     ],
   },
   {
@@ -64,12 +64,12 @@ export const services: Service[] = [
     ],
   },
   {
-    name: "Product",
-    headline: "From idea to MVP.",
-    line: "Scope, trade-offs, shipping and measuring, the way the Process below works.",
+    name: "Frontend",
+    headline: "Interfaces that keep up.",
+    line: "Real-time, data-heavy UIs with complex state, fast and built to last.",
     proof: [
-      { kind: "work", slug: "kalistenio" },
-      { kind: "samples", slug: "vinui" },
+      { kind: "work", slug: "huddleos" },
+      { kind: "samples", slug: "dashboard" },
     ],
   },
 ];
