@@ -76,24 +76,22 @@ export const services: Service[] = [
 
 export const work: Work[] = [
   {
-    slug: "huddleos",
-    name: "HuddleOS",
-    summary: "Live data. Live events. No lag.",
-    company: "Huddle Tech",
-    role: "Frontend Engineer",
-    type: "Frontend",
-    years: { start: 2020, end: 2024 },
-    stack: ["Vue", "GraphQL", "WebSockets"],
-    productUrl: "https://huddle.tech/products/huddle-os/",
-    image: { src: "/images/work/huddleos.svg", alt: "HuddleOS dashboard" }, // TODO
-    impact:
-      "Presented on stage in Las Vegas. Helped close a major investment.",
+    slug: "kalistenio",
+    name: "Kalistenio",
+    summary: "Calisthenics training, in your pocket.", // TODO
+    company: "Independent",
+    role: "Product Engineer", // TODO
+    type: "Product",
+    years: { start: 2025 }, // TODO
+    stack: ["React Native", "Supabase"],
+    image: { src: "/images/work/kalistenio.svg", alt: "Kalistenio workout screen" }, // TODO
+    impact: "From idea to app store, on my own.", // TODO
     // TODO
     context:
-      "HuddleOS runs live events in real time. Organisers watch data change as it happens and act on it straight away, so the interface has to keep up without getting in the way.",
+      "Kalistenio is a calisthenics app for people training with their own body weight. It plans workouts and tracks progress over time.",
     // TODO
     myRole:
-      "I built the real-time frontend: the live views, the data layer over GraphQL and WebSockets, and the components the rest of the team built on.",
+      "Everything: product decisions, design, the React Native app and the Supabase backend.",
   },
   {
     slug: "odjeca-hr",
@@ -115,56 +113,53 @@ export const work: Work[] = [
       "I worked across the stack: search pages in React and Handlebars, and the Node.js and MongoDB services behind them.",
   },
   {
-    slug: "kalistenio",
-    name: "Kalistenio",
-    summary: "Calisthenics training, in your pocket.", // TODO
-    company: "Independent",
-    role: "Product Engineer", // TODO
-    type: "Product",
-    years: { start: 2025 }, // TODO
-    stack: ["React Native", "Supabase"],
-    image: { src: "/images/work/kalistenio.svg", alt: "Kalistenio workout screen" }, // TODO
-    impact: "From idea to app store, on my own.", // TODO
+    slug: "huddleos",
+    name: "HuddleOS",
+    summary: "Live data. Live events. No lag.",
+    company: "Huddle Tech",
+    role: "Frontend Engineer",
+    type: "Frontend",
+    years: { start: 2020, end: 2024 },
+    stack: ["Vue", "GraphQL", "WebSockets"],
+    productUrl: "https://huddle.tech/products/huddle-os/",
+    image: { src: "/images/work/huddleos.svg", alt: "HuddleOS dashboard" }, // TODO
+    impact:
+      "Presented on stage in Las Vegas. Helped close a major investment.",
     // TODO
     context:
-      "Kalistenio is a calisthenics app for people training with their own body weight. It plans workouts and tracks progress over time.",
+      "HuddleOS runs live events in real time. Organisers watch data change as it happens and act on it straight away, so the interface has to keep up without getting in the way.",
     // TODO
     myRole:
-      "Everything: product decisions, design, the React Native app and the Supabase backend.",
+      "I built the real-time frontend: the live views, the data layer over GraphQL and WebSockets, and the components the rest of the team built on.",
   },
 ];
 
 export const samples: Sample[] = [
   {
-    slug: "dashboard",
-    name: "Dashboard",
-    summary: "A data dashboard that stays fast.", // TODO
-    type: "Frontend",
-    stack: ["React", "TanStack"],
+    slug: "vinui",
+    name: "VinUI",
+    summary: "One component API, cross-framework and cross-platform.",
+    type: "Product",
+    stack: ["React", "Vue", "React Native"],
     year: 2026, // TODO
-    status: "Live",
-    demoUrl: "https://example.com/dashboard", // TODO
-    sourceUrl: "https://github.com/example/dashboard", // TODO
-    image: { src: "/images/samples/dashboard.svg", alt: "Dashboard overview" }, // TODO
+    status: "Live", // TODO
+    demoUrl: "https://vinui.dev",
+    image: { src: "/images/samples/vinui.svg", alt: "One button rendered in React, Vue and React Native" }, // TODO
     // TODO
-    why: "To see how far TanStack's query, table and router libraries go together on a data-heavy screen.",
+    why: "To write a component once and use it in React, Vue and React Native, instead of keeping three libraries in step.",
     // TODO
     architecture:
-      "A React app with TanStack Router for routing, TanStack Query for server state and TanStack Table for the data grids.",
-    diagram: { src: "/images/samples/dashboard-diagram.svg", alt: "Dashboard architecture" }, // TODO
+      "One component API, with a thin layer per framework that maps it onto React, Vue and React Native.",
+    diagram: { src: "/images/samples/vinui-diagram.svg", alt: "VinUI architecture" }, // TODO
     // TODO
     decisions: [
       {
-        title: "Server state in TanStack Query",
-        body: "Caching and refetching handled in one place, instead of a global store.",
-      },
-      {
-        title: "Headless tables",
-        body: "TanStack Table for behaviour, my own markup for the look.",
+        title: "One API for every framework",
+        body: "The same props and names everywhere, so moving between React, Vue and Native costs nothing.",
       },
     ],
     // TODO
-    next: "Virtualised rows for very large tables, and saved views.",
+    next: "More components, and docs for each framework.",
   },
   {
     slug: "sokoban",
@@ -198,29 +193,34 @@ export const samples: Sample[] = [
     next: "A level editor, and sharing levels with other players.",
   },
   {
-    slug: "vinui",
-    name: "VinUI",
-    summary: "One component API, cross-framework and cross-platform.",
-    type: "Product",
-    stack: ["React", "Vue", "React Native"],
+    slug: "dashboard",
+    name: "Dashboard",
+    summary: "A data dashboard that stays fast.", // TODO
+    type: "Frontend",
+    stack: ["React", "TanStack"],
     year: 2026, // TODO
-    status: "Live", // TODO
-    demoUrl: "https://vinui.dev",
-    image: { src: "/images/samples/vinui.svg", alt: "One button rendered in React, Vue and React Native" }, // TODO
+    status: "Live",
+    demoUrl: "https://example.com/dashboard", // TODO
+    sourceUrl: "https://github.com/example/dashboard", // TODO
+    image: { src: "/images/samples/dashboard.svg", alt: "Dashboard overview" }, // TODO
     // TODO
-    why: "To write a component once and use it in React, Vue and React Native, instead of keeping three libraries in step.",
+    why: "To see how far TanStack's query, table and router libraries go together on a data-heavy screen.",
     // TODO
     architecture:
-      "One component API, with a thin layer per framework that maps it onto React, Vue and React Native.",
-    diagram: { src: "/images/samples/vinui-diagram.svg", alt: "VinUI architecture" }, // TODO
+      "A React app with TanStack Router for routing, TanStack Query for server state and TanStack Table for the data grids.",
+    diagram: { src: "/images/samples/dashboard-diagram.svg", alt: "Dashboard architecture" }, // TODO
     // TODO
     decisions: [
       {
-        title: "One API for every framework",
-        body: "The same props and names everywhere, so moving between React, Vue and Native costs nothing.",
+        title: "Server state in TanStack Query",
+        body: "Caching and refetching handled in one place, instead of a global store.",
+      },
+      {
+        title: "Headless tables",
+        body: "TanStack Table for behaviour, my own markup for the look.",
       },
     ],
     // TODO
-    next: "More components, and docs for each framework.",
+    next: "Virtualised rows for very large tables, and saved views.",
   },
 ];
