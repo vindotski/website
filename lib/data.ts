@@ -51,6 +51,7 @@ export const services: Service[] = [
     line: "Real-time, data-heavy UIs with complex state, fast and built to last.",
     proof: [
       { kind: "work", slug: "huddleos" },
+      { kind: "samples", slug: "spotcraft" },
     ],
   },
   {
@@ -185,6 +186,37 @@ export const samples: Sample[] = [
     ],
     // TODO
     next: "Charts for progress over time, and more programs than 5×5.",
+  },
+  {
+    slug: "spotcraft",
+    name: "Spotcraft",
+    summary: "A data dashboard that stays fast.", // TODO
+    type: "Fullstack",
+    stack: ["React", "TanStack"], // TODO
+    year: 2026, // TODO
+    status: "Live", // TODO
+    demoUrl: "https://example.com/spotcraft", // TODO
+    sourceUrl: "https://github.com/example/spotcraft", // TODO
+    image: { src: "/images/samples/spotcraft.svg", alt: "Spotcraft overview" }, // TODO
+    // TODO
+    why: "To see how far TanStack's query, table and router libraries go together on a data-heavy screen.",
+    // TODO
+    architecture:
+      "A React app with TanStack Router for routing, TanStack Query for server state and TanStack Table for the data grids.",
+    diagram: { src: "/images/samples/spotcraft-diagram.svg", alt: "Spotcraft architecture" }, // TODO
+    // TODO
+    decisions: [
+      {
+        title: "Server state in TanStack Query",
+        body: "Caching and refetching handled in one place, instead of a global store.",
+      },
+      {
+        title: "Headless tables",
+        body: "TanStack Table for behaviour, my own markup for the look.",
+      },
+    ],
+    // TODO
+    next: "Virtualised rows for very large tables, and saved views.",
   },
   {
     slug: "sokobanko",
