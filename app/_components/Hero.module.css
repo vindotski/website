@@ -70,11 +70,12 @@
   mask-composite: intersect;
 }
 
-/* Phones: a small mono label, like the card labels */
-.status {
+/* The title above the headline, as an eyebrow: a short lead-in line, then
+   a small mono label like the card labels. The same at every width */
+.eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-label);
@@ -84,11 +85,13 @@
   color: var(--color-muted);
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
+.eyebrow::before {
+  content: "";
+  width: 24px;
+  height: 1px;
   background: var(--color-text);
 }
+
 
 .headline {
   max-width: 16ch;
@@ -100,6 +103,19 @@
   line-height: 1.1;
   /* Keeps the two sentences from leaving a single word on the last line */
   text-wrap: balance;
+}
+
+/* Phones: what I'm available for, under the headline. Tablets and up show
+   it in the header instead */
+.subline {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+@media (min-width: 640px) {
+  .subline {
+    display: none;
+  }
 }
 
 /* Phones: two equal buttons, gutter to gutter */
@@ -173,17 +189,6 @@
     gap: 24px;
   }
 
-  /* A boxed pill beside the photo */
-  .status {
-    padding: 6px 14px;
-    border: 1px solid var(--color-border);
-    font-family: var(--font-sans);
-    font-size: var(--text-small);
-    font-weight: 400;
-    letter-spacing: normal;
-    text-transform: none;
-  }
-
   .headline {
     font-size: var(--text-display);
   }
@@ -222,7 +227,7 @@
 }
 
 /* Phones turned sideways: the tablet layout, squeezed to fit the short
-   screen, with the phone's compact status line and scroll cue */
+   screen, with the phone's scroll cue */
 @media (orientation: landscape) and (min-width: 560px) and (max-width: 767px) {
   .hero {
     grid-template-columns: 1fr 200px;
@@ -232,16 +237,6 @@
 
   .text {
     gap: 12px;
-  }
-
-  .status {
-    padding: 0;
-    border: none;
-    font-family: var(--font-mono);
-    font-size: var(--text-label);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
   }
 
   /* Scales with the screen height, so three lines always fit */

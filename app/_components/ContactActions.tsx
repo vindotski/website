@@ -1,8 +1,10 @@
 import { getContact } from "@/lib/api";
 import ButtonLink from "./ButtonLink";
+import { CalendarIcon, MailIcon } from "./ContactIcons";
 
-// The ways to reach me, shared by the hero and the contact prompt.
-// The parent lays them out; tone picks colours for a light or dark background
+// The ways to reach me, in the footer's contact prompt: email first, then a
+// call. The parent lays them out; tone picks colours for a light or dark
+// background
 export default async function ContactActions({
   tone,
 }: {
@@ -14,51 +16,20 @@ export default async function ContactActions({
   return (
     <>
       <ButtonLink
-        href={contact.callUrl}
+        href={`mailto:${contact.email}`}
         variant={tone === "light" ? "primary" : "inverse"}
+        icon={<MailIcon />}
+      >
+        Email me
+      </ButtonLink>
+      <ButtonLink
+        href={contact.callUrl}
+        variant={secondary}
         icon={<CalendarIcon />}
         newTab
       >
         Book a call
       </ButtonLink>
-      <ButtonLink
-        href={`mailto:${contact.email}`}
-        variant={secondary}
-        icon={<MailIcon />}
-      >
-        Email me
-      </ButtonLink>
     </>
-  );
-}
-
-// Icons are square-cornered, to match the rest of the site
-function CalendarIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <rect x="3" y="5" width="18" height="16" />
-      <path d="M3 10h18M8 3v4M16 3v4" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <rect x="3" y="5" width="18" height="14" />
-      <path d="m3 6 9 7 9-7" />
-    </svg>
   );
 }

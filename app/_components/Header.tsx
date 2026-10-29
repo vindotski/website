@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { Suspense } from "react";
-import { getPosts, getSamples, getWork } from "@/lib/api";
+import { getHero, getPosts, getSamples, getWork } from "@/lib/api";
+import HeaderContact, { HeaderContactFallback } from "./HeaderContact";
 import SectionMenu, { SectionMenuFallback } from "./SectionMenu";
 import styles from "./Header.module.css";
 
@@ -14,7 +14,8 @@ const links = [
 ];
 
 export default async function Header() {
-  const [work, samples, posts] = await Promise.all([
+  const [hero, work, samples, posts] = await Promise.all([
+    getHero(),
     getWork(),
     getSamples(),
     getPosts(),
@@ -37,20 +38,13 @@ export default async function Header() {
             <SectionMenu links={links} pageNames={pageNames} />
           </Suspense>
         </div>
-        {/* Leads to the contact prompt in the footer, on any page */}
-        <Link href="#contact" className={styles.cta}>
-          {/* Speech bubble: talk, by call or email */}
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            aria-hidden="true"
-          >
-            <path d="M3 4h18v13H10l-5 4v-4H3z" />
-          </svg>
-          <span className={styles.ctaText}>Get in touch</span>
-        </Link>
+        {/* Availability or Get in touch, depending on what's in view; reads
+            the URL, like the menu */}
+        <Suspense
+          fallback={<HeaderContactFallback availability={hero.availability} />}
+        >
+          <HeaderContact availability={hero.availability} />
+        </Suspense>
       </div>
     </header>
   );

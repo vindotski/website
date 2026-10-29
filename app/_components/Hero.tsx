@@ -1,25 +1,36 @@
 import Image from "next/image";
-import { getHero } from "@/lib/api";
+import { getContact, getHero } from "@/lib/api";
 // TODO: replace with a larger cut-out (1500–2048px); this one is 500px
 import portrait from "@/public/images/portrait-cutout.png";
-import ContactActions from "./ContactActions";
+import ButtonLink from "./ButtonLink";
+import { ChatIcon, MailIcon } from "./ContactIcons";
 import styles from "./Hero.module.css";
 
 export default async function Hero() {
-  const hero = await getHero();
+  const [hero, contact] = await Promise.all([getHero(), getContact()]);
 
   return (
     // White on black, edge to edge
-    <div className={styles.band}>
+    // Phones show a floating Get in touch only while this is out of view
+    <div className={styles.band} data-hides-contact>
       <section className={styles.hero} aria-label="Introduction">
         <div className={styles.text}>
-          <p className={styles.status}>
-            <span className={styles.dot} aria-hidden="true" />
-            {hero.availability}
-          </p>
+          <p className={styles.eyebrow}>{hero.title}</p>
           <h1 className={styles.headline}>{hero.headline}</h1>
+          {/* Phones only; tablets and up show it in the header */}
+          <p className={styles.subline}>{hero.availability}</p>
           <div className={styles.actions}>
-            <ContactActions tone="light" />
+            {/* Leads to the contact prompt in the footer */}
+            <ButtonLink href="#contact" icon={<ChatIcon />}>
+              Get in touch
+            </ButtonLink>
+            <ButtonLink
+              href={`mailto:${contact.email}`}
+              variant="secondary"
+              icon={<MailIcon />}
+            >
+              Email me
+            </ButtonLink>
           </div>
         </div>
         {/* On top of the text on phones, fading into it; beside it from tablets

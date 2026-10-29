@@ -12,6 +12,7 @@ import type {
 // Fields marked TODO are generated placeholders, to be replaced with real content
 
 export const hero: Hero = {
+  title: "Product Engineer",
   availability: "Available for frontend and product work",
   headline: "I build the part you see. And the parts you don't.",
 };
@@ -38,7 +39,7 @@ export const contact: Contact = {
   callUrl: "https://calendly.com/vindotski/30min",
   details: [
     { label: "Based in", value: "Samobor, Croatia", timeZone: "Europe/Zagreb" },
-    { label: "Available for", value: "Frontend and product work" },
+    { label: "Stack", value: "TypeScript, React, Vue, Supabase" },
     { label: "Work setup", value: "On-site, hybrid or remote" },
   ],
 };

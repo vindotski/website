@@ -1,6 +1,6 @@
 import { cacheLife } from "next/cache";
 import Image from "next/image";
-import { getContact, getSocials } from "@/lib/api";
+import { getContact, getHero, getSocials } from "@/lib/api";
 import portrait from "@/public/images/portrait.jpg";
 import ContactActions from "./ContactActions";
 import LocalTime from "./LocalTime";
@@ -17,10 +17,14 @@ async function CurrentYear() {
 // Ends every page: the contact prompt, then the small print.
 // Every "Get in touch" link lands here
 export default async function Footer() {
-  const [contact, socials] = await Promise.all([getContact(), getSocials()]);
+  const [contact, hero, socials] = await Promise.all([
+    getContact(),
+    getHero(),
+    getSocials(),
+  ]);
 
   return (
-    <footer id="contact" className={styles.footer}>
+    <footer id="contact" className={styles.footer} data-hides-contact>
       <section className={styles.contact} aria-label="Contact">
         {/* I ask the question; the buttons are the answers */}
         <div className={styles.chat}>
@@ -34,6 +38,8 @@ export default async function Footer() {
           <div className={styles.actions}>
             <ContactActions tone="dark" />
           </div>
+          {/* Same line as under the hero's headline on phones */}
+          <p className={styles.subline}>{hero.availability}</p>
         </div>
         <dl className={styles.details}>
           {contact.details.map((detail) => (

@@ -1,5 +1,7 @@
 export type Hero = {
   // Shown above the headline
+  title: string;
+  // Shown in the header while the hero or footer is in view
   availability: string;
   headline: string;
 };

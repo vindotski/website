@@ -35,7 +35,8 @@
   grid-template-areas:
     "avatar bubble"
     "details details"
-    "actions actions";
+    "actions actions"
+    "subline subline";
   gap: 40px 16px;
   padding-top: 56px;
   padding-bottom: 56px;
@@ -83,6 +84,15 @@
   border-left: 1px solid var(--color-background);
   background: var(--color-text);
   rotate: 45deg;
+}
+
+/* Phones: what I'm available for, under the buttons; like the hero's line,
+   hidden from 640px where the header shows it */
+.subline {
+  grid-area: subline;
+  /* Closer to the buttons than the 40px between the other rows */
+  margin: -24px 0 0;
+  color: var(--footer-muted);
 }
 
 /* Phones: two equal buttons, gutter to gutter */
@@ -212,6 +222,11 @@
   .avatar,
   .bubble {
     grid-area: auto;
+  }
+
+  /* Tablets and up show it in the header, like the hero's line */
+  .subline {
+    display: none;
   }
 
   .bubble {
