@@ -34,7 +34,8 @@ export const experience: Role[] = [
 
 export const contact: Contact = {
   email: "ivan@vin.ski",
-  prompt: "Have a role or a product in mind? Let's talk.",
+  prompt: "Have a role or a product in mind?",
+  callUrl: "https://calendly.com/vindotski/30min",
 };
 
 // Order: code first (proof behind the samples), then roles and contact, then design

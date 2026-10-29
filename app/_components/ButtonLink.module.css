@@ -1,10 +1,28 @@
 .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 22px;
   border: 1px solid var(--color-text);
   text-decoration: none;
   transition:
     background 0.15s,
     color 0.15s;
+}
+
+/* Icons take the text colour, so they flip with it on hover */
+.button svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+/* Square, as tall as a button with text: one line, padding and border */
+.iconOnly {
+  justify-content: center;
+  min-width: calc(1lh + 22px);
+  min-height: calc(1lh + 22px);
+  padding: 10px;
 }
 
 /* Each variant swaps its fill and text colour on hover */
@@ -40,6 +58,18 @@
   color: var(--color-background);
 }
 
-.inverse:focus-visible {
+.inverseSecondary {
+  border-color: var(--color-background);
+  background: transparent;
+  color: var(--color-background);
+}
+
+.inverseSecondary:hover {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.inverse:focus-visible,
+.inverseSecondary:focus-visible {
   outline-color: var(--color-background);
 }

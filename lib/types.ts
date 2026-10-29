@@ -10,8 +10,10 @@ export type About = {
 
 export type Contact = {
   email: string;
-  // One line shown above the "Get in touch" button
+  // One line shown above the contact actions
   prompt: string;
+  // Booking page for a call
+  callUrl: string;
 };
 
 export type SocialName = "GitHub" | "LinkedIn" | "Figma";

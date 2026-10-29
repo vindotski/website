@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { getContact } from "@/lib/api";
 import MobileMenu from "./MobileMenu";
 import styles from "./Header.module.css";
 
@@ -12,10 +11,7 @@ const links = [
   { href: "/#blog", label: "Blog" },
 ];
 
-export default async function Header() {
-  const contact = await getContact();
-  const mailto = `mailto:${contact.email}`;
-
+export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
@@ -34,21 +30,18 @@ export default async function Header() {
         </nav>
         {/* Leads to the contact prompt at the bottom of the home page */}
         <Link href="/#contact" className={styles.cta}>
-          Get in touch
-        </Link>
-        <a href={mailto} className={styles.mail} aria-label="Email Ivan">
+          {/* Speech bubble: talk, by call or email */}
           <svg
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
+            strokeWidth="2"
             aria-hidden="true"
           >
-            <rect x="3" y="5" width="18" height="14" rx="2" />
-            <path d="m3.5 6.5 8.5 6.5 8.5-6.5" />
+            <path d="M3 4h18v13H10l-5 4v-4H3z" />
           </svg>
-        </a>
+          Get in touch
+        </Link>
       </div>
     </header>
   );

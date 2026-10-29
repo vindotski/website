@@ -6,11 +6,11 @@
   background: var(--color-background);
 }
 
-/* Three columns keep the middle item centred on the page.
-   Phones: menu button · name · mail icon */
+/* Phones: menu button · name · contact button */
 .inner {
   display: grid;
-  grid-template-columns: 44px 1fr 44px;
+  grid-template-columns: auto 1fr auto;
+  column-gap: 8px;
   align-items: center;
   max-width: var(--content-width);
   height: calc(var(--header-height) - 1px);
@@ -19,29 +19,13 @@
 }
 
 .name {
-  justify-self: center;
+  justify-self: start;
   font-weight: 600;
   text-decoration: none;
 }
 
-.nav,
-.cta {
+.nav {
   display: none;
-}
-
-.mail {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  margin-right: -10px;
-  color: var(--color-text);
-}
-
-.mail svg {
-  width: 22px;
-  height: 22px;
 }
 
 .links {
@@ -63,6 +47,10 @@
 
 /* A compact version of the dark button, sized for the header; inverts on hover */
 .cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
   padding: 6px 14px;
   border: 1px solid var(--color-text);
   background: var(--color-text);
@@ -74,31 +62,25 @@
     color 0.15s;
 }
 
+.cta svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+}
+
 .cta:hover {
   background: var(--color-background);
   color: var(--color-text);
 }
 
-/* Wide screens: name left, links centred, contact button right */
+/* Wide screens: name left, links centred, contact button right.
+   Equal outer columns keep the links centred on the page */
 @media (min-width: 900px) {
   .inner {
     grid-template-columns: 1fr auto 1fr;
   }
 
-  .name {
-    justify-self: start;
-  }
-
   .nav {
     display: block;
-  }
-
-  .cta {
-    display: block;
-    justify-self: end;
-  }
-
-  .mail {
-    display: none;
   }
 }

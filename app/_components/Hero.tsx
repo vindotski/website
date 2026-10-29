@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { getHero } from "@/lib/api";
 import portrait from "@/public/images/portrait.jpg";
-import ButtonLink from "./ButtonLink";
+import ContactActions from "./ContactActions";
 import styles from "./Hero.module.css";
 
 export default async function Hero() {
@@ -16,10 +16,7 @@ export default async function Hero() {
         </p>
         <h1 className={styles.headline}>{hero.headline}</h1>
         <div className={styles.actions}>
-          <ButtonLink href="#work">See work</ButtonLink>
-          <ButtonLink href="#contact" variant="secondary">
-            Get in touch
-          </ButtonLink>
+          <ContactActions tone="light" />
         </div>
       </div>
       {/* Wide screens only; phones see the portrait in About */}
@@ -30,8 +27,11 @@ export default async function Hero() {
         sizes="380px"
         className={styles.portrait}
       />
-      <a href="#work" className={styles.cue} aria-label="Scroll to work">
-        ↓
+      <a href="#work" className={styles.cue}>
+        See work
+        <span className={styles.arrow} aria-hidden="true">
+          ↓
+        </span>
       </a>
     </section>
   );
