@@ -38,7 +38,7 @@ export default async function SamplePage({
   const next = await getNextSample(slug);
 
   return (
-    <DetailPage backHref="/#play" backLabel="Play">
+    <DetailPage backHref="/#work" backLabel="Work">
       <DetailIntro
         title={sample.name}
         summary={sample.summary}

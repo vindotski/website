@@ -6,11 +6,10 @@ import styles from "./Header.module.css";
 // Paths include "/" so the links also work from project pages
 const links = [
   { href: "/#work", label: "Work" },
-  { href: "/#about", label: "About" },
-  { href: "/#play", label: "Play" },
-  { href: "/#blog", label: "Blog" },
   { href: "/#services", label: "Services" },
-  { href: "/#contact", label: "Contact" },
+  { href: "/#experience", label: "Experience" },
+  { href: "/#process", label: "Process" },
+  { href: "/#blog", label: "Blog" },
 ];
 
 export default async function Header() {
@@ -33,9 +32,10 @@ export default async function Header() {
             ))}
           </ul>
         </nav>
-        <a href={mailto} className={styles.cta}>
+        {/* Leads to the contact prompt at the bottom of the home page */}
+        <Link href="/#contact" className={styles.cta}>
           Get in touch
-        </a>
+        </Link>
         <a href={mailto} className={styles.mail} aria-label="Email Ivan">
           <svg
             viewBox="0 0 24 24"

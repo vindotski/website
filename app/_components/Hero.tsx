@@ -1,11 +1,11 @@
 import Image from "next/image";
-import { getContact, getHero } from "@/lib/api";
+import { getHero } from "@/lib/api";
 import portrait from "@/public/images/portrait.jpg";
 import ButtonLink from "./ButtonLink";
 import styles from "./Hero.module.css";
 
 export default async function Hero() {
-  const [hero, contact] = await Promise.all([getHero(), getContact()]);
+  const hero = await getHero();
 
   return (
     <section className={styles.hero} aria-label="Introduction">
@@ -17,7 +17,7 @@ export default async function Hero() {
         <h1 className={styles.headline}>{hero.headline}</h1>
         <div className={styles.actions}>
           <ButtonLink href="#work">See work</ButtonLink>
-          <ButtonLink href={`mailto:${contact.email}`} variant="secondary">
+          <ButtonLink href="#contact" variant="secondary">
             Get in touch
           </ButtonLink>
         </div>
