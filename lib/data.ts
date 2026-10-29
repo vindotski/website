@@ -154,32 +154,6 @@ export const work: Work[] = [
 
 export const samples: Sample[] = [
   {
-    slug: "vinui",
-    name: "VinUI",
-    summary: "One component API, cross-framework and cross-platform.",
-    type: "Product",
-    stack: ["React", "Vue", "React Native"],
-    year: 2026, // TODO
-    status: "Live", // TODO
-    demoUrl: "https://vinui.dev",
-    image: { src: "/images/samples/vinui.svg", alt: "One button rendered in React, Vue and React Native" }, // TODO
-    // TODO
-    why: "To write a component once and use it in React, Vue and React Native, instead of keeping three libraries in step.",
-    // TODO
-    architecture:
-      "One component API, with a thin layer per framework that maps it onto React, Vue and React Native.",
-    diagram: { src: "/images/samples/vinui-diagram.svg", alt: "VinUI architecture" }, // TODO
-    // TODO
-    decisions: [
-      {
-        title: "One API for every framework",
-        body: "The same props and names everywhere, so moving between React, Vue and Native costs nothing.",
-      },
-    ],
-    // TODO
-    next: "More components, and docs for each framework.",
-  },
-  {
     slug: "sokobanko",
     name: "Sokobanko",
     summary: "A classic puzzle game, rebuilt from scratch.",
@@ -209,6 +183,32 @@ export const samples: Sample[] = [
     ],
     // TODO
     next: "A level editor, and sharing levels with other players.",
+  },
+  {
+    slug: "vinui",
+    name: "VinUI",
+    summary: "One component API, cross-framework and cross-platform.",
+    type: "Product",
+    stack: ["React", "Vue", "React Native"],
+    year: 2026, // TODO
+    status: "Live", // TODO
+    demoUrl: "https://vinui.dev",
+    image: { src: "/images/samples/vinui.svg", alt: "One button rendered in React, Vue and React Native" }, // TODO
+    // TODO
+    why: "To write a component once and use it in React, Vue and React Native, instead of keeping three libraries in step.",
+    // TODO
+    architecture:
+      "One component API, with a thin layer per framework that maps it onto React, Vue and React Native.",
+    diagram: { src: "/images/samples/vinui-diagram.svg", alt: "VinUI architecture" }, // TODO
+    // TODO
+    decisions: [
+      {
+        title: "One API for every framework",
+        body: "The same props and names everywhere, so moving between React, Vue and Native costs nothing.",
+      },
+    ],
+    // TODO
+    next: "More components, and docs for each framework.",
   },
   {
     slug: "spotcraft",
