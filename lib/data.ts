@@ -69,7 +69,7 @@ export const services: Service[] = [
     line: "Scope, trade-offs, shipping and measuring, the way the Process below works.",
     proof: [
       { kind: "work", slug: "kalistenio" },
-      { kind: "samples", slug: "website" },
+      { kind: "samples", slug: "vinui" },
     ],
   },
 ];
@@ -198,33 +198,29 @@ export const samples: Sample[] = [
     next: "A level editor, and sharing levels with other players.",
   },
   {
-    slug: "website",
-    name: "Website",
-    summary: "This site, built as a product.",
+    slug: "vinui",
+    name: "VinUI",
+    summary: "One component API, cross-framework and cross-platform.",
     type: "Product",
-    stack: ["Next.js", "React", "TypeScript"],
-    year: 2026,
-    status: "In progress",
-    demoUrl: "https://example.com", // TODO
-    image: { src: "/images/samples/website.svg", alt: "Portfolio home page" }, // TODO
-    why: "Two audiences need different things from me. Employers hiring full time look for a frontend engineer. Freelance clients look for someone who can build a whole product.",
+    stack: ["React", "Vue", "React Native"],
+    year: 2026, // TODO
+    status: "Live", // TODO
+    demoUrl: "https://vinui.dev",
+    image: { src: "/images/samples/vinui.svg", alt: "One button rendered in React, Vue and React Native" }, // TODO
+    // TODO
+    why: "To write a component once and use it in React, Vue and React Native, instead of keeping three libraries in step.",
+    // TODO
     architecture:
-      "Next.js 16 with the App Router and Cache Components, so pages are built ahead of time. Styling is CSS Modules. Pages are built from small shared components.",
-    diagram: { src: "/images/samples/website-diagram.svg", alt: "Website architecture" }, // TODO
+      "One component API, with a thin layer per framework that maps it onto React, Vue and React Native.",
+    diagram: { src: "/images/samples/vinui-diagram.svg", alt: "VinUI architecture" }, // TODO
+    // TODO
     decisions: [
       {
-        title: "One story, not two",
-        body: "One narrative, a frontend engineer who builds whole products, instead of separate pages per audience. The projects prove both sides.",
-      },
-      {
-        title: "Proof, person, pitch",
-        body: "Work and samples first, then about me, then services and process right before contact.",
-      },
-      {
-        title: "Wireframes in code",
-        body: "Grey placeholder boxes instead of a design tool, one section per commit, so changing the structure stayed cheap.",
+        title: "One API for every framework",
+        body: "The same props and names everywhere, so moving between React, Vue and Native costs nothing.",
       },
     ],
-    next: "Real content, then launch, then watching where people get in touch from.",
+    // TODO
+    next: "More components, and docs for each framework.",
   },
 ];
