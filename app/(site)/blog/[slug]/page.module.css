@@ -49,62 +49,6 @@
   text-decoration: underline;
 }
 
-/* The post body comes from MDX as plain elements, so style them here */
-.prose {
-  max-width: 720px;
-  line-height: 1.7;
-}
-
-.prose h2 {
-  margin: 56px 0 16px;
-  font-size: var(--text-title);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  /* Keeps the heading clear of the sticky header when jumped to */
-  scroll-margin-top: calc(var(--header-height) + 16px);
-}
-
-.prose h2:first-child {
-  margin-top: 0;
-}
-
-.prose p,
-.prose ul,
-.prose ol,
-.prose pre {
-  margin: 0 0 20px;
-}
-
-.prose ul,
-.prose ol {
-  padding-left: 24px;
-}
-
-.prose li + li {
-  margin-top: 6px;
-}
-
-.prose code {
-  font-family: var(--font-mono);
-  font-size: 0.9em;
-}
-
-/* Inline code only; code blocks are styled on pre */
-.prose :not(pre) > code {
-  padding: 2px 6px;
-  background: var(--color-placeholder);
-}
-
-.prose pre {
-  padding: 20px;
-  overflow-x: auto;
-  background: var(--color-text);
-  color: var(--color-placeholder);
-  font-size: var(--text-small);
-  line-height: 1.6;
-}
-
 .tldrLabel {
   margin: 0;
   font-family: var(--font-mono);

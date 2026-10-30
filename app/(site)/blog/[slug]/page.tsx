@@ -12,6 +12,7 @@ import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
 import ScrollLink from "../../_components/ScrollLink";
 import NextLink from "../../_components/detail/NextLink";
+import Prose from "../../_components/detail/Prose";
 import styles from "./page.module.css";
 
 // Every page is prebuilt, so a navigation that waits for it is still quick.
@@ -76,9 +77,9 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         </nav>
       )}
 
-      <div className={styles.prose}>
+      <Prose>
         <Content />
-      </div>
+      </Prose>
 
       {next && <NextLink href={`/blog/${next.slug}`} name={next.title} />}
     </DetailPage>
