@@ -23,10 +23,11 @@ const model = "gte-small";
 // "title — heading" prefix and for code, which costs more tokens per word
 const maxWords = 300;
 const maxChars = 3000;
-// Inputs per call to the embed function (it accepts up to 64)
-const embedBatch = 16;
+// Hosted Edge Functions get 2 s of CPU per request, and 16 texts in one call
+// ran out (546). One text per call stays well inside it
+const embedRetries = 3;
 // Rows per upsert or delete request
-const writeBatch = 100;
+const writeBatch = 10;
 
 const dryRun = process.argv.includes("--dry-run");
 
@@ -131,21 +132,32 @@ function hash(chunk: Chunk) {
   return createHash("sha256").update(JSON.stringify(fields)).digest("hex");
 }
 
-async function embed(texts: string[]) {
-  const { data, error } = await db.functions.invoke<{
-    embeddings: number[][];
-  }>("embed", { body: { input: texts } });
-  if (error) {
+// Out of resources (546) or not reachable yet (502, 503, 504): a fresh
+// worker may manage
+const retryable = new Set([502, 503, 504, 546]);
+
+async function embed(text: string): Promise<number[]> {
+  for (let attempt = 0; ; attempt++) {
+    const { data, error } = await db.functions.invoke<{
+      embeddings: number[][];
+    }>("embed", { body: { input: [text] } });
+    if (data) return data.embeddings[0];
+
     // supabase-js only says "non-2xx"; the status and body say why
-    const response: unknown = error.context;
+    const response: unknown = error?.context;
+    const status = response instanceof Response ? response.status : 0;
+    if (retryable.has(status) && attempt < embedRetries) {
+      const wait = 2000 * 2 ** attempt;
+      console.log(`  embed answered ${status}, retrying in ${wait / 1000} s`);
+      await new Promise((resolve) => setTimeout(resolve, wait));
+      continue;
+    }
     const detail =
       response instanceof Response
-        ? `${response.status} ${await response.text().catch(() => "")}`
-        : error.message;
+        ? `${status} ${await response.text().catch(() => "")}`
+        : (error?.message ?? "empty response");
     throw new Error(`embed failed: ${detail}`);
   }
-  if (!data) throw new Error("embed failed: empty response");
-  return data.embeddings;
 }
 
 // Paged, since the API returns at most 1000 rows per request
@@ -204,17 +216,15 @@ if (dryRun) {
   process.exit(0);
 }
 
-// Upserts first, so a failure part-way never leaves the index emptier
-for (const batch of batches(changed, embedBatch)) {
-  const embeddings = await embed(batch.map((chunk) => chunk.content));
-  const rows: Row[] = batch.map((chunk, index) => ({
-    ...chunk,
-    embedding: JSON.stringify(embeddings[index]),
-  }));
-  for (const write of batches(rows, writeBatch)) {
-    const { error } = await db.from("documents").upsert(write);
-    if (error) throw new Error(`upsert failed: ${error.message}`);
+// Upserts first, so a failure part-way never leaves the index emptier. Each
+// batch is saved as it's done, so a rerun picks up where a failure stopped
+for (const batch of batches(changed, writeBatch)) {
+  const rows: Row[] = [];
+  for (const chunk of batch) {
+    rows.push({ ...chunk, embedding: JSON.stringify(await embed(chunk.content)) });
   }
+  const { error } = await db.from("documents").upsert(rows);
+  if (error) throw new Error(`upsert failed: ${error.message}`);
   console.log(`  embedded ${batch.map((chunk) => chunk.id).join(", ")}`);
 }
 
