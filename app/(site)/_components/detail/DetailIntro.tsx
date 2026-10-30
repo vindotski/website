@@ -1,5 +1,3 @@
-import styles from "./DetailIntro.module.css";
-
 type ExternalLink = { href: string; label: string };
 
 type DetailIntroProps = {
@@ -16,18 +14,21 @@ export default function DetailIntro({
   children,
 }: DetailIntroProps) {
   return (
-    <header className={styles.intro}>
-      <h1 className={styles.title}>{title}</h1>
-      {summary && <p className={styles.summary}>{summary}</p>}
+    <header className="flex max-w-[720px] flex-col gap-4">
+      <h1 className="text-4xl font-semibold tracking-tight text-balance md:text-6xl">
+        {title}
+      </h1>
+      {summary && <p className="text-xl text-muted-foreground">{summary}</p>}
       {children}
       {links.length > 0 && (
-        <p className={styles.links}>
+        <p className="flex flex-wrap gap-x-5 gap-y-2">
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
+              className="font-medium underline underline-offset-4"
             >
               {link.label} ↗
             </a>

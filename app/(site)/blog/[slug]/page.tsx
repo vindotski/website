@@ -6,6 +6,7 @@ import {
   getPostContent,
   getStaticSlugs,
 } from "@/lib/api";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatDate } from "@/lib/format";
 import DraftBadge from "../../_components/DraftBadge";
 import Tags from "../../_components/Tags";
@@ -14,7 +15,6 @@ import DetailPage from "../../_components/detail/DetailPage";
 import ScrollLink from "../../_components/ScrollLink";
 import NextLink from "../../_components/detail/NextLink";
 import Prose from "../../_components/detail/Prose";
-import styles from "./page.module.css";
 
 // Every page is prebuilt, so a navigation that waits for it is still quick.
 // Opts out of instant-navigation checks rather than streaming it behind Suspense
@@ -50,7 +50,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
           ...(post.demoUrl ? [{ href: post.demoUrl, label: "Demo" }] : []),
         ]}
       >
-        <div className={styles.meta}>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
           {post.date && (
             <time dateTime={post.date}>{formatDate(post.date)}</time>
           )}
@@ -59,19 +59,32 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         </div>
       </DetailIntro>
 
-      <aside className={styles.tldr} aria-label="Summary">
-        <p className={styles.tldrLabel}>TL;DR</p>
-        <p className={styles.tldrText}>{post.tldr}</p>
-      </aside>
+      {/* A note, not an alert: nothing to announce when the page loads */}
+      <Alert role="note" aria-label="Summary" className="max-w-[720px]">
+        <AlertTitle>TL;DR</AlertTitle>
+        <AlertDescription className="text-base text-foreground">
+          {post.tldr}
+        </AlertDescription>
+      </Alert>
 
       {/* From the post's ## headings, with the ids rehype-slug gives them */}
       {post.sections.length > 0 && (
-        <nav className={styles.toc} aria-label="Contents">
-          <p className={styles.tocLabel}>Contents</p>
-          <ol>
+        <nav
+          className="flex max-w-[720px] flex-col gap-2 text-sm"
+          aria-label="Contents"
+        >
+          <p className="font-mono text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            Contents
+          </p>
+          <ol className="flex flex-col gap-1 pl-5">
             {post.sections.map((section) => (
               <li key={section.id}>
-                <ScrollLink href={`#${section.id}`}>{section.title}</ScrollLink>
+                <ScrollLink
+                  href={`#${section.id}`}
+                  className="underline-offset-4 hover:underline"
+                >
+                  {section.title}
+                </ScrollLink>
               </li>
             ))}
           </ol>

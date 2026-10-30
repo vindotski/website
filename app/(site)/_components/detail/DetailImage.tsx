@@ -1,6 +1,5 @@
 import Image from "next/image";
 import type { Image as ContentImage } from "@/lib/types";
-import styles from "./DetailImage.module.css";
 
 type DetailImageProps = {
   image: ContentImage;
@@ -8,11 +7,18 @@ type DetailImageProps = {
   sizes: string;
 };
 
-// Fixed 16:10 frame, matching the project cards
+// Fixed 16:10 frame, matching the project cards. not-prose, since MDX images
+// render here too and typography mustn't style the frame
 export default function DetailImage({ image, sizes }: DetailImageProps) {
   return (
-    <div className={styles.frame}>
-      <Image src={image.src} alt={image.alt} fill sizes={sizes} />
+    <div className="not-prose relative aspect-[16/10] overflow-hidden bg-muted">
+      <Image
+        src={image.src}
+        alt={image.alt}
+        fill
+        sizes={sizes}
+        className="object-cover"
+      />
     </div>
   );
 }

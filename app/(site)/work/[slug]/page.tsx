@@ -6,6 +6,7 @@ import {
   getWorkBySlug,
   getWorkContent,
 } from "@/lib/api";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatYears } from "@/lib/format";
 import DraftBadge from "../../_components/DraftBadge";
 import DetailImage from "../../_components/detail/DetailImage";
@@ -14,7 +15,6 @@ import DetailPage from "../../_components/detail/DetailPage";
 import Facts from "../../_components/detail/Facts";
 import NextLink from "../../_components/detail/NextLink";
 import Prose from "../../_components/detail/Prose";
-import styles from "./page.module.css";
 
 // Every page is prebuilt, so a navigation that waits for it is still quick.
 // Opts out of instant-navigation checks rather than streaming it behind Suspense
@@ -66,10 +66,13 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
 
       <DetailImage image={item.image} sizes="(min-width: 1080px) 1048px, 100vw" />
 
-      <aside className={styles.impact} aria-label="Impact">
-        <p className={styles.impactLabel}>Impact</p>
-        <p className={styles.impactText}>{item.impact}</p>
-      </aside>
+      {/* A note, not an alert: nothing to announce when the page loads */}
+      <Alert role="note" aria-label="Impact" className="max-w-[720px]">
+        <AlertTitle>Impact</AlertTitle>
+        <AlertDescription className="text-base text-foreground">
+          {item.impact}
+        </AlertDescription>
+      </Alert>
 
       <Prose>
         <Content />
