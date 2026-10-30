@@ -6,7 +6,7 @@ import type { projectKind } from "./content/schemas";
 export type Hero = {
   // Shown above the headline
   title: string;
-  // Shown in the header while the hero or footer is in view
+  // Shown under the hero headline
   availability: string;
   headline: string;
 };

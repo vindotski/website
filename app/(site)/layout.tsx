@@ -1,5 +1,3 @@
-import { Suspense } from "react";
-import FloatingContact from "./_components/FloatingContact";
 import Footer from "./_components/Footer";
 import Header from "./_components/Header";
 
@@ -13,10 +11,6 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
           the bottom */}
       <main className="flex-1">{children}</main>
       <Footer />
-      {/* Reads the URL, which waits on pages with dynamic params */}
-      <Suspense fallback={null}>
-        <FloatingContact />
-      </Suspense>
     </>
   );
 }

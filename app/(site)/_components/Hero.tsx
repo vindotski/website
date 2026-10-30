@@ -23,9 +23,8 @@ export default async function Hero() {
   const gitHub = socials.find((social) => social.name === "GitHub");
 
   return (
-    // The dark theme, edge to edge. Phones show a floating Get in touch only
-    // while this is out of view
-    <div className="dark bg-background text-foreground" data-hides-contact>
+    // The dark theme, edge to edge
+    <div className="dark bg-background text-foreground">
       <section
         // At least the screen below the header. svh is the height with the
         // phone toolbars showing, so the hero never hides under them or jumps
@@ -45,8 +44,7 @@ export default async function Hero() {
           <h1 className="max-w-[16ch] text-4xl leading-[1.1] font-semibold tracking-tight text-balance split:text-6xl short-landscape:text-[min(2.25rem,9svh)]">
             {hero.headline}
           </h1>
-          {/* Phones only; tablets and up show it in the header */}
-          <p className="text-muted-foreground sm:hidden">{hero.availability}</p>
+          <p className="text-muted-foreground">{hero.availability}</p>
           {/* Phones: two equal buttons, gutter to gutter; from tablet width
               they keep their natural width. GitHub joins them from 768px,
               once the cue is centred; below that it sits by the cue */}

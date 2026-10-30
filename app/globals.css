@@ -22,16 +22,6 @@
      before sm, so md and below override it */
   --breakpoint-wide: 56.25rem;
 
-  /* The header's section label slides up when the section changes */
-  --animate-label-in: label-in 0.15s ease-out;
-
-  @keyframes label-in {
-    from {
-      opacity: 0;
-      transform: translateY(4px);
-    }
-  }
-
   /* The Hero's scroll cue arrow */
   --animate-nudge: nudge 2s ease-in-out infinite;
 

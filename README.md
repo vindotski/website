@@ -68,7 +68,7 @@ Tailwind CSS v4 and shadcn/ui, set up in [`app/globals.css`](app/globals.css). T
 - **Breakpoints.** Tailwind's `sm` (640) and `md` (768), plus `wide` (900, written as `56.25rem`: a px breakpoint can't be sorted against Tailwind's rem ones). Two custom variants for the Hero and teaser: `split` (tablets, or a phone held sideways) and `short-landscape` (a sideways phone). Custom variants are emitted after breakpoints, so a value that both a breakpoint and a custom variant set has to use variants that never overlap.
 - **MDX bodies** use the typography plugin (`prose`, in [`Prose.tsx`](app/(site)/_components/detail/Prose.tsx)).
 - **Buttons as links** use `buttonVariants()` on the link ([`ButtonLink.tsx`](app/(site)/_components/ButtonLink.tsx)): shadcn's `Button` always sets `role="button"`.
-- **Animations** (`animate-label-in`, `animate-nudge`, `animate-ticker`) and the `portrait-mask` utility are defined in `globals.css` and used with `motion-safe:`.
+- **Animations** (`animate-nudge`, `animate-ticker`) and the `portrait-mask` utility are defined in `globals.css` and used with `motion-safe:`.
 
 ## Content
 

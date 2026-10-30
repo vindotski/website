@@ -26,7 +26,6 @@ export default async function Footer() {
       // Dark, edge to edge; the content keeps the page column. Jumped-to
       // links stop below the sticky header
       className="dark scroll-mt-header bg-background text-foreground"
-      data-hides-contact
     >
       <section
         className="mx-auto flex max-w-content flex-col gap-10 px-gutter py-14 [--avatar:48px] sm:gap-6 sm:py-20 sm:[--avatar:64px]"
