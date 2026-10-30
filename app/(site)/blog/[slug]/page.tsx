@@ -39,7 +39,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return {};
-  return { title: `${post.title} · Ivan Vinski`, description: post.tldr };
+  return { title: post.title, description: post.tldr };
 }
 
 export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {

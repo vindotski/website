@@ -25,7 +25,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const item = await getWorkBySlug(slug);
   if (!item) return {};
-  return { title: `${item.name} · Ivan Vinski`, description: item.summary };
+  return { title: item.name, description: item.summary };
 }
 
 export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {

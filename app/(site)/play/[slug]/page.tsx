@@ -24,7 +24,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const sample = await getSampleBySlug(slug);
   if (!sample) return {};
-  return { title: `${sample.name} · Ivan Vinski`, description: sample.summary };
+  return { title: sample.name, description: sample.summary };
 }
 
 export default async function SamplePage({

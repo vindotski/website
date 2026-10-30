@@ -11,11 +11,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ivan Vinski · Software Engineer",
-  description: "I build the part you see. And the parts you don't.",
   metadataBase: new URL(siteUrl),
+  // Pages set only their own name; the template adds the rest
+  title: {
+    default: "Ivan Vinski · Product Engineer",
+    template: "%s · Ivan Vinski",
+  },
+  description: "Frontend by trade, full-stack by habit, product by focus.",
   // No canonical or og:url here: every page would inherit them and point at /
-  openGraph: { type: "website", siteName: "Ivan Vinski" },
+  openGraph: {
+    type: "website",
+    siteName: "Ivan Vinski",
+  },
   robots: isProduction
     ? { index: true, follow: true }
     : { index: false, follow: false },
