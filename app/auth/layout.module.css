@@ -1,0 +1,14 @@
+/* Fills the screen and centres in it; there's no header or footer */
+.auth {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 48px var(--gutter);
+}
+
+/* Keeps forms from stretching on wide screens */
+.column {
+  width: 100%;
+  max-width: 360px;
+}

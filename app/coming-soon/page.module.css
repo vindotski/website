@@ -1,4 +1,4 @@
-/* Centred in the screen below the header, like the hero */
+/* Fills the screen and centres in it; there's no header or footer */
 .comingSoon {
   display: flex;
   flex-direction: column;
@@ -6,7 +6,8 @@
   justify-content: center;
   gap: 16px;
   max-width: var(--content-width);
-  min-height: calc(100svh - var(--header-height));
+  flex: 1;
+  width: 100%;
   margin: 0 auto;
   padding: 48px var(--gutter);
   text-align: center;

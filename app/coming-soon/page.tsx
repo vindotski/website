@@ -10,15 +10,14 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-// Shown by the auth guard in place of every page until launch.
-// The footer below carries the contact prompt
+// Shown by the auth guard in place of every page until launch
 export default async function ComingSoonPage() {
   const hero = await getHero();
 
   return (
-    <section className={styles.comingSoon} aria-label="Coming soon">
+    <main className={styles.comingSoon} aria-label="Coming soon">
       <p className={styles.eyebrow}>Coming soon</p>
       <h1 className={styles.headline}>{hero.headline}</h1>
-    </section>
+    </main>
   );
 }
