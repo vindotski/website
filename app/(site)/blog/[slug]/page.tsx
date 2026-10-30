@@ -14,16 +14,6 @@ import ScrollLink from "../../_components/ScrollLink";
 import NextLink from "../../_components/detail/NextLink";
 import styles from "./page.module.css";
 
-// Every post follows the experiment report structure
-// Ids match what rehype-slug generates from each post's ## headings
-const sections = [
-  { id: "the-question", title: "The question" },
-  { id: "setup", title: "Setup" },
-  { id: "what-i-tried", title: "What I tried" },
-  { id: "results", title: "Results" },
-  { id: "takeaways", title: "Takeaways" },
-];
-
 // Every page is prebuilt, so a navigation that waits for it is still quick.
 // Opts out of instant-navigation checks rather than streaming it behind Suspense
 export const instant = false;
@@ -72,16 +62,19 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         <p className={styles.tldrText}>{post.tldr}</p>
       </aside>
 
-      <nav className={styles.toc} aria-label="Contents">
-        <p className={styles.tocLabel}>Contents</p>
-        <ol>
-          {sections.map((section) => (
-            <li key={section.id}>
-              <ScrollLink href={`#${section.id}`}>{section.title}</ScrollLink>
-            </li>
-          ))}
-        </ol>
-      </nav>
+      {/* From the post's ## headings, with the ids rehype-slug gives them */}
+      {post.sections.length > 0 && (
+        <nav className={styles.toc} aria-label="Contents">
+          <p className={styles.tocLabel}>Contents</p>
+          <ol>
+            {post.sections.map((section) => (
+              <li key={section.id}>
+                <ScrollLink href={`#${section.id}`}>{section.title}</ScrollLink>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
 
       <div className={styles.prose}>
         <Content />
