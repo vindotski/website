@@ -1,12 +1,25 @@
 "use client";
 
-import { Autocomplete } from "@base-ui/react/autocomplete";
-import { Dialog } from "@base-ui/react/dialog";
 import { Search as SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import styles from "./Search.module.css";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // One result from /api/search
 type Result = {
@@ -38,16 +51,15 @@ function message(status: Status, query: string, count: number) {
     : "Search work, play and posts";
 }
 
-// The search button in the header, and ⌘K / Ctrl+K anywhere, open a dialog
-// that searches as you type. Arrow keys pick a result and Enter opens it;
-// Enter with nothing picked searches straight away
+// The search button in the header, and ⌘K / Ctrl+K anywhere, open a command
+// palette that searches as you type. Arrow keys pick a result and Enter opens
+// it. The server ranks the results, so the palette doesn't filter them
 export default function Search() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Result[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
   const timer = useRef<number | undefined>(undefined);
   const request = useRef<AbortController | null>(null);
   // Results by query, so going back to an earlier query doesn't search again
@@ -114,83 +126,100 @@ export default function Search() {
 
   function onValueChange(value: string) {
     setQuery(value);
+    // The results on screen are for an older query from here on
+    if (value.trim().length >= minLength) setStatus("loading");
     window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => search(value), debounceMs);
   }
 
-  // Plain clicks and Enter navigate here and close the dialog. ⌘, Ctrl,
-  // Shift and middle clicks are left to the link, which opens a new tab or
-  // window
-  function choose(event: React.MouseEvent, url: string) {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button === 1) {
+  // cmdk always highlights the first result, so Enter while a newer search
+  // is pending would open a stale one; search straight away instead
+  function onSelect(url: string) {
+    if (status === "loading") {
+      search(query);
       return;
     }
-    event.preventDefault();
     setOpen(false);
     router.push(url);
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger
-        className={styles.trigger}
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger
+        render={
+          // A 44px target that doesn't push the header
+          <Button variant="ghost" size="icon-lg" className="-my-2 -mr-2" />
+        }
         aria-label="Search"
         title="Search (⌘K)"
       >
-        <SearchIcon aria-hidden="true" />
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Backdrop className={styles.backdrop} />
-        <Dialog.Popup className={styles.popup} initialFocus={inputRef}>
-          <Dialog.Title className={styles.visuallyHidden}>Search</Dialog.Title>
-          {/* Inline and always open: the dialog is the popup. The server
-              ranks the results, so nothing is filtered or autocompleted here */}
-          <Autocomplete.Root
-            inline
-            open
-            mode="none"
-            items={results}
+        <SearchIcon />
+      </DialogTrigger>
+      <DialogContent
+        showCloseButton={false}
+        // Phones: the whole screen; wider screens: a panel near the top, so
+        // results have room to grow downwards
+        className="flex h-dvh max-w-none flex-col gap-0 overflow-hidden rounded-none p-0 max-sm:inset-0 max-sm:translate-x-0 max-sm:translate-y-0 sm:top-[12vh] sm:h-auto sm:max-h-[76vh] sm:max-w-[640px] sm:translate-y-0"
+      >
+        <DialogTitle className="sr-only">Search</DialogTitle>
+        <DialogDescription className="sr-only">
+          Search work, play and posts. Use the arrow keys to pick a result.
+        </DialogDescription>
+        <Command shouldFilter={false} className="rounded-none!">
+          <CommandInput
             value={query}
             onValueChange={onValueChange}
-            itemToStringValue={(result: Result) => result.title}
+            placeholder="Search work, play and posts"
+            // 16px or more keeps iOS from zooming in on focus
+            className="text-base"
+          />
+          <p
+            className="px-3 py-2 text-sm text-muted-foreground"
+            role="status"
+            aria-live="polite"
           >
-            <div className={styles.field}>
-              <SearchIcon aria-hidden="true" />
-              <Autocomplete.Input
-                ref={inputRef}
-                className={styles.input}
-                placeholder="Search work, play and posts"
-                aria-label="Search"
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") search(query);
-                }}
-              />
-              <Dialog.Close className={styles.close}>Esc</Dialog.Close>
-            </div>
-            <Autocomplete.Status className={styles.status}>
-              {message(status, query, results.length)}
-            </Autocomplete.Status>
-            <Autocomplete.List className={styles.list}>
-              {(result: Result) => (
-                <Autocomplete.Item
-                  key={result.url}
-                  value={result}
-                  className={styles.item}
-                  render={<Link href={result.url} />}
-                  onClick={(event) => choose(event, result.url)}
-                >
-                  <span className={styles.type}>{result.type}</span>
-                  <span className={styles.title}>
-                    {result.title}
-                    {result.heading && ` — ${result.heading}`}
-                  </span>
-                  <span className={styles.snippet}>{result.snippet}</span>
-                </Autocomplete.Item>
-              )}
-            </Autocomplete.List>
-          </Autocomplete.Root>
-        </Dialog.Popup>
-      </Dialog.Portal>
-    </Dialog.Root>
+            {message(status, query, results.length)}
+          </p>
+          <CommandList className="max-h-none flex-1">
+            {results.length > 0 && (
+              <CommandGroup>
+                {results.map((result) => (
+                  <CommandItem
+                    key={result.url}
+                    value={result.url}
+                    onSelect={onSelect}
+                    className="items-start"
+                  >
+                    {/* A real link, so ⌘, Ctrl, Shift and middle clicks open a
+                        new tab or window. Plain clicks go through onSelect */}
+                    <Link
+                      href={result.url}
+                      tabIndex={-1}
+                      className="flex flex-1 flex-col gap-1"
+                      onClick={(event) => {
+                        if (event.metaKey || event.ctrlKey || event.shiftKey) {
+                          event.stopPropagation();
+                          return;
+                        }
+                        event.preventDefault();
+                      }}
+                    >
+                      <Badge variant="outline">{result.type}</Badge>
+                      <span className="font-medium">
+                        {result.title}
+                        {result.heading && ` — ${result.heading}`}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {result.snippet}
+                      </span>
+                    </Link>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </DialogContent>
+    </Dialog>
   );
 }
