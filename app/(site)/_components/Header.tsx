@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { getHero, getItems } from "@/lib/api";
 import { CONTENT_TYPES, type ContentType } from "@/lib/content-types";
 import HeaderContact, { HeaderContactFallback } from "./HeaderContact";
+import Search from "./Search";
 import SectionMenu, { SectionMenuFallback } from "./SectionMenu";
 import styles from "./Header.module.css";
 
@@ -41,6 +42,7 @@ export default async function Header() {
             <SectionMenu links={links} pageNames={pageNames} />
           </Suspense>
         </div>
+        <Search />
         {/* Availability or Get in touch, depending on what's in view; reads
             the URL, like the menu */}
         <Suspense

@@ -6,10 +6,10 @@
   background: var(--color-background);
 }
 
-/* The name with the section menu, and the contact button */
+/* The name with the section menu, search, and the contact button */
 .inner {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   column-gap: 8px;
   align-items: center;
   max-width: var(--content-width);

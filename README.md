@@ -81,6 +81,7 @@ Supabase holds a search index derived from the MDX. It can be deleted and rebuil
 - **Scores.** gte-small rates even unrelated text around 0.75–0.80, while good matches score 0.85–0.90. A minimum similarity cutoff belongs around 0.82, not 0.5.
 - **Sync.** `pnpm embed` reads `content/`, skips drafts, and keeps scheduled items (`match_documents` hides them until their date). Each chunk's hash covers every stored field and the model name, so only new or changed chunks are embedded; rows for removed chunks, items or types are deleted afterwards. It refuses to run if it finds no content, so a broken path can't wipe the index. Sections are split at ~300 words to stay inside gte-small's 512 tokens.
 - **API.** `GET /api/search?q=…` with optional `type` and `tag` (both repeatable; a result needs every tag and any one type) and `limit` (1–10, default 5). It embeds the query, calls `match_documents`, drops results below 0.82, keeps one result per page section, and returns `{ results: [{ url, title, heading, type, snippet, similarity }] }`. URLs come from the type's route, so `/blog/<slug>#<heading-id>`. Until launch it answers 401 to guests; the proxy already hides it behind a 404.
+- **UI.** The search button in the header, or ⌘K / Ctrl+K, opens a dialog (Base UI `Dialog` with an inline `Autocomplete`). It searches 400 ms after typing stops, from 3 characters; Enter searches at once. Arrow keys pick a result and Enter opens it. Results are real links, so ⌘-click opens a new tab. A newer query cancels the older request, and results are cached per query for the visit.
 - **In CI.** The [Search sync](.github/workflows/search-sync.yml) workflow runs `pnpm embed` after each successful Vercel production deploy (`deployment_status`), on exactly the deployed commit, so search never links to a page that isn't live yet. It runs only while the repository variable `SEARCH_SYNC` is `on`; otherwise runs show as skipped. Run it by hand from the Actions tab for a full re-sync, e.g. after a Vercel Instant Rollback, which leaves the index on the newer commit until the next deploy.
 
 Still to build:
@@ -90,7 +91,7 @@ Still to build:
 - [x] Sync script, [`scripts/embed.mts`](scripts/embed.mts): chunk, hash, embed what changed, upsert, delete stale rows
 - [x] CI sync, [`.github/workflows/search-sync.yml`](.github/workflows/search-sync.yml)
 - [x] Search route, [`app/api/search/route.ts`](app/api/search/route.ts)
-- [ ] Search UI
+- [x] Search UI, [`Search.tsx`](app/(site)/_components/Search.tsx)
 
 ## Supabase
 
