@@ -40,6 +40,16 @@
       transform: translateY(6px);
     }
   }
+
+  /* The teaser's "Coming soon" strip: two identical halves, so moving half
+     the width lands on an identical frame and the loop has no seam */
+  --animate-ticker: ticker 20s linear infinite;
+
+  @keyframes ticker {
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 /* The portrait's shoulders run into the image's bottom and side edges; this
