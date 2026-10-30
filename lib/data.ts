@@ -6,7 +6,6 @@ import type {
   Sample,
   Service,
   Social,
-  Work,
 } from "./types";
 
 // Fields marked TODO are generated placeholders, to be replaced with real content
@@ -74,66 +73,6 @@ export const services: Service[] = [
       { kind: "work", slug: "odjeca-hr" },
       { kind: "samples", slug: "sokobanko" },
     ],
-  },
-];
-
-export const work: Work[] = [
-  {
-    slug: "huddleos",
-    name: "HuddleOS",
-    summary: "Live data. Live events. No lag.",
-    company: "Huddle Tech",
-    role: "Frontend Engineer",
-    type: "Frontend",
-    years: { start: 2020, end: 2024 },
-    stack: ["Vue", "GraphQL", "WebSockets"],
-    productUrl: "https://huddle.tech/products/huddle-os/",
-    image: { src: "/images/work/huddleos.svg", alt: "HuddleOS dashboard" }, // TODO
-    impact:
-      "Presented on stage in Las Vegas. Helped close a major investment.",
-    // TODO
-    context:
-      "HuddleOS runs live events in real time. Organisers watch data change as it happens and act on it straight away, so the interface has to keep up without getting in the way.",
-    // TODO
-    myRole:
-      "I built the real-time frontend: the live views, the data layer over GraphQL and WebSockets, and the components the rest of the team built on.",
-  },
-  {
-    slug: "kalistenio",
-    name: "Kalistenio",
-    summary: "Calisthenics training, in your pocket.", // TODO
-    company: "Independent",
-    role: "Product Engineer", // TODO
-    type: "Product",
-    years: { start: 2025 }, // TODO
-    stack: ["React Native", "Supabase"],
-    image: { src: "/images/work/kalistenio.svg", alt: "Kalistenio workout screen" }, // TODO
-    impact: "From idea to app store, on my own.", // TODO
-    // TODO
-    context:
-      "Kalistenio is a calisthenics app for people training with their own body weight. It plans workouts and tracks progress over time.",
-    // TODO
-    myRole:
-      "Everything: product decisions, design, the React Native app and the Supabase backend.",
-  },
-  {
-    slug: "odjeca-hr",
-    name: "Odjeca.hr",
-    summary: "Fashion search for a whole region.",
-    company: "Interproactive",
-    role: "Software Engineer",
-    type: "Fullstack",
-    years: { start: 2024, end: 2025 },
-    stack: ["Node.js", "React", "Handlebars", "MongoDB"],
-    productUrl: "https://odjeca.hr/zene",
-    image: { src: "/images/work/odjeca-hr.svg", alt: "Odjeca.hr search results" }, // TODO
-    impact: "Thousands of shops. One search.", // TODO
-    // TODO
-    context:
-      "Odjeca.hr is a large vertical search engine for fashion across Croatia and the Balkans. It brings products from many shops into one place to search and compare.",
-    // TODO
-    myRole:
-      "I worked across the stack: search pages in React and Handlebars, and the Node.js and MongoDB services behind them.",
   },
 ];
 

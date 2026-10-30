@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getNextWork, getWork, getWorkBySlug } from "@/lib/api";
+import {
+  getNextWork,
+  getWork,
+  getWorkBySlug,
+  getWorkContent,
+} from "@/lib/api";
 import { formatYears } from "@/lib/format";
-import { DetailBlock, DetailBody } from "../../_components/detail/DetailBody";
 import DetailImage from "../../_components/detail/DetailImage";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
 import Facts from "../../_components/detail/Facts";
 import NextLink from "../../_components/detail/NextLink";
+import Prose from "../../_components/detail/Prose";
 import styles from "./page.module.css";
 
 // Every page is prebuilt, so a navigation that waits for it is still quick.
@@ -25,7 +30,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const item = await getWorkBySlug(slug);
   if (!item) return {};
-  return { title: item.name, description: item.summary };
+  return { title: item.title, description: item.tldr };
 }
 
 export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
@@ -33,12 +38,13 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
   const item = await getWorkBySlug(slug);
   if (!item) notFound();
 
+  const Content = await getWorkContent(slug);
   const next = await getNextWork(slug);
 
   return (
     <DetailPage backHref="/#work" backLabel="Work">
       <DetailIntro
-        title={item.name}
+        title={item.title}
         summary={item.summary}
         links={
           item.productUrl
@@ -63,17 +69,11 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
         <p className={styles.impactText}>{item.impact}</p>
       </aside>
 
-      <DetailBody>
-        <DetailBlock title="Context">
-          <p>{item.context}</p>
-        </DetailBlock>
+      <Prose>
+        <Content />
+      </Prose>
 
-        <DetailBlock title="My role">
-          <p>{item.myRole}</p>
-        </DetailBlock>
-      </DetailBody>
-
-      {next && <NextLink href={`/work/${next.slug}`} name={next.name} />}
+      {next && <NextLink href={`/work/${next.slug}`} name={next.title} />}
     </DetailPage>
   );
 }

@@ -1,4 +1,6 @@
+import type { z } from "zod";
 import type { Item } from "./content/load";
+import type { projectKind } from "./content/schemas";
 
 export type Hero = {
   // Shown above the headline
@@ -46,25 +48,10 @@ export type Role = {
 };
 
 // The three kinds of work, shared by work items, samples and services
-export type ProjectType = "Frontend" | "Fullstack" | "Product";
+export type ProjectType = z.infer<typeof projectKind>;
 
-// Display order is the order of the data array; "Next" is the following item
-export type Work = {
-  slug: string;
-  name: string;
-  summary: string;
-  company: string;
-  // Job title, shown on the work page; `type` is the kind of work, on the card
-  role: string;
-  type: ProjectType;
-  years: YearRange;
-  stack: string[];
-  productUrl?: string;
-  image: Image;
-  impact: string;
-  context: string;
-  myRole: string;
-};
+// A work item's front matter, slug and ## sections
+export type Work = Item<"work">;
 
 export type SampleStatus = "Live" | "In progress" | "Archived";
 

@@ -10,7 +10,6 @@ import {
   samples,
   services,
   socials,
-  work,
 } from "./data";
 import type {
   About,
@@ -68,29 +67,34 @@ export async function getSocials(): Promise<Social[]> {
 // Proof slugs become links; any that no longer match a project are dropped,
 // so renaming or removing a project can't leave a broken link
 export async function getServices(): Promise<ResolvedService[]> {
+  const work = await getWork();
   return services.map((service) => ({
     ...service,
     proof: service.proof.flatMap(({ kind, slug }) => {
-      const item = findBySlug<Work | Sample>(
-        kind === "work" ? work : samples,
-        slug,
-      );
-      const path = kind === "work" ? "work" : "play";
-      return item ? [{ name: item.name, href: `/${path}/${slug}` }] : [];
+      if (kind === "work") {
+        const item = findBySlug(work, slug);
+        return item ? [{ name: item.title, href: `/work/${slug}` }] : [];
+      }
+      const item = findBySlug(samples, slug);
+      return item ? [{ name: item.name, href: `/play/${slug}` }] : [];
     }),
   }));
 }
 
 export async function getWork(): Promise<Work[]> {
-  return work;
+  return getItems("work");
 }
 
 export async function getWorkBySlug(slug: string): Promise<Work | null> {
-  return findBySlug(work, slug);
+  return getItem("work", slug);
+}
+
+export async function getWorkContent(slug: string): Promise<MDXContent> {
+  return getContent("work", slug);
 }
 
 export async function getNextWork(slug: string): Promise<Work | null> {
-  return nextAfter(work, slug);
+  return getNext("work", slug);
 }
 
 export async function getSamples(): Promise<Sample[]> {

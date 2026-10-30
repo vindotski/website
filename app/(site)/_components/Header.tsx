@@ -22,7 +22,7 @@ export default async function Header() {
   ]);
   // Names for the header trail on project and blog pages
   const pageNames = Object.fromEntries([
-    ...work.map((item) => [`/work/${item.slug}`, item.name]),
+    ...work.map((item) => [`/work/${item.slug}`, item.title]),
     ...samples.map((item) => [`/play/${item.slug}`, item.name]),
     ...posts.map((post) => [`/blog/${post.slug}`, post.title]),
   ]);

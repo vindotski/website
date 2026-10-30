@@ -20,9 +20,9 @@ export default async function Work() {
         {work.map((item, index) => (
           <ProjectCard
             key={item.slug}
-            label={{ start: item.type, end: formatYears(item.years) }}
+            label={{ start: item.kind, end: formatYears(item.years) }}
             eyebrow={item.company}
-            name={item.name}
+            name={item.title}
             href={`/work/${item.slug}`}
             image={item.image}
             featured={index === 0}
