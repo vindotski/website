@@ -60,7 +60,9 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         ]}
       >
         <div className={styles.meta}>
-          <time dateTime={post.date}>{formatDate(post.date)}</time>
+          {post.date && (
+            <time dateTime={post.date}>{formatDate(post.date)}</time>
+          )}
           <Tags tags={post.tags} />
         </div>
       </DetailIntro>

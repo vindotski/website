@@ -1,7 +1,7 @@
 import type { MDXContent } from "mdx/types";
 import { cacheLife } from "next/cache";
-import { readdir } from "node:fs/promises";
-import path from "node:path";
+import { CONTENT_TYPES, type ContentType } from "./content-types";
+import { loadItems, type Item } from "./content/load";
 import {
   about,
   contact,
@@ -16,7 +16,7 @@ import type {
   About,
   Contact,
   Hero,
-  PostMeta,
+  Post,
   ResolvedService,
   Role,
   Sample,
@@ -26,23 +26,12 @@ import type {
 
 // Async so callers stay the same when content moves out of local data
 
-const postsDir = path.join(process.cwd(), "content/posts");
-
-// Reads each post's front matter. Posts only change on deploy, so cache for as
-// long as possible (the default profile would refresh every 15 minutes)
-async function loadPosts(): Promise<PostMeta[]> {
+// MDX content only changes on deploy, so cache for as long as possible (the
+// default profile would refresh every 15 minutes)
+async function loadAll<T extends ContentType>(type: T): Promise<Item<T>[]> {
   "use cache";
   cacheLife("max");
-  const files = (await readdir(postsDir)).filter((file) =>
-    file.endsWith(".mdx"),
-  );
-  return Promise.all(
-    files.map(async (file) => {
-      const slug = file.replace(/\.mdx$/, "");
-      const { frontmatter } = await import(`@/content/posts/${slug}.mdx`);
-      return { slug, ...(frontmatter as Omit<PostMeta, "slug">) };
-    }),
-  );
+  return loadItems(type);
 }
 
 function findBySlug<T extends { slug: string }>(items: T[], slug: string) {
@@ -116,23 +105,58 @@ export async function getNextSample(slug: string): Promise<Sample | null> {
   return nextAfter(samples, slug);
 }
 
-// Newest first; ISO dates sort correctly as strings
-export async function getPosts(): Promise<PostMeta[]> {
-  const posts = await loadPosts();
-  return [...posts].sort((a, b) => b.date.localeCompare(a.date));
+// In the type's display order. Undated drafts sort last; ISO dates sort
+// correctly as strings
+export async function getItems<T extends ContentType>(
+  type: T,
+): Promise<Item<T>[]> {
+  const items: Item[] = [...(await loadAll(type))];
+  if (CONTENT_TYPES[type].sortBy === "date") {
+    items.sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+  } else {
+    const order = (item: Item) => item.order ?? Number.MAX_SAFE_INTEGER;
+    items.sort((a, b) => order(a) - order(b));
+  }
+  return items as Item<T>[];
 }
 
-export async function getPostBySlug(slug: string): Promise<PostMeta | null> {
-  return findBySlug(await loadPosts(), slug);
+export async function getItem<T extends ContentType>(
+  type: T,
+  slug: string,
+): Promise<Item<T> | null> {
+  return findBySlug(await loadAll(type), slug);
 }
 
-// The post's body as a component; front matter comes from getPostBySlug
-export async function getPostContent(slug: string): Promise<MDXContent> {
-  const { default: Content } = await import(`@/content/posts/${slug}.mdx`);
+// Follows the display order
+export async function getNext<T extends ContentType>(
+  type: T,
+  slug: string,
+): Promise<Item<T> | null> {
+  return nextAfter(await getItems(type), slug);
+}
+
+// The item's body as a component; front matter comes from getItem
+export async function getContent(
+  type: ContentType,
+  slug: string,
+): Promise<MDXContent> {
+  const { default: Content } = await import(`@/content/${type}/${slug}.mdx`);
   return Content;
 }
 
-// Follows the newest-first order, so "next" is the next older post
-export async function getNextPost(slug: string): Promise<PostMeta | null> {
-  return nextAfter(await getPosts(), slug);
+export async function getPosts(): Promise<Post[]> {
+  return getItems("posts");
+}
+
+export async function getPostBySlug(slug: string): Promise<Post | null> {
+  return getItem("posts", slug);
+}
+
+export async function getPostContent(slug: string): Promise<MDXContent> {
+  return getContent("posts", slug);
+}
+
+// Newest first, so "next" is the next older post
+export async function getNextPost(slug: string): Promise<Post | null> {
+  return getNext("posts", slug);
 }

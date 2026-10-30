@@ -1,3 +1,5 @@
+import type { Item } from "./content/load";
+
 export type Hero = {
   // Shown above the headline
   title: string;
@@ -105,16 +107,5 @@ export type Sample = {
   next: string;
 };
 
-// Front matter of a post's MDX file; the body sections are its ## headings
-export type PostMeta = {
-  // From the file name
-  slug: string;
-  title: string;
-  // ISO date, e.g. "2026-11-03"; posts sort by it
-  date: string;
-  // Without "#"
-  tags: string[];
-  repoUrl?: string;
-  demoUrl?: string;
-  tldr: string;
-};
+// A post's front matter, slug and ## sections
+export type Post = Item<"posts">;
