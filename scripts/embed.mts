@@ -135,7 +135,16 @@ async function embed(texts: string[]) {
   const { data, error } = await db.functions.invoke<{
     embeddings: number[][];
   }>("embed", { body: { input: texts } });
-  if (error || !data) throw new Error(`embed failed: ${error?.message}`);
+  if (error) {
+    // supabase-js only says "non-2xx"; the status and body say why
+    const response: unknown = error.context;
+    const detail =
+      response instanceof Response
+        ? `${response.status} ${await response.text().catch(() => "")}`
+        : error.message;
+    throw new Error(`embed failed: ${detail}`);
+  }
+  if (!data) throw new Error("embed failed: empty response");
   return data.embeddings;
 }
 
