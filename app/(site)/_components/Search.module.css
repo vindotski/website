@@ -10,7 +10,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-text);
+  color: var(--legacy-text);
   cursor: pointer;
 }
 
@@ -34,7 +34,7 @@
   z-index: 21;
   display: flex;
   flex-direction: column;
-  background: var(--color-background);
+  background: var(--legacy-background);
 }
 
 @media (min-width: 640px) {
@@ -42,7 +42,7 @@
     inset: 12vh auto auto 50%;
     width: min(640px, calc(100vw - 2 * var(--gutter)));
     max-height: 76vh;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--legacy-border);
     transform: translateX(-50%);
   }
 }
@@ -62,14 +62,14 @@
   gap: 12px;
   height: var(--header-height);
   padding: 0 var(--gutter);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--legacy-border);
 }
 
 .field > svg {
   flex: none;
   width: 18px;
   height: 18px;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
 }
 
 .input {
@@ -79,7 +79,7 @@
   border: 0;
   outline: none;
   background: none;
-  color: var(--color-text);
+  color: var(--legacy-text);
   /* 16px or more keeps iOS from zooming in on focus */
   font-size: var(--text-body);
 }
@@ -87,9 +87,9 @@
 .close {
   flex: none;
   padding: 2px 6px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--legacy-border);
   background: none;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   font-family: var(--font-mono);
   font-size: var(--text-label);
   cursor: pointer;
@@ -98,7 +98,7 @@
 .status {
   margin: 0;
   padding: 12px var(--gutter);
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   font-size: var(--text-small);
 }
 
@@ -117,13 +117,13 @@
   flex-direction: column;
   gap: 4px;
   padding: 12px var(--gutter);
-  color: var(--color-text);
+  color: var(--legacy-text);
   text-decoration: none;
   cursor: pointer;
 }
 
 .item[data-highlighted] {
-  background: var(--color-placeholder);
+  background: var(--legacy-placeholder);
 }
 
 /* Like the card labels */
@@ -133,7 +133,7 @@
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
 }
 
 .title {
@@ -141,7 +141,7 @@
 }
 
 .snippet {
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   font-size: var(--text-small);
   line-height: 1.5;
 }

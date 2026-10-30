@@ -10,7 +10,7 @@
   padding: 12px 0;
   border: 0;
   background: none;
-  color: var(--color-text);
+  color: var(--legacy-text);
   font: inherit;
   /* One weight for both, so only the colour tells them apart; bold next to
      regular made the name look a size bigger */
@@ -21,7 +21,7 @@
 
 /* Between the name and the section, like a path */
 .separator {
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   font-weight: 400;
 }
 
@@ -46,7 +46,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
 }
 
 /* The name goes home. Phones: the menu icon sits at the right; tablets and
@@ -90,7 +90,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-text);
+  color: var(--legacy-text);
   cursor: pointer;
 }
 
@@ -119,7 +119,7 @@
 
 .trigger:hover .where,
 .trigger[aria-expanded="true"] .where {
-  color: var(--color-text);
+  color: var(--legacy-text);
 }
 
 /* Slides up when the section changes */
@@ -154,7 +154,7 @@
   height: calc(100svh - var(--header-height));
   padding: 24px 0;
   overflow-y: auto;
-  background: var(--color-background);
+  background: var(--legacy-background);
   opacity: 0;
   visibility: hidden;
   transition:
@@ -194,13 +194,13 @@
   font-size: var(--text-title);
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   text-decoration: none;
 }
 
 .links a:hover,
 .links a[aria-current="true"] {
-  color: var(--color-text);
+  color: var(--legacy-text);
 }
 
 /* Tablets and up: only as tall as the links, with a line under it, and the
@@ -208,7 +208,7 @@
 @media (min-width: 640px) {
   .panel {
     height: auto;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--legacy-border);
   }
 }
 

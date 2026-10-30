@@ -55,14 +55,14 @@
 /* Inline code only; code blocks are styled on pre */
 .prose :not(pre) > code {
   padding: 2px 6px;
-  background: var(--color-placeholder);
+  background: var(--legacy-placeholder);
 }
 
 .prose pre {
   padding: 20px;
   overflow-x: auto;
-  background: var(--color-text);
-  color: var(--color-placeholder);
+  background: var(--legacy-text);
+  color: var(--legacy-placeholder);
   font-size: var(--text-small);
   line-height: 1.6;
 }

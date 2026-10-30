@@ -16,7 +16,7 @@
 
 /* No border to light up, so keyboard focus outlines the whole card */
 .card:has(.link:focus-visible) {
-  outline: 2px solid var(--color-text);
+  outline: 2px solid var(--legacy-text);
   outline-offset: 6px;
 }
 
@@ -27,7 +27,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   font-family: var(--font-mono);
 }
 
@@ -41,7 +41,7 @@
   position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: var(--color-placeholder);
+  background: var(--legacy-placeholder);
 }
 
 .image img {
@@ -67,7 +67,7 @@
 }
 
 .arrow {
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   transition:
     transform 0.2s,
     color 0.2s;
@@ -75,14 +75,14 @@
 
 .card:hover .arrow,
 .card:has(.link:focus-visible) .arrow {
-  color: var(--color-text);
+  color: var(--legacy-text);
   transform: translateX(4px);
 }
 
 .tags {
   margin: 0;
   font-size: var(--text-small);
-  color: var(--color-muted);
+  color: var(--legacy-muted);
 }
 
 .summary {
@@ -113,7 +113,7 @@
   flex-direction: column;
   gap: 4px;
   padding-top: 12px;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--legacy-border);
 }
 
 .impactLabel {
@@ -122,7 +122,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   font-family: var(--font-mono);
 }
 

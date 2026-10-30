@@ -16,7 +16,7 @@
 .summary {
   margin: 0;
   font-size: var(--text-lead);
-  color: var(--color-muted);
+  color: var(--legacy-muted);
 }
 
 .links {

@@ -5,11 +5,11 @@
 }
 
 .posts li {
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--legacy-border);
 }
 
 .posts li:last-child {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--legacy-border);
 }
 
 .post {
@@ -37,13 +37,13 @@
 
 .arrow {
   margin-left: auto;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   transition: transform 0.2s;
 }
 
 .post:hover .arrow,
 .post:focus-visible .arrow {
-  color: var(--color-text);
+  color: var(--legacy-text);
   transform: translateX(4px);
 }
 
@@ -52,7 +52,7 @@
   flex-wrap: wrap;
   gap: 4px 16px;
   font-size: var(--text-small);
-  color: var(--color-muted);
+  color: var(--legacy-muted);
 }
 
 .post:hover .title,

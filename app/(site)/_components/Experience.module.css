@@ -39,14 +39,14 @@
   left: 0;
   width: 11px;
   height: 11px;
-  border: 2px solid var(--color-muted);
-  background: var(--color-background);
+  border: 2px solid var(--legacy-muted);
+  background: var(--legacy-background);
 }
 
 /* The current role's dot is filled */
 .role[data-current="true"]::before {
-  border-color: var(--color-text);
-  background: var(--color-text);
+  border-color: var(--legacy-text);
+  background: var(--legacy-text);
 }
 
 /* Line from this dot down to the next one */
@@ -57,7 +57,7 @@
   bottom: 4px;
   left: 5px;
   width: 1px;
-  background: var(--color-border);
+  background: var(--legacy-border);
 }
 
 .roleTop {
@@ -73,13 +73,13 @@
 
 .years {
   flex-shrink: 0;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   font-size: var(--text-small);
   font-variant-numeric: tabular-nums;
 }
 
 .company {
-  color: var(--color-muted);
+  color: var(--legacy-muted);
 }
 
 /* Wide screens: intro left, timeline right. The hero already shows the photo */

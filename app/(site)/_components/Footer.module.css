@@ -1,21 +1,21 @@
 /* Black, edge to edge; the content keeps the page column */
 .footer {
   /* Grey on black: the site's muted grey is too dark here */
-  --footer-muted: color-mix(in srgb, var(--color-background) 70%, transparent);
+  --footer-muted: color-mix(in srgb, var(--legacy-background) 70%, transparent);
   --footer-line-color: color-mix(
     in srgb,
-    var(--color-background) 30%,
+    var(--legacy-background) 30%,
     transparent
   );
-  background: var(--color-text);
-  color: var(--color-background);
+  background: var(--legacy-text);
+  color: var(--legacy-background);
   /* Keeps the prompt clear of the sticky header when jumped to */
   scroll-margin-top: var(--header-height);
 }
 
 /* The global black outline would vanish on black */
 .footer :focus-visible {
-  outline-color: var(--color-background);
+  outline-color: var(--legacy-background);
 }
 
 .contact,
@@ -89,7 +89,7 @@
   justify-content: center;
   width: var(--avatar);
   height: var(--avatar);
-  border: 1px solid var(--color-background);
+  border: 1px solid var(--legacy-background);
   color: var(--footer-muted);
 }
 
@@ -104,7 +104,7 @@
   max-width: 18ch;
   margin: 0;
   padding: 16px 24px;
-  border: 1px solid var(--color-background);
+  border: 1px solid var(--legacy-background);
   font-size: var(--text-title);
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -121,14 +121,14 @@
   top: calc(var(--avatar) / 2 - 6px);
   width: 12px;
   height: 12px;
-  background: var(--color-text);
+  background: var(--legacy-text);
   rotate: 45deg;
 }
 
 .bubble::before {
   left: -7px;
-  border-bottom: 1px solid var(--color-background);
-  border-left: 1px solid var(--color-background);
+  border-bottom: 1px solid var(--legacy-background);
+  border-left: 1px solid var(--legacy-background);
 }
 
 /* The visitor's answer: the buttons in a bubble pointing right */
@@ -137,13 +137,13 @@
   position: relative;
   justify-self: end;
   padding: 12px;
-  border: 1px solid var(--color-background);
+  border: 1px solid var(--legacy-background);
 }
 
 .reply::after {
   right: -7px;
-  border-top: 1px solid var(--color-background);
-  border-right: 1px solid var(--color-background);
+  border-top: 1px solid var(--legacy-background);
+  border-right: 1px solid var(--legacy-background);
 }
 
 /* Phones: the buttons stack, full width of the bubble */
@@ -204,7 +204,7 @@
 
 .social:hover,
 .social:focus-visible {
-  color: var(--color-background);
+  color: var(--legacy-background);
 }
 
 .social svg {
@@ -219,7 +219,7 @@
 }
 
 .top:hover {
-  color: var(--color-background);
+  color: var(--legacy-background);
   text-decoration: underline;
 }
 

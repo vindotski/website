@@ -4,15 +4,15 @@
 /* Flips the site's colours for everything inside, so the text, buttons,
    lines and focus outlines all turn white on black. Fills the screen */
 .band {
-  --color-text: #fff;
-  --color-background: #000;
-  --color-border: #fff;
+  --legacy-text: #fff;
+  --legacy-background: #000;
+  --legacy-border: #fff;
   /* #555 is unreadable on black */
-  --color-muted: rgb(255 255 255 / 70%);
+  --legacy-muted: rgb(255 255 255 / 70%);
   position: relative;
   flex: 1;
-  background: var(--color-background);
-  color: var(--color-text);
+  background: var(--legacy-background);
+  color: var(--legacy-text);
 }
 
 .hero {
@@ -84,14 +84,14 @@
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
 }
 
 .eyebrow::before {
   content: "";
   width: 24px;
   height: 1px;
-  background: var(--color-text);
+  background: var(--legacy-text);
 }
 
 .headline {
@@ -110,7 +110,7 @@
    there's no header to carry it */
 .subline {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--legacy-muted);
 }
 
 /* Phones: one row, gutter to gutter. The email button takes what's left

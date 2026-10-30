@@ -3,7 +3,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 22px;
-  border: 1px solid var(--color-text);
+  border: 1px solid var(--legacy-text);
   text-decoration: none;
   transition:
     background 0.15s,
@@ -27,49 +27,49 @@
 
 /* Each variant swaps its fill and text colour on hover */
 .primary {
-  background: var(--color-text);
-  color: var(--color-background);
+  background: var(--legacy-text);
+  color: var(--legacy-background);
 }
 
 .primary:hover {
-  background: var(--color-background);
-  color: var(--color-text);
+  background: var(--legacy-background);
+  color: var(--legacy-text);
 }
 
 .secondary {
   background: transparent;
-  color: var(--color-text);
+  color: var(--legacy-text);
 }
 
 .secondary:hover {
-  background: var(--color-text);
-  color: var(--color-background);
+  background: var(--legacy-text);
+  color: var(--legacy-background);
 }
 
 /* For dark backgrounds */
 .inverse {
-  border-color: var(--color-background);
-  background: var(--color-background);
-  color: var(--color-text);
+  border-color: var(--legacy-background);
+  background: var(--legacy-background);
+  color: var(--legacy-text);
 }
 
 .inverse:hover {
   background: transparent;
-  color: var(--color-background);
+  color: var(--legacy-background);
 }
 
 .inverseSecondary {
-  border-color: var(--color-background);
+  border-color: var(--legacy-background);
   background: transparent;
-  color: var(--color-background);
+  color: var(--legacy-background);
 }
 
 .inverseSecondary:hover {
-  background: var(--color-background);
-  color: var(--color-text);
+  background: var(--legacy-background);
+  color: var(--legacy-text);
 }
 
 .inverse:focus-visible,
 .inverseSecondary:focus-visible {
-  outline-color: var(--color-background);
+  outline-color: var(--legacy-background);
 }

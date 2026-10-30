@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: center;
   padding: 8px 12px;
-  background: var(--color-placeholder);
-  color: var(--color-muted);
+  background: var(--legacy-placeholder);
+  color: var(--legacy-muted);
   font-size: var(--text-small);
   text-align: center;
 }

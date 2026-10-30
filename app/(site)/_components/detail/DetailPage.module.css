@@ -10,7 +10,7 @@
 .back {
   align-self: flex-start;
   font-size: var(--text-small);
-  color: var(--color-muted);
+  color: var(--legacy-muted);
   text-decoration: none;
 }
 
