@@ -4,20 +4,24 @@ import { formatDate } from "@/lib/format";
 import DraftBadge from "./DraftBadge";
 import Section from "./Section";
 import Tags from "./Tags";
-import styles from "./Blog.module.css";
 
 export default async function Blog() {
   const posts = await getPosts();
 
   return (
     <Section id="blog" title="Blog">
-      <ul className={styles.posts}>
+      <ul className="divide-y border-y">
         {posts.map((post) => (
           <li key={post.slug}>
-            <Link href={`/blog/${post.slug}`} className={styles.post}>
-              <div className={styles.text}>
-                <h3 className={styles.title}>{post.title}</h3>
-                <div className={styles.meta}>
+            <Link
+              href={`/blog/${post.slug}`}
+              className="group flex items-center gap-4 py-5 pr-2"
+            >
+              <div className="flex flex-1 flex-col gap-2">
+                <h3 className="max-w-[560px] text-xl font-semibold tracking-tight underline-offset-4 group-hover:underline group-focus-visible:underline">
+                  {post.title}
+                </h3>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                   {post.date && (
                     <time dateTime={post.date}>{formatDate(post.date)}</time>
                   )}
@@ -25,7 +29,10 @@ export default async function Blog() {
                   <DraftBadge item={post} />
                 </div>
               </div>
-              <span className={styles.arrow} aria-hidden="true">
+              <span
+                className="ml-auto text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-foreground group-focus-visible:translate-x-1 group-focus-visible:text-foreground"
+                aria-hidden="true"
+              >
                 →
               </span>
             </Link>
