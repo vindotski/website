@@ -1,6 +1,8 @@
 # Portfolio
 
-Personal site of Ivan Vinski, live at [www.vin.ski](https://www.vin.ski). Built with [Next.js](https://nextjs.org) 16 (App Router, Cache Components), React 19 and TypeScript. The portfolio is styled with CSS Modules; the auth forms use shadcn/ui on Tailwind CSS. Login runs on Supabase Auth.
+Portfolio site of Ivan Vinski, product engineer: frontend by trade, full-stack by habit, product by focus. Live at [www.vin.ski](https://www.vin.ski).
+
+Built with [Next.js](https://nextjs.org) 16 (App Router, Cache Components), React 19 and TypeScript. The portfolio is styled with CSS Modules; the auth forms use shadcn/ui on Tailwind CSS. Login runs on Supabase Auth.
 
 Until launch, visitors see a teaser at `/` and every other page answers 404. After logging in, you see the full site.
 
