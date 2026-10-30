@@ -1,10 +1,14 @@
 import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
+import { readContentPaths } from "./lib/content/paths";
 
 const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Every content file's slug and date, for the proxy's 404 check. Read when
+  // the build or dev server starts
+  env: { CONTENT_PATHS: JSON.stringify(readContentPaths()) },
   async redirects() {
     // Section paths have no page of their own; send them to the home section.
     // Temporary until the URL structure settles, since browsers cache 308s.

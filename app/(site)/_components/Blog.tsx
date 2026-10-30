@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/api";
 import { formatDate } from "@/lib/format";
+import DraftBadge from "./DraftBadge";
 import Section from "./Section";
 import Tags from "./Tags";
 import styles from "./Blog.module.css";
@@ -21,6 +22,7 @@ export default async function Blog() {
                     <time dateTime={post.date}>{formatDate(post.date)}</time>
                   )}
                   <Tags tags={post.tags} />
+                  <DraftBadge item={post} />
                 </div>
               </div>
               <span className={styles.arrow} aria-hidden="true">

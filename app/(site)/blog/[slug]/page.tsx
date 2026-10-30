@@ -4,9 +4,10 @@ import {
   getNextPost,
   getPostBySlug,
   getPostContent,
-  getPosts,
+  getStaticSlugs,
 } from "@/lib/api";
 import { formatDate } from "@/lib/format";
+import DraftBadge from "../../_components/DraftBadge";
 import Tags from "../../_components/Tags";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
@@ -20,8 +21,7 @@ import styles from "./page.module.css";
 export const instant = false;
 
 export async function generateStaticParams() {
-  const posts = await getPosts();
-  return posts.map((post) => ({ slug: post.slug }));
+  return getStaticSlugs("posts");
 }
 
 export async function generateMetadata({
@@ -55,6 +55,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
             <time dateTime={post.date}>{formatDate(post.date)}</time>
           )}
           <Tags tags={post.tags} />
+          <DraftBadge item={post} />
         </div>
       </DetailIntro>
 

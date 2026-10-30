@@ -1,5 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isMissingContent, type ContentPaths } from "@/lib/content/paths";
+
+const contentPaths: ContentPaths = JSON.parse(
+  process.env.CONTENT_PATHS ?? "{}",
+);
 
 // For proxy.ts. Refreshes the auth session on every request and shows anyone
 // without one the teaser page. Log in at /auth/login to see the site
@@ -57,6 +62,12 @@ export async function updateSession(request: NextRequest) {
     // page at /, 404 for everything else, /teaser itself included
     const target = pathname === "/" ? "/teaser" : "/_not-public";
     return guarded(NextResponse.rewrite(new URL(target, request.url)));
+  }
+
+  // A real 404 for content that doesn't exist or isn't published yet; the page
+  // itself could only answer with a 200
+  if (isMissingContent(contentPaths, pathname)) {
+    return guarded(NextResponse.rewrite(new URL("/_not-public", request.url)));
   }
 
   return guarded(response);

@@ -2,6 +2,7 @@ import type { MDXContent } from "mdx/types";
 import { cacheLife } from "next/cache";
 import { CONTENT_TYPES, type ContentType } from "./content-types";
 import { loadItems, type Item } from "./content/load";
+import { isPublished, showDrafts, todayUtc } from "./content/publish";
 import {
   about,
   contact,
@@ -13,6 +14,7 @@ import {
 import type {
   About,
   Contact,
+  Entry,
   Hero,
   Play,
   Post,
@@ -30,6 +32,21 @@ async function loadAll<T extends ContentType>(type: T): Promise<Item<T>[]> {
   "use cache";
   cacheLife("max");
   return loadItems(type);
+}
+
+// Drops drafts and scheduled items, except in `next dev`. Refreshed hourly, so
+// a scheduled item goes live within the hour of its date without a redeploy
+async function loadPublished<T extends ContentType>(
+  type: T,
+): Promise<Entry<T>[]> {
+  "use cache";
+  cacheLife("hours");
+  const today = todayUtc();
+  const items = (await loadAll(type)).map((item) => ({
+    ...item,
+    published: isPublished(item.date, today),
+  }));
+  return showDrafts ? items : items.filter((item) => item.published);
 }
 
 function findBySlug<T extends { slug: string }>(items: T[], slug: string) {
@@ -119,29 +136,37 @@ export async function getNextPlay(slug: string): Promise<Play | null> {
 // correctly as strings
 export async function getItems<T extends ContentType>(
   type: T,
-): Promise<Item<T>[]> {
-  const items: Item[] = [...(await loadAll(type))];
+): Promise<Entry<T>[]> {
+  const items: Entry[] = [...(await loadPublished(type))];
   if (CONTENT_TYPES[type].sortBy === "date") {
     items.sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
   } else {
-    const order = (item: Item) => item.order ?? Number.MAX_SAFE_INTEGER;
+    const order = (item: Entry) => item.order ?? Number.MAX_SAFE_INTEGER;
     items.sort((a, b) => order(a) - order(b));
   }
-  return items as Item<T>[];
+  return items as Entry<T>[];
+}
+
+// For generateStaticParams. Cache Components needs at least one param, so a
+// type with nothing published yet gets a slug that matches no file and 404s
+export async function getStaticSlugs(type: ContentType) {
+  const items = await getItems(type);
+  if (items.length === 0) return [{ slug: "__none__" }];
+  return items.map((item) => ({ slug: item.slug }));
 }
 
 export async function getItem<T extends ContentType>(
   type: T,
   slug: string,
-): Promise<Item<T> | null> {
-  return findBySlug(await loadAll(type), slug);
+): Promise<Entry<T> | null> {
+  return findBySlug(await loadPublished(type), slug);
 }
 
 // Follows the display order
 export async function getNext<T extends ContentType>(
   type: T,
   slug: string,
-): Promise<Item<T> | null> {
+): Promise<Entry<T> | null> {
   return nextAfter(await getItems(type), slug);
 }
 

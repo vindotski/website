@@ -7,6 +7,7 @@ import {
   ProjectSummary,
   ProjectTags,
 } from "./ProjectCards";
+import DraftBadge from "./DraftBadge";
 import Section from "./Section";
 
 // Jobs first, then side projects (Play) as plain cards after them
@@ -31,6 +32,7 @@ export default async function Work() {
             <ProjectSummary>{item.summary}</ProjectSummary>
             {index === 0 && <ProjectImpact>{item.impact}</ProjectImpact>}
             <ProjectTags stack={item.stack} />
+            <DraftBadge item={item} />
           </ProjectCard>
         ))}
         {play.map((item) => (
@@ -44,6 +46,7 @@ export default async function Work() {
           >
             <ProjectSummary>{item.summary}</ProjectSummary>
             <ProjectTags stack={item.stack} />
+            <DraftBadge item={item} />
           </ProjectCard>
         ))}
       </ProjectGrid>

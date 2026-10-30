@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   getNextPlay,
-  getPlay,
   getPlayBySlug,
   getPlayContent,
+  getStaticSlugs,
 } from "@/lib/api";
+import DraftBadge from "../../_components/DraftBadge";
 import DetailImage from "../../_components/detail/DetailImage";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
@@ -18,8 +19,7 @@ import Prose from "../../_components/detail/Prose";
 export const instant = false;
 
 export async function generateStaticParams() {
-  const play = await getPlay();
-  return play.map((item) => ({ slug: item.slug }));
+  return getStaticSlugs("play");
 }
 
 export async function generateMetadata({
@@ -48,7 +48,9 @@ export default async function PlayPage({ params }: PageProps<"/play/[slug]">) {
           { href: item.demoUrl, label: "Live demo" },
           ...(item.repoUrl ? [{ href: item.repoUrl, label: "Source" }] : []),
         ]}
-      />
+      >
+        <DraftBadge item={item} />
+      </DetailIntro>
 
       <Facts
         facts={[

@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   getNextWork,
-  getWork,
+  getStaticSlugs,
   getWorkBySlug,
   getWorkContent,
 } from "@/lib/api";
 import { formatYears } from "@/lib/format";
+import DraftBadge from "../../_components/DraftBadge";
 import DetailImage from "../../_components/detail/DetailImage";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
@@ -20,8 +21,7 @@ import styles from "./page.module.css";
 export const instant = false;
 
 export async function generateStaticParams() {
-  const work = await getWork();
-  return work.map((item) => ({ slug: item.slug }));
+  return getStaticSlugs("work");
 }
 
 export async function generateMetadata({
@@ -51,7 +51,9 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
             ? [{ href: item.productUrl, label: "Visit product" }]
             : []
         }
-      />
+      >
+        <DraftBadge item={item} />
+      </DetailIntro>
 
       <Facts
         facts={[

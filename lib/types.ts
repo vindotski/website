@@ -51,8 +51,13 @@ export type Role = {
 // The three kinds of work, shared by work items, play items and services
 export type ProjectType = z.infer<typeof projectKind>;
 
-// A work item's front matter, slug and ## sections
-export type Work = Item<"work">;
+// An item as the site lists it: front matter, slug and ## sections.
+// `published` is false only for the drafts and scheduled items `next dev` shows
+export type Entry<T extends ContentType = ContentType> = Item<T> & {
+  published: boolean;
+};
+
+export type Work = Entry<"work">;
 
 export type ServiceName = ProjectType;
 
@@ -70,8 +75,6 @@ export type ResolvedService = Omit<Service, "proof"> & {
   proof: { name: string; href: string }[];
 };
 
-// A play item's front matter, slug and ## sections
-export type Play = Item<"play">;
+export type Play = Entry<"play">;
 
-// A post's front matter, slug and ## sections
-export type Post = Item<"posts">;
+export type Post = Entry<"posts">;
