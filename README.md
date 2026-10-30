@@ -80,13 +80,14 @@ Supabase holds a search index derived from the MDX. It can be deleted and rebuil
 - **Embeddings.** The [`embed`](supabase/functions/embed/index.ts) Edge Function runs gte-small (384 dimensions, normalized, English, input truncated at ~512 tokens). Callers send the secret key on the `apikey` header; `verify_jwt` is off for it in `config.toml` because the platform JWT check would reject a secret key. Locally: `supabase functions serve embed`. The first call takes ~10 s while the model loads.
 - **Scores.** gte-small rates even unrelated text around 0.75–0.80, while good matches score 0.85–0.90. A minimum similarity cutoff belongs around 0.82, not 0.5.
 - **Sync.** `pnpm embed` reads `content/`, skips drafts, and keeps scheduled items (`match_documents` hides them until their date). Each chunk's hash covers every stored field and the model name, so only new or changed chunks are embedded; rows for removed chunks, items or types are deleted afterwards. It refuses to run if it finds no content, so a broken path can't wipe the index. Sections are split at ~300 words to stay inside gte-small's 512 tokens.
+- **In CI.** The [Search sync](.github/workflows/search-sync.yml) workflow runs `pnpm embed` after each successful Vercel production deploy (`deployment_status`), on exactly the deployed commit, so search never links to a page that isn't live yet. It runs only while the repository variable `SEARCH_SYNC` is `on`; otherwise runs show as skipped. Run it by hand from the Actions tab for a full re-sync, e.g. after a Vercel Instant Rollback, which leaves the index on the newer commit until the next deploy.
 
 Still to build:
 
 - [x] Turn the Data API back on (`[api] enabled` in `config.toml`). supabase-js reaches `documents` and `match_documents` through it.
 - [x] Server-only admin client, [`lib/supabase/admin.ts`](lib/supabase/admin.ts), with `SUPABASE_SECRET_KEY`
 - [x] Sync script, [`scripts/embed.mts`](scripts/embed.mts): chunk, hash, embed what changed, upsert, delete stale rows
-- [ ] CI job that runs the sync on push to `main`
+- [x] CI sync, [`.github/workflows/search-sync.yml`](.github/workflows/search-sync.yml)
 - [ ] Search route handler. Returns 401 to guests until launch
 
 ## Supabase
@@ -150,7 +151,9 @@ Infrastructure:
 - [ ] Run `supabase config push` (check the diff)
 - [ ] Create your user in the hosted Supabase dashboard
 - [ ] Run `supabase db push` and `supabase functions deploy embed`
-- [ ] Set `SUPABASE_SECRET_KEY` in Vercel and in CI, then run the first sync
+- [ ] Set `SUPABASE_SECRET_KEY` in Vercel
+- [ ] Add the GitHub repository secrets `NEXT_PUBLIC_SUPABASE_URL` (`https://api.vin.ski` once the custom domain is active, otherwise `https://<ref>.supabase.co`) and `SUPABASE_SECRET_KEY` (the hosted project's secret key named `default`, which the embed function checks against)
+- [ ] Set the repository variable `SEARCH_SYNC` to `on`, run the Search sync workflow once by hand, and check that the next production deploy's run prints the `Production` environment
 
 Going public:
 

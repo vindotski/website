@@ -1,0 +1,64 @@
+# Keeps the production search index in sync with content/, after each
+# successful Vercel production deploy, so search never links to a page that
+# isn't live yet. Indexes exactly the deployed commit. Run it by hand from the
+# Actions tab for a full re-sync.
+#
+# Off until the repository variable SEARCH_SYNC is "on" (Settings → Secrets and
+# variables → Actions → Variables). Set it once the migrations are pushed, the
+# embed function is deployed and the secrets below exist; until then runs show
+# as skipped.
+
+name: Search sync
+
+on:
+  deployment_status:
+  workflow_dispatch:
+
+# Queue rather than race: two runs could otherwise upsert and delete at once
+concurrency:
+  group: search-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    # Vercel names the environment "Production", sometimes with the project
+    # name after it; previews are "Preview"
+    if: >-
+      vars.SEARCH_SYNC == 'on' && (
+        github.event_name == 'workflow_dispatch' || (
+          github.event.deployment_status.state == 'success' &&
+          startsWith(github.event.deployment.environment, 'Production')
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Show what triggered the sync
+        env:
+          EVENT: ${{ github.event_name }}
+          ENVIRONMENT: ${{ github.event.deployment.environment }}
+          COMMIT: ${{ github.event.deployment.sha || github.sha }}
+        run: echo "Event $EVENT, environment ${ENVIRONMENT:-none}, commit $COMMIT"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.deployment.sha || github.sha }}
+
+      # Reads the pnpm version from packageManager in package.json
+      - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
+
+      # The embed script needs Node 22.9+ for --env-file-if-exists
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Sync the search index
+        run: pnpm embed
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
