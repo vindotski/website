@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ChatIcon } from "./ContactIcons";
+import ScrollLink from "./ScrollLink";
 import styles from "./HeaderContact.module.css";
 import useContactHidden from "./useContactHidden";
 
@@ -44,10 +44,10 @@ export default function HeaderContact({
         <Status text={availability} />
       </span>
       {/* Leads to the contact prompt in the footer, on any page */}
-      <Link href="#contact" className={styles.cta} inert={!showButton}>
+      <ScrollLink href="#contact" className={styles.cta} inert={!showButton}>
         <ChatIcon />
         Get in touch
-      </Link>
+      </ScrollLink>
     </span>
   );
 }

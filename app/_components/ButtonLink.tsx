@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ScrollLink from "./ScrollLink";
 import styles from "./ButtonLink.module.css";
 
 type ButtonLinkProps = {
@@ -35,6 +36,16 @@ export default function ButtonLink({
       {children}
     </>
   );
+
+  // Links to a section or something on the page scroll there, without a
+  // #hash in the address bar
+  if (href.startsWith("#") || href.startsWith("/#")) {
+    return (
+      <ScrollLink href={href} className={className} aria-label={label}>
+        {content}
+      </ScrollLink>
+    );
+  }
 
   // Links that leave the site (mailto:, https:) don't go through the router
   if (/^[a-z]+:/i.test(href)) {

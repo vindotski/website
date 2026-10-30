@@ -10,6 +10,7 @@ import { formatDate } from "@/lib/format";
 import Tags from "../../_components/Tags";
 import DetailIntro from "../../_components/detail/DetailIntro";
 import DetailPage from "../../_components/detail/DetailPage";
+import ScrollLink from "../../_components/ScrollLink";
 import NextLink from "../../_components/detail/NextLink";
 import styles from "./page.module.css";
 
@@ -74,7 +75,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         <ol>
           {sections.map((section) => (
             <li key={section.id}>
-              <a href={`#${section.id}`}>{section.title}</a>
+              <ScrollLink href={`#${section.id}`}>{section.title}</ScrollLink>
             </li>
           ))}
         </ol>

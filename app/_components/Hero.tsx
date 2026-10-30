@@ -3,6 +3,7 @@ import { getHero, getSocials } from "@/lib/api";
 // TODO: replace with a larger cut-out (1500–2048px); this one is 500px
 import portrait from "@/public/images/portrait-cutout.png";
 import ButtonLink from "./ButtonLink";
+import ScrollLink from "./ScrollLink";
 import { ChatIcon } from "./ContactIcons";
 import SocialIcon from "./SocialIcon";
 import styles from "./Hero.module.css";
@@ -62,12 +63,12 @@ export default async function Hero() {
         </div>
         {/* The scroll cue, with GitHub beside it */}
         <div className={styles.bottom}>
-          <a href="#work" className={styles.cue}>
+          <ScrollLink href="#work" className={styles.cue}>
             See work
             <span className={styles.arrow} aria-hidden="true">
               ↓
             </span>
-          </a>
+          </ScrollLink>
           {/* Phones: GitHub sits by the cue instead of with the buttons */}
           {gitHub && (
             <a

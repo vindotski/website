@@ -1,4 +1,4 @@
-import Link from "next/link";
+import ScrollLink from "../ScrollLink";
 import styles from "./DetailPage.module.css";
 
 type DetailPageProps = {
@@ -14,9 +14,9 @@ export default function DetailPage({
 }: DetailPageProps) {
   return (
     <article className={styles.page}>
-      <Link href={backHref} className={styles.back}>
+      <ScrollLink href={backHref} className={styles.back}>
         ← {backLabel}
-      </Link>
+      </ScrollLink>
       {children}
     </article>
   );

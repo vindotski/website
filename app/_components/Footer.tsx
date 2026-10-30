@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getContact, getSocials } from "@/lib/api";
 import portrait from "@/public/images/portrait.jpg";
 import ContactActions from "./ContactActions";
+import ScrollLink from "./ScrollLink";
 import { PersonIcon } from "./ContactIcons";
 import SocialIcon from "./SocialIcon";
 import styles from "./Footer.module.css";
@@ -66,10 +67,9 @@ export default async function Footer() {
             </li>
           ))}
         </ul>
-        {/* Browsers scroll to the top for #top when no element has that id */}
-        <a href="#top" className={styles.top}>
+        <ScrollLink href="#top" className={styles.top}>
           Back to top
-        </a>
+        </ScrollLink>
       </div>
     </footer>
   );

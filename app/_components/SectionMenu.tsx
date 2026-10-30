@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   useEffect,
@@ -9,6 +8,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import ScrollLink from "./ScrollLink";
 import styles from "./SectionMenu.module.css";
 
 type MenuLink = { href: string; label: string };
@@ -97,7 +97,7 @@ function HomeName({
   onClick?: React.MouseEventHandler;
 }) {
   return (
-    <Link
+    <ScrollLink
       href="/"
       className={styles.homeName}
       aria-label={short ? "Ivan Vinski" : undefined}
@@ -111,7 +111,7 @@ function HomeName({
       ) : (
         "Ivan Vinski"
       )}
-    </Link>
+    </ScrollLink>
   );
 }
 
@@ -220,14 +220,7 @@ export default function SectionMenu({
     <>
       <HomeName
         short={Boolean(pageName)}
-        onClick={(event) => {
-          // Already home: just go back to the top
-          if (pathname === "/") {
-            event.preventDefault();
-            window.scrollTo({ top: 0 });
-          }
-          setOpen(false);
-        }}
+        onClick={() => setOpen(false)}
       />
       <button
         ref={buttonRef}
@@ -277,14 +270,14 @@ export default function SectionMenu({
               // Each link fades in a little after the one above it
               style={{ "--i": index } as React.CSSProperties}
             >
-              <Link
+              <ScrollLink
                 href={link.href}
                 ref={index === 0 ? firstLinkRef : undefined}
                 aria-current={link === current ? "true" : undefined}
                 onClick={() => setOpen(false)}
               >
                 {link.label}
-              </Link>
+              </ScrollLink>
             </li>
           ))}
         </ul>
