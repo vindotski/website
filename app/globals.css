@@ -6,8 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /* The Hero and teaser split into text and portrait from tablets, or earlier
-   on a phone held sideways */
-/* Block form: the one-line form splits its argument on commas */
+   on a phone held sideways. Block form: the one-line form splits its
+   argument on commas */
 @custom-variant split {
   @media (min-width: 768px), (orientation: landscape) and (min-width: 560px) {
     @slot;
@@ -62,29 +62,11 @@
 }
 
 :root {
-  /* Monochrome, high contrast. Muted is about 7.5:1 on white */
-  --legacy-text: #000;
-  --legacy-muted: #555;
-  --legacy-background: #fff;
-  /* Behind images while they load, and inline code */
-  --legacy-placeholder: #f2f2f2;
-  --legacy-border: #000;
-  --font-sans: var(--font-geist), -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
-    Consolas, monospace;
-  /* Type scale: every font size on the site is one of these */
-  --text-label: 12px; /* Geist Mono capitals: card labels, fact labels */
-  --text-small: 14px; /* meta, tags, nav, footer */
-  --text-body: 17px;
-  --text-lead: 22px; /* intros and small headings */
-  --text-title: 28px; /* headings inside a page */
-  --text-section: 40px; /* section headings */
-  --text-display: 44px; /* hero and page titles; 64px on wider screens */
+  /* Layout. --header-height is the sticky header's height, including its
+     border: the hero fills the screen below it, jumped-to headings stop just
+     under it, and the section menu reads it from JS */
   --content-width: 1080px;
   --gutter: 16px;
-  /* Height of the sticky header, including its border. The hero fills the
-     screen below it, and jumped-to headings stop just under it */
   --header-height: 52px;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -120,21 +102,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-@media (min-width: 768px) {
-  :root {
-    --text-display: 64px;
-  }
-}
-
-/* The site's base rules, from before Tailwind. Layered, so Tailwind
-   utilities on an element win over them; they go once the modules do */
 @layer base {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
   html {
     scroll-behavior: smooth;
   }
@@ -145,28 +113,18 @@
     }
   }
 
+  /* A column that fills the screen, so the footer stays at the bottom */
   body {
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
-    margin: 0;
-    font-family: var(--font-sans);
-    font-size: var(--text-body);
-    line-height: 1.6;
-    color: var(--legacy-text);
-    background: var(--legacy-background);
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Every underline looks the same: thin and clear of the letters */
-  a {
-    color: inherit;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-  }
-
+  /* One clear focus outline everywhere. The foreground colour, so it turns
+     light by itself inside the dark bands */
   :focus-visible {
-    outline: 2px solid var(--legacy-text);
+    outline: 2px solid var(--foreground);
     outline-offset: 2px;
   }
 }
@@ -175,9 +133,8 @@
   --font-heading: var(--font-sans);
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  /* Layout tokens, as utilities: h-header, top-header, scroll-mt-header,
-     px-gutter, max-w-content. The values stay on :root, where the
-     section menu reads --header-height from JS */
+  /* The layout tokens as utilities: h-header, top-header,
+     scroll-mt-header, px-gutter, max-w-content */
   --spacing-header: var(--header-height);
   --spacing-gutter: var(--gutter);
   --container-content: var(--content-width);

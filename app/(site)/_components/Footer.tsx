@@ -25,7 +25,7 @@ export default async function Footer() {
       id="contact"
       // Dark, edge to edge; the content keeps the page column. Jumped-to
       // links stop below the sticky header
-      className="dark scroll-mt-header bg-background text-foreground [&_:focus-visible]:outline-foreground"
+      className="dark scroll-mt-header bg-background text-foreground"
       data-hides-contact
     >
       <section

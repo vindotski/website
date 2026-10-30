@@ -2,7 +2,7 @@
 
 Portfolio site of Ivan Vinski, product engineer: frontend by trade, full-stack by habit, product by focus. Live at [www.vin.ski](https://www.vin.ski).
 
-Built with [Next.js](https://nextjs.org) 16 (App Router, Cache Components), React 19 and TypeScript. The portfolio is styled with CSS Modules; the auth forms use shadcn/ui on Tailwind CSS. Content is MDX in the repo. Login runs on Supabase Auth, and semantic search over the content (in progress) runs on Supabase pgvector.
+Built with [Next.js](https://nextjs.org) 16 (App Router, Cache Components), React 19 and TypeScript. It's styled with Tailwind CSS v4 and shadcn/ui (Base UI primitives). Content is MDX in the repo. Login runs on Supabase Auth, and semantic search over the content runs on Supabase pgvector.
 
 Until launch, visitors see a teaser at `/` and every other page answers 404. After logging in, you see the full site.
 
@@ -59,6 +59,17 @@ Then open [http://localhost:3000](http://localhost:3000). You'll see the teaser.
 
 Robots, the sitemap and generated icons skip the guard, so crawlers always get the real files. That also means anything served at those paths is public before launch: keep `app/sitemap.ts` to `/`, and don't add per-page OG images, RSS or `llms.txt` until the site opens.
 
+## Styling
+
+Tailwind CSS v4 and shadcn/ui, set up in [`app/globals.css`](app/globals.css). There are no CSS Modules.
+
+- **Look.** shadcn's semantic tokens (`bg-background`, `text-muted-foreground`, …) from the `base-nova` preset: neutral, Geist, square corners. The Hero, teaser and footer carry the `dark` class, so the same tokens turn light-on-dark inside them. Light theme only for now; the tokens make dark mode cheap to add.
+- **Layout tokens.** `--content-width`, `--gutter` and `--header-height` live on `:root` (the section menu reads `--header-height` from JS) and are exposed as `max-w-content`, `px-gutter`, `h-header`, `top-header` and `scroll-mt-header`.
+- **Breakpoints.** Tailwind's `sm` (640) and `md` (768), plus `wide` (900, written as `56.25rem`: a px breakpoint can't be sorted against Tailwind's rem ones). Two custom variants for the Hero and teaser: `split` (tablets, or a phone held sideways) and `short-landscape` (a sideways phone). Custom variants are emitted after breakpoints, so a value that both a breakpoint and a custom variant set has to use variants that never overlap.
+- **MDX bodies** use the typography plugin (`prose`, in [`Prose.tsx`](app/(site)/_components/detail/Prose.tsx)).
+- **Buttons as links** use `buttonVariants()` on the link ([`ButtonLink.tsx`](app/(site)/_components/ButtonLink.tsx)): shadcn's `Button` always sets `role="button"`.
+- **Animations** (`animate-label-in`, `animate-nudge`, `animate-ticker`) and the `portrait-mask` utility are defined in `globals.css` and used with `motion-safe:`.
+
 ## Content
 
 Work, Play and blog posts are MDX files in `content/<type>/<slug>.mdx`. The folder is the type and the file name is the slug.
@@ -71,7 +82,7 @@ Work, Play and blog posts are MDX files in `content/<type>/<slug>.mdx`. The fold
 - **Body.** The `##` headings become the table of contents and the search chunks, with the same ids `rehype-slug` gives them ([`lib/content/sections.ts`](lib/content/sections.ts)). Images are plain markdown (`![alt](/images/…)`) and render in the 16:10 frame.
 - **When nothing is published** for a type, `generateStaticParams` returns a `__none__` placeholder that 404s, because Cache Components fails the build on an empty list.
 
-## Search (in progress)
+## Search
 
 Supabase holds a search index derived from the MDX. It can be deleted and rebuilt from the repo at any time.
 
@@ -81,7 +92,7 @@ Supabase holds a search index derived from the MDX. It can be deleted and rebuil
 - **Scores.** gte-small rates even unrelated text around 0.75–0.80, while good matches score 0.85–0.90. A minimum similarity cutoff belongs around 0.82, not 0.5.
 - **Sync.** `pnpm embed` reads `content/`, skips drafts, and keeps scheduled items (`match_documents` hides them until their date). Each chunk's hash covers every stored field and the model name, so only new or changed chunks are embedded; rows for removed chunks, items or types are deleted afterwards. It refuses to run if it finds no content, so a broken path can't wipe the index. Sections are split at ~300 words to stay inside gte-small's 512 tokens.
 - **API.** `GET /api/search?q=…` with optional `type` and `tag` (both repeatable; a result needs every tag and any one type) and `limit` (1–10, default 5). It embeds the query, calls `match_documents`, drops results below 0.82, keeps one result per page section, and returns `{ results: [{ url, title, heading, type, snippet, similarity }] }`. URLs come from the type's route, so `/blog/<slug>#<heading-id>`. Until launch it answers 401 to guests; the proxy already hides it behind a 404.
-- **UI.** The search button in the header, or ⌘K / Ctrl+K, opens a dialog (Base UI `Dialog` with an inline `Autocomplete`). It searches 400 ms after typing stops, from 3 characters; Enter searches at once. Arrow keys pick a result and Enter opens it. Results are real links, so ⌘-click opens a new tab. A newer query cancels the older request, and results are cached per query for the visit.
+- **UI.** The search button in the header, or ⌘K / Ctrl+K, opens a command palette (shadcn `Dialog` with `Command`, filtering off since the server ranks). It searches 400 ms after typing stops, from 3 characters. Arrow keys pick a result and Enter opens it; Enter while a newer search is pending searches instead of opening a stale result. Results are real links, so ⌘-click opens a new tab. A newer query cancels the older request, and results are cached per query for the visit.
 - **In CI.** The [Search sync](.github/workflows/search-sync.yml) workflow runs `pnpm embed` after each successful Vercel production deploy (`deployment_status`), on exactly the deployed commit, so search never links to a page that isn't live yet. It runs only while the repository variable `SEARCH_SYNC` is `on`; otherwise runs show as skipped. Run it by hand from the Actions tab for a full re-sync, e.g. after a Vercel Instant Rollback, which leaves the index on the newer commit until the next deploy.
 
 Still to build:
@@ -129,7 +140,7 @@ app/
   auth/login/         Login page, rendered bare and centred
   robots.ts
   sitemap.ts
-components/ui/        shadcn/ui components, plus form.tsx (react-hook-form + zod)
+components/ui/        shadcn/ui components (add more with `pnpm dlx shadcn@latest add`), plus form.tsx
 features/auth/        Login form
 lib/
   data.ts api.ts      Site data (hero, services, experience…) and the functions that read all content
