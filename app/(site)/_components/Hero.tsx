@@ -7,6 +7,7 @@ import ScrollLink from "./ScrollLink";
 import { ChatIcon } from "./ContactIcons";
 import SocialIcon from "./SocialIcon";
 import styles from "./Hero.module.css";
+import { cn } from "@/lib/utils";
 
 export default async function Hero() {
   const [hero, socials] = await Promise.all([getHero(), getSocials()]);
@@ -16,7 +17,7 @@ export default async function Hero() {
   return (
     // White on black, edge to edge
     // Phones show a floating Get in touch only while this is out of view
-    <div className={styles.band} data-hides-contact>
+    <div className={cn(styles.band, "dark")} data-hides-contact>
       <section className={styles.hero} aria-label="Introduction">
         <div className={styles.text}>
           <p className={styles.eyebrow}>{hero.title}</p>

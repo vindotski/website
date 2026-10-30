@@ -7,6 +7,7 @@ import ScrollLink from "./ScrollLink";
 import { PersonIcon } from "./ContactIcons";
 import SocialIcon from "./SocialIcon";
 import styles from "./Footer.module.css";
+import { cn } from "@/lib/utils";
 
 // Cached so the page can still be prerendered; refreshed daily for the new year
 async function CurrentYear() {
@@ -21,7 +22,7 @@ export default async function Footer() {
   const [contact, socials] = await Promise.all([getContact(), getSocials()]);
 
   return (
-    <footer id="contact" className={styles.footer} data-hides-contact>
+    <footer id="contact" className={cn(styles.footer, "dark")} data-hides-contact>
       <section className={styles.contact} aria-label="Contact">
         {/* I ask the question; the buttons are the answers */}
         {/* Ivan asks; the visitor's answer is the buttons */}

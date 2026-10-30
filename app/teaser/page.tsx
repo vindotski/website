@@ -4,6 +4,7 @@ import ButtonLink from "../(site)/_components/ButtonLink";
 import { MailIcon } from "../(site)/_components/ContactIcons";
 import SocialIcon from "../(site)/_components/SocialIcon";
 import styles from "./page.module.css";
+import { cn } from "@/lib/utils";
 
 // Shown by the auth guard at / until launch. A copy of the site's hero, made
 // to stand alone: no header to carry the name, no footer to scroll to, and
@@ -13,7 +14,7 @@ import styles from "./page.module.css";
 export default function TeaserPage() {
   return (
     // White on black, edge to edge
-    <main className={styles.band}>
+    <main className={cn(styles.band, "dark")}>
       <section className={styles.hero} aria-label="Introduction">
         <div className={styles.text}>
           <p className={styles.eyebrow}>Ivan Vinski · Product Engineer</p>

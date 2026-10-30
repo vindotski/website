@@ -1,4 +1,4 @@
-import styles from "./DraftBadge.module.css";
+import { Badge } from "@/components/ui/badge";
 
 // Marks the drafts and scheduled items that only `next dev` shows
 export default function DraftBadge({
@@ -8,6 +8,8 @@ export default function DraftBadge({
 }) {
   if (item.published) return null;
   return (
-    <span className={styles.badge}>{item.date ? "Scheduled" : "Draft"}</span>
+    <Badge variant="secondary" className="self-start">
+      {item.date ? "Scheduled" : "Draft"}
+    </Badge>
   );
 }
