@@ -44,6 +44,10 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     url.search = "";
+    // Sends them back to where they were headed once they log in
+    if (pathname !== "/") {
+      url.searchParams.set("redirectTo", pathname + request.nextUrl.search);
+    }
     const redirect = NextResponse.redirect(url);
     // Carries over cookies cleared or refreshed by getClaims()
     response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
