@@ -1,5 +1,5 @@
 /* Fills the screen and centres in it; there's no header or footer */
-.comingSoon {
+.teaser {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,6 +23,12 @@
   color: var(--color-muted);
 }
 
+.name {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 600;
+}
+
 .headline {
   max-width: 16ch;
   margin: 0;
@@ -38,4 +44,19 @@
   .headline {
     font-size: var(--text-display);
   }
+}
+
+.note {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.links {
+  display: flex;
+  gap: 24px;
+  font-size: var(--text-small);
+}
+
+.links a {
+  color: inherit;
 }

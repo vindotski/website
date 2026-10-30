@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // For proxy.ts. Refreshes the auth session on every request and shows anyone
-// without one the coming-soon page. Log in at /auth/login to see the site
+// without one the teaser page. Log in at /auth/login to see the site
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -40,22 +40,24 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAuthRoute = pathname === "/auth" || pathname.startsWith("/auth/");
 
-  if (!data?.claims && !isAuthRoute) {
-    // A rewrite, so visitors keep the URL they asked for
-    const comingSoon = NextResponse.rewrite(
-      new URL("/coming-soon", request.url),
-    );
+  // The same URL serves different pages with and without a session, so no
+  // CDN or cache may keep one visitor's version for another, or for a crawler
+  const guarded = (next: NextResponse) => {
     // Carries over cookies cleared or refreshed by getClaims()
-    response.cookies
-      .getAll()
-      .forEach((cookie) => comingSoon.cookies.set(cookie));
-    response.headers.forEach((value, key) => {
-      if (["cache-control", "expires", "pragma"].includes(key)) {
-        comingSoon.headers.set(key, value);
-      }
-    });
-    return comingSoon;
+    if (next !== response) {
+      response.cookies.getAll().forEach((cookie) => next.cookies.set(cookie));
+    }
+    next.headers.set("Cache-Control", "private, no-store");
+    return next;
+  };
+
+  if (!data?.claims && !isAuthRoute) {
+    // Until launch the public site is the homepage alone. Rewrites, not
+    // redirects, so every URL keeps an honest status: 200 for the teaser
+    // page at /, 404 for everything else, /teaser itself included
+    const target = pathname === "/" ? "/teaser" : "/_not-public";
+    return guarded(NextResponse.rewrite(new URL(target, request.url)));
   }
 
-  return response;
+  return guarded(response);
 }
