@@ -421,3 +421,14 @@ enabled = true
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# Production overrides, applied by `supabase config push` to the linked project
+# below. Everything not set here is pushed from the local values above
+[remotes.production]
+project_id = "jfnmaofecvlajflzwwsv"
+
+[remotes.production.auth]
+site_url = "https://www.vin.ski"
+# No auth callback routes yet: login is email and password, with no email
+# links or OAuth. Add each production callback URL here when one exists
+additional_redirect_urls = ["https://www.vin.ski", "https://vin.ski"]
