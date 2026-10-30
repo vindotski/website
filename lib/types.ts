@@ -1,4 +1,5 @@
 import type { z } from "zod";
+import type { ContentType } from "./content-types";
 import type { Item } from "./content/load";
 import type { projectKind } from "./content/schemas";
 
@@ -47,18 +48,16 @@ export type Role = {
   years: YearRange;
 };
 
-// The three kinds of work, shared by work items, samples and services
+// The three kinds of work, shared by work items, play items and services
 export type ProjectType = z.infer<typeof projectKind>;
 
 // A work item's front matter, slug and ## sections
 export type Work = Item<"work">;
 
-export type SampleStatus = "Live" | "In progress" | "Archived";
-
 export type ServiceName = ProjectType;
 
-// Points at a work item or sample by slug, resolved to a link by the api
-export type ProofLink = { kind: "work" | "samples"; slug: string };
+// Points at an item of any content type by slug, resolved to a link by the api
+export type ProofLink = { type: ContentType; slug: string };
 
 export type Service = {
   name: ServiceName;
@@ -71,28 +70,8 @@ export type ResolvedService = Omit<Service, "proof"> & {
   proof: { name: string; href: string }[];
 };
 
-export type Decision = {
-  title: string;
-  body: string;
-};
-
-export type Sample = {
-  slug: string;
-  name: string;
-  summary: string;
-  type: ProjectType;
-  stack: string[];
-  year: number;
-  status: SampleStatus;
-  demoUrl: string;
-  sourceUrl?: string;
-  image: Image;
-  why: string;
-  architecture: string;
-  diagram: Image;
-  decisions: Decision[];
-  next: string;
-};
+// A play item's front matter, slug and ## sections
+export type Play = Item<"play">;
 
 // A post's front matter, slug and ## sections
 export type Post = Item<"posts">;

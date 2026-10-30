@@ -7,7 +7,6 @@ import {
   contact,
   experience,
   hero,
-  samples,
   services,
   socials,
 } from "./data";
@@ -15,10 +14,10 @@ import type {
   About,
   Contact,
   Hero,
+  Play,
   Post,
   ResolvedService,
   Role,
-  Sample,
   Social,
   Work,
 } from "./types";
@@ -67,18 +66,21 @@ export async function getSocials(): Promise<Social[]> {
 // Proof slugs become links; any that no longer match a project are dropped,
 // so renaming or removing a project can't leave a broken link
 export async function getServices(): Promise<ResolvedService[]> {
-  const work = await getWork();
-  return services.map((service) => ({
-    ...service,
-    proof: service.proof.flatMap(({ kind, slug }) => {
-      if (kind === "work") {
-        const item = findBySlug(work, slug);
-        return item ? [{ name: item.title, href: `/work/${slug}` }] : [];
-      }
-      const item = findBySlug(samples, slug);
-      return item ? [{ name: item.name, href: `/play/${slug}` }] : [];
+  return Promise.all(
+    services.map(async (service) => {
+      const items = await Promise.all(
+        service.proof.map(({ type, slug }) => getItem(type, slug)),
+      );
+      return {
+        ...service,
+        proof: service.proof.flatMap(({ type, slug }, index) => {
+          const item = items[index];
+          const href = `${CONTENT_TYPES[type].route}/${slug}`;
+          return item ? [{ name: item.title, href }] : [];
+        }),
+      };
     }),
-  }));
+  );
 }
 
 export async function getWork(): Promise<Work[]> {
@@ -97,16 +99,20 @@ export async function getNextWork(slug: string): Promise<Work | null> {
   return getNext("work", slug);
 }
 
-export async function getSamples(): Promise<Sample[]> {
-  return samples;
+export async function getPlay(): Promise<Play[]> {
+  return getItems("play");
 }
 
-export async function getSampleBySlug(slug: string): Promise<Sample | null> {
-  return findBySlug(samples, slug);
+export async function getPlayBySlug(slug: string): Promise<Play | null> {
+  return getItem("play", slug);
 }
 
-export async function getNextSample(slug: string): Promise<Sample | null> {
-  return nextAfter(samples, slug);
+export async function getPlayContent(slug: string): Promise<MDXContent> {
+  return getContent("play", slug);
+}
+
+export async function getNextPlay(slug: string): Promise<Play | null> {
+  return getNext("play", slug);
 }
 
 // In the type's display order. Undated drafts sort last; ISO dates sort

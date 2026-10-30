@@ -1,4 +1,4 @@
-import { getSamples, getWork } from "@/lib/api";
+import { getPlay, getWork } from "@/lib/api";
 import { formatYears } from "@/lib/format";
 import {
   ProjectCard,
@@ -11,7 +11,7 @@ import Section from "./Section";
 
 // Jobs first, then side projects (Play) as plain cards after them
 export default async function Work() {
-  const [work, samples] = await Promise.all([getWork(), getSamples()]);
+  const [work, play] = await Promise.all([getWork(), getPlay()]);
 
   return (
     <Section id="work" title="Work">
@@ -33,17 +33,17 @@ export default async function Work() {
             <ProjectTags stack={item.stack} />
           </ProjectCard>
         ))}
-        {samples.map((sample) => (
+        {play.map((item) => (
           <ProjectCard
-            key={sample.slug}
-            label={{ start: sample.type, end: String(sample.year) }}
-            name={sample.name}
-            href={`/play/${sample.slug}`}
-            image={sample.image}
+            key={item.slug}
+            label={{ start: item.kind, end: String(item.year) }}
+            name={item.title}
+            href={`/play/${item.slug}`}
+            image={item.image}
             wide
           >
-            <ProjectSummary>{sample.summary}</ProjectSummary>
-            <ProjectTags stack={sample.stack} />
+            <ProjectSummary>{item.summary}</ProjectSummary>
+            <ProjectTags stack={item.stack} />
           </ProjectCard>
         ))}
       </ProjectGrid>

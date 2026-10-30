@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import { getHero, getPosts, getSamples, getWork } from "@/lib/api";
+import { getHero, getItems } from "@/lib/api";
+import { CONTENT_TYPES, type ContentType } from "@/lib/content-types";
 import HeaderContact, { HeaderContactFallback } from "./HeaderContact";
 import SectionMenu, { SectionMenuFallback } from "./SectionMenu";
 import styles from "./Header.module.css";
@@ -14,18 +15,20 @@ const links = [
 ];
 
 export default async function Header() {
-  const [hero, work, samples, posts] = await Promise.all([
+  const types = Object.keys(CONTENT_TYPES) as ContentType[];
+  const [hero, ...lists] = await Promise.all([
     getHero(),
-    getWork(),
-    getSamples(),
-    getPosts(),
+    ...types.map((type) => getItems(type)),
   ]);
   // Names for the header trail on project and blog pages
-  const pageNames = Object.fromEntries([
-    ...work.map((item) => [`/work/${item.slug}`, item.title]),
-    ...samples.map((item) => [`/play/${item.slug}`, item.name]),
-    ...posts.map((post) => [`/blog/${post.slug}`, post.title]),
-  ]);
+  const pageNames = Object.fromEntries(
+    lists.flatMap((items, index) =>
+      items.map((item) => [
+        `${CONTENT_TYPES[types[index]].route}/${item.slug}`,
+        item.title,
+      ]),
+    ),
+  );
 
   return (
     <header className={styles.header}>

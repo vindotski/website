@@ -3,7 +3,6 @@ import type {
   Contact,
   Hero,
   Role,
-  Sample,
   Service,
   Social,
 } from "./types";
@@ -52,8 +51,8 @@ export const services: Service[] = [
     headline: "Interfaces that keep up.",
     line: "Real-time, data-heavy UIs with complex state, fast and built to last.",
     proof: [
-      { kind: "work", slug: "huddleos" },
-      { kind: "samples", slug: "spotcraft" },
+      { type: "work", slug: "huddleos" },
+      { type: "play", slug: "spotcraft" },
     ],
   },
   {
@@ -61,8 +60,8 @@ export const services: Service[] = [
     headline: "From idea to MVP.",
     line: "Scope, trade-offs, shipping and measuring, the way I work, step by step.", // TODO
     proof: [
-      { kind: "work", slug: "kalistenio" },
-      { kind: "samples", slug: "vinui" },
+      { type: "work", slug: "kalistenio" },
+      { type: "play", slug: "vinui" },
     ],
   },
   {
@@ -70,125 +69,8 @@ export const services: Service[] = [
     headline: "From the screen to the database.",
     line: "UI, API and data, built as one piece.",
     proof: [
-      { kind: "work", slug: "odjeca-hr" },
-      { kind: "samples", slug: "sokobanko" },
+      { type: "work", slug: "odjeca-hr" },
+      { type: "play", slug: "sokobanko" },
     ],
-  },
-];
-
-export const samples: Sample[] = [
-  {
-    slug: "vinui",
-    name: "VinUI",
-    summary: "One component API, cross-framework and cross-platform.",
-    type: "Product",
-    stack: ["React", "Vue", "React Native"],
-    year: 2026, // TODO
-    status: "Live", // TODO
-    demoUrl: "https://vinui.dev",
-    image: { src: "/images/samples/vinui.svg", alt: "One button rendered in React, Vue and React Native" }, // TODO
-    // TODO
-    why: "To write a component once and use it in React, Vue and React Native, instead of keeping three libraries in step.",
-    // TODO
-    architecture:
-      "One component API, with a thin layer per framework that maps it onto React, Vue and React Native.",
-    diagram: { src: "/images/samples/vinui-diagram.svg", alt: "VinUI architecture" }, // TODO
-    // TODO
-    decisions: [
-      {
-        title: "One API for every framework",
-        body: "The same props and names everywhere, so moving between React, Vue and Native costs nothing.",
-      },
-    ],
-    // TODO
-    next: "More components, and docs for each framework.",
-  },
-  {
-    slug: "strongfives",
-    name: "Strongfives",
-    summary: "Five by five strength training.", // TODO
-    type: "Fullstack",
-    stack: ["React Native"],
-    year: 2026, // TODO
-    status: "In progress", // TODO
-    demoUrl: "https://example.com/strongfives", // TODO
-    image: { src: "/images/samples/strongfives.svg", alt: "Strongfives workout screen" }, // TODO
-    // TODO
-    why: "A StrongLifts-style 5×5 tracker of my own: a simple workout plan, logged set by set, with the weights going up over time.",
-    // TODO
-    architecture:
-      "A React Native app. Workout logic, the sets, reps and next weights, sits apart from the screens, and progress is saved after every set.",
-    diagram: { src: "/images/samples/strongfives-diagram.svg", alt: "Strongfives architecture" }, // TODO
-    // TODO
-    decisions: [
-      {
-        title: "Logic apart from the screens",
-        body: "The rules for sets and weight increases run without the UI, so they're easy to test.",
-      },
-    ],
-    // TODO
-    next: "Charts for progress over time, and more programs than 5×5.",
-  },
-  {
-    slug: "spotcraft",
-    name: "Spotcraft",
-    summary: "A data dashboard that stays fast.", // TODO
-    type: "Fullstack",
-    stack: ["React", "TanStack"], // TODO
-    year: 2026, // TODO
-    status: "Live", // TODO
-    demoUrl: "https://example.com/spotcraft", // TODO
-    sourceUrl: "https://github.com/example/spotcraft", // TODO
-    image: { src: "/images/samples/spotcraft.svg", alt: "Spotcraft overview" }, // TODO
-    // TODO
-    why: "To see how far TanStack's query, table and router libraries go together on a data-heavy screen.",
-    // TODO
-    architecture:
-      "A React app with TanStack Router for routing, TanStack Query for server state and TanStack Table for the data grids.",
-    diagram: { src: "/images/samples/spotcraft-diagram.svg", alt: "Spotcraft architecture" }, // TODO
-    // TODO
-    decisions: [
-      {
-        title: "Server state in TanStack Query",
-        body: "Caching and refetching handled in one place, instead of a global store.",
-      },
-      {
-        title: "Headless tables",
-        body: "TanStack Table for behaviour, my own markup for the look.",
-      },
-    ],
-    // TODO
-    next: "Virtualised rows for very large tables, and saved views.",
-  },
-  {
-    slug: "sokobanko",
-    name: "Sokobanko",
-    summary: "A classic puzzle game, rebuilt from scratch.",
-    type: "Fullstack",
-    stack: ["TypeScript", "Vue", "Nuxt", "Pixi", "Supabase"],
-    year: 2026, // TODO
-    status: "Live",
-    demoUrl: "https://example.com/sokoban", // TODO
-    sourceUrl: "https://github.com/example/sokoban", // TODO
-    image: { src: "/images/samples/sokobanko.svg", alt: "Sokobanko level in play" }, // TODO
-    // TODO
-    why: "To build a complete game end to end: rendering, game logic, and a backend for players and progress.",
-    // TODO
-    architecture:
-      "A Nuxt app renders the game with Pixi. Game logic is plain TypeScript, separate from rendering. Supabase stores players and their progress.",
-    diagram: { src: "/images/samples/sokobanko-diagram.svg", alt: "Sokobanko architecture" }, // TODO
-    // TODO
-    decisions: [
-      {
-        title: "Game logic separate from rendering",
-        body: "The rules run without Pixi, so they're easy to test and reason about.",
-      },
-      {
-        title: "Supabase for the backend",
-        body: "Auth and storage out of the box, so the time went into the game.",
-      },
-    ],
-    // TODO
-    next: "A level editor, and sharing levels with other players.",
   },
 ];

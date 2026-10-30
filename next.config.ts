@@ -24,8 +24,9 @@ const withMDX = createMDX({
   options: {
     // Front matter becomes an exported `frontmatter` object
     remarkPlugins: ["remark-frontmatter", "remark-mdx-frontmatter"],
-    // Headings get ids, so the table of contents can link to them
-    rehypePlugins: ["rehype-slug"],
+    // Headings get ids, so the table of contents can link to them. Images
+    // lose their wrapping paragraph, since they render as a framed block
+    rehypePlugins: ["rehype-slug", "rehype-unwrap-images"],
   },
 });
 

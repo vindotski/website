@@ -1,0 +1,40 @@
+---
+title: "Spotcraft"
+date: "2026-10-30" # TODO
+tags: ["react", "tanstack"] # TODO
+tldr: "A data-heavy dashboard built to see how far TanStack Router, Query and Table go together, with server state cached in one place and headless tables." # TODO
+order: 3
+summary: "A data dashboard that stays fast." # TODO
+kind: "Fullstack"
+stack: ["React", "TanStack"] # TODO
+year: 2026 # TODO
+status: "Live" # TODO
+demoUrl: "https://example.com/spotcraft" # TODO
+repoUrl: "https://github.com/example/spotcraft" # TODO
+image: { src: "/images/samples/spotcraft.svg", alt: "Spotcraft overview" } # TODO
+# TODO: Why I built it, Architecture and its diagram, Key decisions, What I'd do next
+---
+
+## Why I built it
+
+To see how far TanStack's query, table and router libraries go together on a data-heavy screen.
+
+## Architecture
+
+A React app with TanStack Router for routing, TanStack Query for server state and TanStack Table for the data grids.
+
+![Spotcraft architecture](/images/samples/spotcraft-diagram.svg)
+
+## Key decisions
+
+### Server state in TanStack Query
+
+Caching and refetching handled in one place, instead of a global store.
+
+### Headless tables
+
+TanStack Table for behaviour, my own markup for the look.
+
+## What I'd do next
+
+Virtualised rows for very large tables, and saved views.
