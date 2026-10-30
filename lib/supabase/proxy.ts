@@ -1,8 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// For proxy.ts. Refreshes the auth session on every request and sends anyone
-// without one to the login page
+// For proxy.ts. Refreshes the auth session on every request and shows anyone
+// without one the coming-soon page. Log in at /auth/login to see the site
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -41,22 +41,20 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute = pathname === "/auth" || pathname.startsWith("/auth/");
 
   if (!data?.claims && !isAuthRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
-    url.search = "";
-    // Sends them back to where they were headed once they log in
-    if (pathname !== "/") {
-      url.searchParams.set("redirectTo", pathname + request.nextUrl.search);
-    }
-    const redirect = NextResponse.redirect(url);
+    // A rewrite, so visitors keep the URL they asked for
+    const comingSoon = NextResponse.rewrite(
+      new URL("/coming-soon", request.url),
+    );
     // Carries over cookies cleared or refreshed by getClaims()
-    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    response.cookies
+      .getAll()
+      .forEach((cookie) => comingSoon.cookies.set(cookie));
     response.headers.forEach((value, key) => {
       if (["cache-control", "expires", "pragma"].includes(key)) {
-        redirect.headers.set(key, value);
+        comingSoon.headers.set(key, value);
       }
     });
-    return redirect;
+    return comingSoon;
   }
 
   return response;
