@@ -47,6 +47,7 @@ Then open [http://localhost:3000](http://localhost:3000). You'll see the teaser.
 | `pnpm start` | Serve the production build           |
 | `pnpm lint`  | Run ESLint                           |
 | `pnpm db:types` | Regenerate `lib/supabase/database.types.ts` from the local database |
+| `pnpm embed` | Sync the search index with `content/` (`--dry-run` to only list changes) |
 
 ## How the teaser works
 
@@ -77,13 +78,14 @@ Supabase holds a search index derived from the MDX. It can be deleted and rebuil
 - **Table.** `documents` ([migration](supabase/migrations/20261030121450_create_documents_table.sql)) has one row per chunk: a summary chunk per item (`type/slug#tldr`) and one per `##` section (`type/slug#heading-id`, `:2`, `:3`… when a long section is split). It has an HNSW index on `vector(384)` with inner product.
 - **Access.** Only the service role. RLS is on with no policies, `anon` and `authenticated` are revoked, and `match_documents()` is executable by `service_role` only. It returns only rows published by today. Grants are explicit because since 2026-10-30 hosted Supabase no longer grants new `public` tables to any API role by default.
 - **Embeddings.** The [`embed`](supabase/functions/embed/index.ts) Edge Function runs gte-small (384 dimensions, normalized, English, input truncated at ~512 tokens). Callers send the secret key on the `apikey` header; `verify_jwt` is off for it in `config.toml` because the platform JWT check would reject a secret key. Locally: `supabase functions serve embed`. The first call takes ~10 s while the model loads.
-- **Scores.** gte-small rates even unrelated text around 0.75, so a minimum similarity cutoff belongs around 0.8, not 0.5.
+- **Scores.** gte-small rates even unrelated text around 0.75–0.80, while good matches score 0.85–0.90. A minimum similarity cutoff belongs around 0.82, not 0.5.
+- **Sync.** `pnpm embed` reads `content/`, skips drafts, and keeps scheduled items (`match_documents` hides them until their date). Each chunk's hash covers every stored field and the model name, so only new or changed chunks are embedded; rows for removed chunks, items or types are deleted afterwards. It refuses to run if it finds no content, so a broken path can't wipe the index. Sections are split at ~300 words to stay inside gte-small's 512 tokens.
 
 Still to build:
 
 - [x] Turn the Data API back on (`[api] enabled` in `config.toml`). supabase-js reaches `documents` and `match_documents` through it.
 - [x] Server-only admin client, [`lib/supabase/admin.ts`](lib/supabase/admin.ts), with `SUPABASE_SECRET_KEY`
-- [ ] Sync script, `scripts/embed.mts`: chunk, hash, embed what changed, upsert, delete stale rows. Run with `tsx` (needs `pnpm approve-builds` for esbuild)
+- [x] Sync script, [`scripts/embed.mts`](scripts/embed.mts): chunk, hash, embed what changed, upsert, delete stale rows
 - [ ] CI job that runs the sync on push to `main`
 - [ ] Search route handler. Returns 401 to guests until launch
 

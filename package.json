@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:types": "supabase gen types typescript --local > lib/supabase/database.types.ts"
+    "db:types": "supabase gen types typescript --local > lib/supabase/database.types.ts",
+    "embed": "tsx --env-file-if-exists=.env.local scripts/embed.mts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -49,6 +50,7 @@
     "postcss": "^8.5.32",
     "shadcn": "^4.23.0",
     "tailwindcss": "^4.3.3",
+    "tsx": "4.23.15",
     "typescript": "^5"
   },
   "packageManager": "pnpm@12.4.1"
