@@ -5,7 +5,8 @@
 project_id = "portfolio"
 
 [api]
-enabled = true
+# Off: the app only uses Auth for now. Set to true and restart to bring it back
+enabled = false
 # Port to use for the API URL.
 port = 54321
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
@@ -85,7 +86,8 @@ allowed_cidrs_v6 = ["::/0"]
 # enabled = true
 
 [realtime]
-enabled = true
+# Off: the app only uses Auth for now. Set to true and restart to bring it back
+enabled = false
 # Bind realtime via either IPv4 or IPv6. (default: IPv4)
 # ip_version = "IPv6"
 # The maximum length in bytes of HTTP request headers. (default: 4096)
@@ -103,7 +105,8 @@ openai_api_key = "env(OPENAI_API_KEY)"
 # Email testing server. Emails sent with the local dev setup are not actually sent - rather, they
 # are monitored, and you can view the emails that would have been sent from the web interface.
 [local_smtp]
-enabled = true
+# Off: the app only uses Auth for now. Set to true and restart to bring it back
+enabled = false
 # Port to use for the email testing server web interface.
 port = 54324
 # Uncomment to expose additional ports for testing user applications that send emails.
@@ -113,7 +116,8 @@ port = 54324
 # sender_name = "Admin"
 
 [storage]
-enabled = true
+# Off: the app only uses Auth for now. Set to true and restart to bring it back
+enabled = false
 # The maximum file size allowed (e.g. "5MB", "500KB").
 file_size_limit = "50MiB"
 
@@ -173,7 +177,8 @@ enable_refresh_token_rotation = true
 # Requires enable_refresh_token_rotation = true.
 refresh_token_reuse_interval = 10
 # Allow/disallow new user signups to your project.
-enable_signup = true
+# Off: only admin-created users (Studio, auth.admin) may log in
+enable_signup = false
 # Allow/disallow anonymous sign-ins to your project.
 enable_anonymous_sign_ins = false
 # Allow/disallow testing manual linking of accounts
@@ -218,6 +223,8 @@ web3 = 30
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
+# Stays true: false turns off email login entirely. Sign-ups are blocked by
+# enable_signup under [auth]
 enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
@@ -372,7 +379,8 @@ authorization_url_path = "/oauth/consent"
 allow_dynamic_registration = false
 
 [edge_runtime]
-enabled = true
+# Off: the app only uses Auth for now. Set to true and restart to bring it back
+enabled = false
 # Supported request policies: `oneshot`, `per_worker`.
 # `per_worker` (default) — enables hot reload during local development.
 # `oneshot` — fallback mode if hot reload causes issues (e.g. in large repos or with symlinks).
@@ -386,7 +394,8 @@ deno_version = 2
 # secret_key = "env(SECRET_VALUE)"
 
 [analytics]
-enabled = true
+# Off: the app only uses Auth for now. Set to true and restart to bring it back
+enabled = false
 port = 54327
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
