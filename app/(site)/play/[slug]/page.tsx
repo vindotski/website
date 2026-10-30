@@ -61,7 +61,11 @@ export default async function PlayPage({ params }: PageProps<"/play/[slug]">) {
         ]}
       />
 
-      <DetailImage image={item.image} sizes="(min-width: 1080px) 1048px, 100vw" />
+      <DetailImage
+        image={item.image}
+        sizes="(min-width: 1080px) 1048px, 100vw"
+        eager
+      />
 
       <Prose>
         <Content />

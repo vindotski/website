@@ -64,7 +64,11 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
         ]}
       />
 
-      <DetailImage image={item.image} sizes="(min-width: 1080px) 1048px, 100vw" />
+      <DetailImage
+        image={item.image}
+        sizes="(min-width: 1080px) 1048px, 100vw"
+        eager
+      />
 
       {/* A note, not an alert: nothing to announce when the page loads */}
       <Alert role="note" aria-label="Impact" className="max-w-[720px]">

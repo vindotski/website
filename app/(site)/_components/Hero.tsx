@@ -83,6 +83,8 @@ export default async function Hero() {
             src={portrait}
             alt="Ivan Vinski"
             placeholder="blur"
+            // The largest thing on screen, so it loads first
+            preload
             sizes="(min-width: 900px) 380px, (min-width: 768px) 280px, 100vw"
             // Phones: a square as big as the area allows (max 480px), so the
             // photo never zooms in. Beside the text: 4:5, which trims the

@@ -30,7 +30,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
+    // globals.css scrolls smoothly for in-page links; the attribute has Next
+    // jump instantly on page changes instead of animating to the top
+    <html
+      lang="en"
+      className={`${geist.variable} ${geistMono.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <body>{children}</body>
     </html>
   );
