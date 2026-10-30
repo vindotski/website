@@ -81,15 +81,15 @@ Supabase holds a search index derived from the MDX. It can be deleted and rebuil
 
 Still to build:
 
-- [ ] Turn the Data API back on (`[api] enabled` in `config.toml`). supabase-js reaches `documents` and `match_documents` through it.
-- [ ] Server-only admin client, `lib/supabase/admin.ts`, with `SUPABASE_SECRET_KEY`
+- [x] Turn the Data API back on (`[api] enabled` in `config.toml`). supabase-js reaches `documents` and `match_documents` through it.
+- [x] Server-only admin client, [`lib/supabase/admin.ts`](lib/supabase/admin.ts), with `SUPABASE_SECRET_KEY`
 - [ ] Sync script, `scripts/embed.mts`: chunk, hash, embed what changed, upsert, delete stale rows. Run with `tsx` (needs `pnpm approve-builds` for esbuild)
 - [ ] CI job that runs the sync on push to `main`
 - [ ] Search route handler. Returns 401 to guests until launch
 
 ## Supabase
 
-- **Auth and Edge Functions.** [`supabase/config.toml`](supabase/config.toml) turns off what the app doesn't use: Realtime, Storage, Analytics and the test inbox, plus the Data API for now (search needs it back, see above). Each has a comment on how to turn it back on.
+- **Auth, the Data API and Edge Functions.** [`supabase/config.toml`](supabase/config.toml) turns off what the app doesn't use: Realtime, Storage, Analytics and the test inbox. Each has a comment on how to turn it back on. The Data API is on for search only; `anon` and `authenticated` have no grants on its table or function.
 - **Sign-ups are off** (`enable_signup = false` under `[auth]`). Otherwise anyone with the public publishable key could create an account and get past the teaser. Leave `enable_signup` under `[auth.email]` set to `true`: setting it to `false` turns off email login entirely.
 - **Hosted project.** Linked with `supabase login` and `supabase link --project-ref jfnmaofecvlajflzwwsv`. The CLI keeps the ref in `supabase/.temp/`, which is gitignored.
 - **Production config.** `[remotes.production]` at the end of `config.toml` overrides only `site_url` (`https://www.vin.ski`) and `additional_redirect_urls` (both domains). Everything else is pushed from the local values. When an auth callback route or OAuth provider is added, put its production URL there too.
