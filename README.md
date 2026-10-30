@@ -4,6 +4,16 @@ Personal site of Ivan Vinski, live at [www.vin.ski](https://www.vin.ski). Built 
 
 Until launch, visitors see a teaser at `/` and every other page answers 404. After logging in, you see the full site.
 
+## Domains
+
+| Domain        | What it is                                                                                |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| `www.vin.ski` | The app, on Vercel. The canonical address (`siteUrl` in [`lib/site.ts`](lib/site.ts))    |
+| `vin.ski`     | Redirects (301) to `www.vin.ski`                                                          |
+| `api.vin.ski` | Custom domain of the hosted Supabase project, and the app's production `NEXT_PUBLIC_SUPABASE_URL` |
+
+`@supabase/ssr` names the auth cookie after the Supabase host: `sb-api-auth-token` in production, `sb-127-auth-token` locally. Changing the Supabase URL therefore logs everyone out once.
+
 ## Requirements
 
 - Node.js
@@ -15,13 +25,13 @@ Until launch, visitors see a teaser at `/` and every other page answers 404. Aft
 ```bash
 pnpm install
 cp .env.example .env.local   # already holds the local Supabase URL and key
-supabase start               # local Supabase in Docker
+supabase start               # local Supabase in Docker: database, Auth, gateway and Studio
 pnpm dev
 ```
 
 Then open [http://localhost:3000](http://localhost:3000). You'll see the teaser. To see the full site:
 
-1. Create a user in Supabase Studio at [http://127.0.0.1:54323](http://127.0.0.1:54323) (Authentication → Add user, tick "Auto confirm").
+1. Create a user in Supabase Studio at [http://127.0.0.1:54323](http://127.0.0.1:54323) (Authentication → Add user, tick "Auto confirm"). Sign-ups are off, so this is the only way to get an account.
 2. Log in at [http://localhost:3000/auth/login](http://localhost:3000/auth/login).
 
 `supabase stop` shuts the local stack down. Its data stays in Docker volumes named `supabase_*_portfolio`.
@@ -44,6 +54,19 @@ Then open [http://localhost:3000](http://localhost:3000). You'll see the teaser.
 - **Always:** every response gets `Cache-Control: private, no-store`. The same URL serves different pages to different visitors, so no cache may keep one visitor's version for another, or for a crawler.
 
 Robots, the sitemap and generated icons skip the guard, so crawlers always get the real files.
+
+## Supabase
+
+- **Auth only.** The app uses nothing else, so [`supabase/config.toml`](supabase/config.toml) turns off the Data API, Realtime, Storage, Edge Functions, Analytics and the test inbox. Each has a comment on how to turn it back on.
+- **Sign-ups are off** (`enable_signup = false` under `[auth]`). Otherwise anyone with the public publishable key could create an account and get past the teaser. Leave `enable_signup` under `[auth.email]` set to `true`: setting it to `false` turns off email login entirely.
+- **Hosted project.** Linked with `supabase login` and `supabase link --project-ref jfnmaofecvlajflzwwsv`. The CLI keeps the ref in `supabase/.temp/`, which is gitignored.
+- **Production config.** `[remotes.production]` at the end of `config.toml` overrides only `site_url` (`https://www.vin.ski`) and `additional_redirect_urls` (both domains). Everything else is pushed from the local values. When an auth callback route or OAuth provider is added, put its production URL there too.
+- **Pushing config.** Run `supabase config push` and read the diff before confirming. It changes the live project.
+- **Production env vars**, set in Vercel:
+  - `NEXT_PUBLIC_SUPABASE_URL=https://api.vin.ski`
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, the hosted project's publishable key
+
+  Never use the secret key here: every `NEXT_PUBLIC_` variable is sent to the browser.
 
 ## Search engines
 
@@ -73,12 +96,21 @@ lib/
   site.ts             Site URL and production check
   supabase/           Browser, server and proxy clients
 content/posts/        Blog posts (MDX)
-supabase/             Local Supabase config
+supabase/             Supabase config: local stack, plus production overrides
 ```
 
 ## Launch checklist
 
+Infrastructure:
+
+- [ ] Serve `www.vin.ski`, with `vin.ski` redirecting (301) to it
+- [ ] Activate the `api.vin.ski` custom domain in Supabase
+- [ ] Set the production env vars in Vercel
+- [ ] Run `supabase config push` (check the diff)
+- [ ] Create your user in the hosted Supabase dashboard
+
+Going public:
+
 - [ ] Remove the signed-out branch from `lib/supabase/proxy.ts` and delete `app/teaser/`
 - [ ] Add the real routes to `app/sitemap.ts`
-- [ ] Serve `www.vin.ski`, with `vin.ski` redirecting (301) to it
 - [ ] Submit the sitemap in Google Search Console and request indexing of `/`
