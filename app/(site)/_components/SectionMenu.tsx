@@ -9,9 +9,22 @@ import {
   useSyncExternalStore,
 } from "react";
 import ScrollLink from "./ScrollLink";
-import styles from "./SectionMenu.module.css";
 
 type MenuLink = { href: string; label: string };
+
+// The name and the section, one button on one baseline. Padding with a
+// negative margin gives a taller tap area without pushing the header. One
+// weight for both, so only the colour tells them apart
+const triggerClass =
+  "group/trigger -my-3 inline-flex flex-none items-baseline gap-2 py-3 text-left font-semibold data-[empty=true]:hidden";
+
+// Phones: a 44px target at the right; tablets and up: before the name, lined
+// up with the page edge
+const menuButtonClass =
+  "group/menu -my-3 -mr-3 ml-auto flex size-11 flex-col items-center justify-center gap-1.5 sm:order-first sm:mr-0 sm:-ml-3";
+
+// Between the name and the section, like a path
+const separatorClass = "font-normal text-muted-foreground";
 
 // Pages under these paths belong to a home section
 const owners: Record<string, string> = {
@@ -55,7 +68,7 @@ function Chevron() {
       stroke="currentColor"
       strokeWidth="2"
       aria-hidden="true"
-      className={styles.chevron}
+      className="size-4 transition-[rotate] duration-200 group-aria-expanded/trigger:rotate-180 motion-reduce:transition-none"
     >
       <path d="m6 9 6 6 6-6" />
     </svg>
@@ -69,14 +82,14 @@ function TriggerContent({ label }: { label: string | null }) {
   return (
     <>
       {label && (
-        <span className={styles.separator} aria-hidden="true">
+        <span className={separatorClass} aria-hidden="true">
           /
         </span>
       )}
       {label && (
-        <span className={styles.where}>
+        <span className="inline-flex items-center gap-1 text-muted-foreground group-hover/trigger:text-foreground group-aria-expanded/trigger:text-foreground">
           {/* The key restarts the entry animation when the section changes */}
-          <span key={label} className={styles.label}>
+          <span key={label} className="motion-safe:animate-label-in">
             {label}
           </span>
           <Chevron />
@@ -99,14 +112,14 @@ function HomeName({
   return (
     <ScrollLink
       href="/"
-      className={styles.homeName}
+      className="flex-none font-semibold"
       aria-label={short ? "Ivan Vinski" : undefined}
       onClick={onClick}
     >
       {short ? (
         <>
-          <span className={styles.initials}>IV</span>
-          <span className={styles.fullName}>Ivan Vinski</span>
+          <span className="sm:hidden">IV</span>
+          <span className="hidden sm:inline">Ivan Vinski</span>
         </>
       ) : (
         "Ivan Vinski"
@@ -116,11 +129,14 @@ function HomeName({
 }
 
 // Phones: two lines that turn into an X while the menu is open
+const lineClass =
+  "h-[1.5px] w-[18px] bg-current transition-transform duration-300 group-aria-expanded/menu:first:translate-y-[3.75px] group-aria-expanded/menu:first:rotate-45 group-aria-expanded/menu:last:-translate-y-[3.75px] group-aria-expanded/menu:last:-rotate-45 motion-reduce:transition-none";
+
 function MenuIcon() {
   return (
     <>
-      <span className={styles.line} aria-hidden="true" />
-      <span className={styles.line} aria-hidden="true" />
+      <span className={lineClass} aria-hidden="true" />
+      <span className={lineClass} aria-hidden="true" />
     </>
   );
 }
@@ -130,10 +146,10 @@ export function SectionMenuFallback() {
   return (
     <>
       <HomeName />
-      <span className={styles.trigger} aria-hidden="true">
+      <span className={triggerClass} aria-hidden="true">
         <TriggerContent label={null} />
       </span>
-      <span className={styles.menuButton} aria-hidden="true">
+      <span className={menuButtonClass} aria-hidden="true">
         <MenuIcon />
       </span>
     </>
@@ -225,7 +241,7 @@ export default function SectionMenu({
       <button
         ref={buttonRef}
         type="button"
-        className={styles.trigger}
+        className={triggerClass}
         // Hidden when there's no section to show
         data-empty={!current}
         aria-expanded={open}
@@ -235,17 +251,17 @@ export default function SectionMenu({
         <TriggerContent label={current?.label ?? null} />
       </button>
       {pageName && (
-        <span className={styles.page} aria-current="page">
-          <span className={styles.separator} aria-hidden="true">
+        <span className="flex min-w-0 gap-2 whitespace-nowrap" aria-current="page">
+          <span className={separatorClass} aria-hidden="true">
             /
           </span>
-          <span className={styles.pageName}>{pageName}</span>
+          <span className="truncate font-semibold">{pageName}</span>
         </span>
       )}
       <button
         ref={menuButtonRef}
         type="button"
-        className={styles.menuButton}
+        className={menuButtonClass}
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={open ? "Close menu" : "Open menu"}
@@ -259,20 +275,27 @@ export default function SectionMenu({
         ref={panelRef}
         id={panelId}
         aria-label="Sections"
-        className={styles.panel}
+        // Positioned from the sticky header, so it sits right under it. Phones:
+        // fills the screen below the header; tablets and up: as tall as the
+        // links, and the page stays scrollable. Visibility only waits for
+        // the fade when closing: opening makes it visible at once, so the
+        // first link can take focus straight away
+        className="group/panel invisible absolute inset-x-0 top-full h-[calc(100svh-var(--header-height))] overflow-y-auto bg-background py-6 opacity-0 transition-[opacity,visibility] duration-300 data-[open=true]:visible data-[open=true]:opacity-100 data-[open=true]:transition-opacity motion-reduce:transition-none sm:h-auto sm:border-b"
         data-open={open}
         inert={!open}
       >
-        <ul className={styles.links}>
+        <ul className="mx-auto max-w-content px-gutter">
           {links.map((link, index) => (
             <li
               key={link.href}
               // Each link fades in a little after the one above it
               style={{ "--i": index } as React.CSSProperties}
+              className="-translate-y-2 opacity-0 transition-[opacity,translate] duration-300 group-data-[open=true]/panel:translate-y-0 group-data-[open=true]/panel:opacity-100 group-data-[open=true]/panel:delay-[calc(var(--i)*40ms+60ms)] motion-reduce:transition-none"
             >
               <ScrollLink
                 href={link.href}
                 ref={index === 0 ? firstLinkRef : undefined}
+                className="block py-2 text-2xl font-semibold tracking-tight text-muted-foreground hover:text-foreground aria-[current=true]:text-foreground"
                 aria-current={link === current ? "true" : undefined}
                 onClick={() => setOpen(false)}
               >

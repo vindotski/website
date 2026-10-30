@@ -4,7 +4,6 @@ import { CONTENT_TYPES, type ContentType } from "@/lib/content-types";
 import HeaderContact, { HeaderContactFallback } from "./HeaderContact";
 import Search from "./Search";
 import SectionMenu, { SectionMenuFallback } from "./SectionMenu";
-import styles from "./Header.module.css";
 
 // Paths include "/" so the links also work from project pages
 const links = [
@@ -32,10 +31,15 @@ export default async function Header() {
   );
 
   return (
-    <header className={styles.header}>
-      <div className={styles.inner}>
+    <header className="sticky top-0 z-10 border-b bg-background">
+      {/* The name with the section menu, search, and the contact button. The
+          first column may shrink below its content, so a long page name
+          ends in an ellipsis instead of running under search */}
+      <div className="mx-auto grid h-[calc(var(--header-height)-1px)] max-w-content grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-2 px-gutter">
         {/* The name, the current section and the menu */}
-        <div className={styles.brand}>
+        {/* Phones: full width, so the menu icon can sit at the right; tablets
+            and up: only as wide as its content, up to the column */}
+        <div className="flex max-w-full min-w-0 items-center gap-2 justify-self-stretch sm:justify-self-start">
           {/* Reads the URL, which waits on pages with dynamic params; the
               rest of the header stays prerendered */}
           <Suspense fallback={<SectionMenuFallback />}>
