@@ -106,10 +106,10 @@ Still to build:
 
 ## Analytics
 
-[Vercel Web Analytics](https://vercel.com/docs/analytics) and Speed Insights, rendered by [`VercelInsights.tsx`](app/_components/VercelInsights.tsx) in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
+[Vercel Web Analytics](https://vercel.com/docs/analytics) and Speed Insights, rendered by [`vercel-insights.tsx`](app/_components/vercel-insights.tsx) in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
 
-- **Your own visits don't count.** [`VercelInsights.tsx`](app/_components/VercelInsights.tsx) drops every page view, event and Speed Insights report while a Supabase session cookie exists (sign-ups are off, so that's you) and on `/auth/*`. Before launch this keeps `/` meaning the teaser.
-- **Events.** Mark an element with `trackAttributes({ event, …properties })` from [`lib/analytics/track.ts`](lib/analytics/track.ts) (`ButtonLink` takes it as `track`); one listener in [`AnalyticsEvents.tsx`](app/_components/AnalyticsEvents.tsx) sends it on click and adds `page` (`teaser`, `home`, `work`, `play`, `blog`) and `path`. Plus allows 8 properties per event. No personal data goes into events.
+- **Your own visits don't count.** [`vercel-insights.tsx`](app/_components/vercel-insights.tsx) drops every page view, event and Speed Insights report while a Supabase session cookie exists (sign-ups are off, so that's you) and on `/auth/*`. Before launch this keeps `/` meaning the teaser.
+- **Events.** Mark an element with `trackAttributes({ event, …properties })` from [`lib/analytics/track.ts`](lib/analytics/track.ts) (`ButtonLink` takes it as `track`); one listener in [`analytics-events.tsx`](app/_components/analytics-events.tsx) sends it on click and adds `page` (`teaser`, `home`, `work`, `play`, `blog`) and `path`. Plus allows 8 properties per event. No personal data goes into events.
 
   | Event | Properties | Fires on |
   | --- | --- | --- |

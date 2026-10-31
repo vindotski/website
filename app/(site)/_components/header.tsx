@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import ButtonLink from "@/components/button-link";
 import { ChatIcon } from "@/components/contact-icons";
-import MobileNav from "./MobileNav";
-import NavLinks, { NavLinksFallback } from "./NavLinks";
+import MobileNav from "./mobile-nav";
+import NavLinks, { NavLinksFallback } from "./nav-links";
 import ScrollLink from "@/components/scroll-link";
 import SearchDialog from "@/features/search/components/search-dialog";
 

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import ButtonLink from "@/components/button-link";
 import { ChatIcon } from "@/components/contact-icons";
-import NavLinks from "./NavLinks";
+import NavLinks from "./nav-links";
 
 // Phones and small tablets: the section links and Get in touch in a sheet
 // from the right. Picking anything closes it

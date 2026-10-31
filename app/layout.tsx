@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { isProduction, siteUrl } from "@/config/site";
-import AnalyticsEvents from "./_components/AnalyticsEvents";
-import VercelInsights from "./_components/VercelInsights";
+import AnalyticsEvents from "./_components/analytics-events";
+import VercelInsights from "./_components/vercel-insights";
 import "./globals.css";
 
 // Self-hosted at build time; exposed as CSS variables used in globals.css

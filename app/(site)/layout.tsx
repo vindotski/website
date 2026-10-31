@@ -1,5 +1,5 @@
-import Footer from "./_components/Footer";
-import Header from "./_components/Header";
+import Footer from "./_components/footer";
+import Header from "./_components/header";
 
 // The portfolio's chrome. Coming soon and login sit outside this group and
 // render without it
