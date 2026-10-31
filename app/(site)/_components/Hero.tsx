@@ -50,7 +50,7 @@ export default async function Hero() {
               once the cue is centred; below that it sits by the cue */}
           <div className="grid grid-cols-2 gap-3 self-stretch *:nth-3:hidden sm:flex sm:flex-wrap split:self-auto md:*:nth-3:inline-flex">
             {/* Leads to the contact prompt in the footer */}
-            <ButtonLink href="#contact" icon={<ChatIcon />}>
+            <ButtonLink href="#contact" icon={<ChatIcon />} event="contact_open">
               Get in touch
             </ButtonLink>
             {linkedIn && (

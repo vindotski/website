@@ -36,7 +36,11 @@ export default function TeaserPage() {
               left beside LinkedIn and GitHub as square icons. From tablet
               width the buttons keep their natural width */}
           <div className="flex gap-3 self-stretch *:first:flex-1 max-sm:*:first:px-3 max-sm:*:nth-2:w-9 max-sm:*:nth-2:px-0 sm:flex-wrap sm:self-auto sm:*:first:flex-none">
-            <ButtonLink href="mailto:ivan@vin.ski" icon={<MailIcon />}>
+            <ButtonLink
+              href="mailto:ivan@vin.ski"
+              icon={<MailIcon />}
+              event="contact_email"
+            >
               ivan@vin.ski
             </ButtonLink>
             <ButtonLink

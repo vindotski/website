@@ -16,6 +16,8 @@ type ButtonLinkProps = {
   // Accessible name for an icon-only button
   label?: string;
   newTab?: boolean;
+  // Sent to Analytics as contact_click's method when clicked
+  event?: string;
   children?: React.ReactNode;
 };
 
@@ -32,12 +34,15 @@ export default function ButtonLink({
   icon,
   label,
   newTab = false,
+  event,
   children,
 }: ButtonLinkProps) {
   const className = buttonVariants({
     variant: variants[variant],
     size: children ? "lg" : "icon-lg",
   });
+  // Read by the Analytics click listener; nothing is sent without it
+  const tracking = event ? { "data-analytics-event": event } : {};
   const content = (
     <>
       {/* data-icon gives the icon side its tighter padding */}
@@ -54,7 +59,12 @@ export default function ButtonLink({
   // #hash in the address bar
   if (href.startsWith("#") || href.startsWith("/#")) {
     return (
-      <ScrollLink href={href} className={className} aria-label={label}>
+      <ScrollLink
+        href={href}
+        className={className}
+        aria-label={label}
+        {...tracking}
+      >
         {content}
       </ScrollLink>
     );
@@ -67,6 +77,7 @@ export default function ButtonLink({
         href={href}
         className={className}
         aria-label={label}
+        {...tracking}
         {...(newTab && { target: "_blank", rel: "noopener noreferrer" })}
       >
         {content}
@@ -75,7 +86,12 @@ export default function ButtonLink({
   }
 
   return (
-    <Link href={href} className={className} aria-label={label}>
+    <Link
+      href={href}
+      className={className}
+      aria-label={label}
+      {...tracking}
+    >
       {content}
     </Link>
   );

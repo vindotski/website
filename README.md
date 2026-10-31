@@ -111,6 +111,7 @@ Google Analytics 4 through `@next/third-parties`, with Google Consent Mode v2, s
 - **Only on the live site:** it renders when the build is production (`isProduction` in [`lib/site.ts`](lib/site.ts)) and `NEXT_PUBLIC_GA_ID` is set, so dev and Vercel previews send nothing.
 - **Nothing stored until consent.** An inline script in the root layout's `<head>` sets every consent signal to `denied` before `gtag.js` loads ([`app/_components/Analytics.tsx`](app/_components/Analytics.tsx)). The [banner](app/_components/ConsentBanner.tsx) grants `analytics_storage` only; ads signals stay denied. The choice is kept in `localStorage` (`analytics-consent`) and applied before the first page view on later visits.
 - **Changing your mind:** "Cookie settings" in the footer clears the choice and shows the banner again.
+- **Events:** `contact_click`, with `method` set to `contact_open` (Get in touch), `contact_email` or `contact_call`. Mark a `ButtonLink` with `event="…"` to track another button; one listener in [`AnalyticsEvents.tsx`](app/_components/AnalyticsEvents.tsx) sends it. No personal data goes into events.
 - **Checking it:** in the browser console, `dataLayer` should start with `consent default` (all denied), then an `update` if the visitor accepted, then `config`.
 
 ## Supabase

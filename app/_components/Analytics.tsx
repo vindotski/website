@@ -1,6 +1,7 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { isProduction } from "@/lib/site";
 import { CONSENT_KEY } from "@/lib/analytics";
+import AnalyticsEvents from "./AnalyticsEvents";
 import ConsentBanner from "./ConsentBanner";
 
 // Google Analytics 4, on the live site only, with Consent Mode v2: nothing
@@ -30,13 +31,14 @@ try {
 } catch (e) {}
 `;
 
-// gtag.js and the consent banner, inside <body>
+// gtag.js, the consent banner and the contact click events, inside <body>
 export default function Analytics() {
   if (!analyticsEnabled || !gaId) return null;
   return (
     <>
       <GoogleAnalytics gaId={gaId} />
       <ConsentBanner />
+      <AnalyticsEvents />
     </>
   );
 }

@@ -26,7 +26,7 @@ export default function Header() {
           <Search />
           <span className="hidden md:block">
             {/* Leads to the contact prompt in the footer, on any page */}
-            <ButtonLink href="#contact" icon={<ChatIcon />}>
+            <ButtonLink href="#contact" icon={<ChatIcon />} event="contact_open">
               Get in touch
             </ButtonLink>
           </span>
