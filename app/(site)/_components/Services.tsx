@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Fragment } from "react";
 import { getServices } from "@/lib/api";
-import Section from "./Section";
+import Section from "@/components/layouts/section";
 
 export default async function Services() {
   const services = await getServices();

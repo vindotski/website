@@ -1,6 +1,6 @@
 import { getContact } from "@/lib/api";
-import ButtonLink from "./ButtonLink";
-import { CalendarIcon, MailIcon } from "./ContactIcons";
+import ButtonLink from "@/components/button-link";
+import { CalendarIcon, MailIcon } from "@/components/contact-icons";
 
 // The ways to reach me, in the footer's contact prompt: email first, then a
 // call. The parent lays them out; tone picks colours for a light or dark

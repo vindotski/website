@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { SCROLL_TARGET_KEY } from "./ScrollLink";
+import { SCROLL_TARGET_KEY } from "./scroll-link";
 
 // On the home page: lands on the section a link from another page asked
 // for, or on the #hash the page was opened with (redirects, old links), and

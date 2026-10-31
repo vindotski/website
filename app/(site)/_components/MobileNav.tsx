@@ -11,8 +11,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import ButtonLink from "./ButtonLink";
-import { ChatIcon } from "./ContactIcons";
+import ButtonLink from "@/components/button-link";
+import { ChatIcon } from "@/components/contact-icons";
 import NavLinks from "./NavLinks";
 
 // Phones and small tablets: the section links and Get in touch in a sheet

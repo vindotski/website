@@ -7,8 +7,8 @@ import {
   ProjectSummary,
   ProjectTags,
 } from "./ProjectCards";
-import DraftBadge from "./DraftBadge";
-import Section from "./Section";
+import DraftBadge from "@/components/draft-badge";
+import Section from "@/components/layouts/section";
 
 // Jobs first, then side projects (Play) as plain cards after them
 export default async function Work() {

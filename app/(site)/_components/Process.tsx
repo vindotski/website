@@ -1,4 +1,4 @@
-import Section from "./Section";
+import Section from "@/components/layouts/section";
 
 const steps = [
   { title: "Understand", line: "What hurts, and why it matters." },

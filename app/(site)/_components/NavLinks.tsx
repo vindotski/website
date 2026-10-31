@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
-import ScrollLink from "./ScrollLink";
+import ScrollLink from "@/components/scroll-link";
 
 type NavLink = { href: string; label: string };
 

@@ -9,13 +9,13 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatDate } from "@/lib/format";
 import { trackViewAttributes } from "@/lib/track";
-import DraftBadge from "../../_components/DraftBadge";
-import Tags from "../../_components/Tags";
-import DetailIntro from "../../_components/detail/DetailIntro";
-import DetailPage from "../../_components/detail/DetailPage";
-import ScrollLink from "../../_components/ScrollLink";
-import NextLink from "../../_components/detail/NextLink";
-import Prose from "../../_components/detail/Prose";
+import DraftBadge from "@/components/draft-badge";
+import Tags from "@/components/tags";
+import DetailIntro from "@/components/detail/detail-intro";
+import DetailPage from "@/components/layouts/detail-page";
+import ScrollLink from "@/components/scroll-link";
+import NextLink from "@/components/detail/next-link";
+import Prose from "@/components/layouts/prose";
 
 // Every page is prebuilt, so a navigation that waits for it is still quick.
 // Opts out of instant-navigation checks rather than streaming it behind Suspense

@@ -1,5 +1,5 @@
 import type { MDXComponents } from "mdx/types";
-import DetailImage from "@/app/(site)/_components/detail/DetailImage";
+import DetailImage from "@/components/detail/detail-image";
 
 // Required by @next/mdx in the App Router. Markdown images get the same
 // 16:10 frame as the project images; rehype-unwrap-images keeps them out of

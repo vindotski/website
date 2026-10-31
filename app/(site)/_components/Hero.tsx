@@ -4,10 +4,10 @@ import { trackAttributes } from "@/lib/track";
 import { cn } from "@/lib/utils";
 // TODO: replace with a larger cut-out (1500–2048px); this one is 500px
 import portrait from "@/public/images/portrait-cutout.png";
-import ButtonLink from "./ButtonLink";
-import ScrollLink from "./ScrollLink";
-import { ChatIcon } from "./ContactIcons";
-import SocialIcon from "./SocialIcon";
+import ButtonLink from "@/components/button-link";
+import ScrollLink from "@/components/scroll-link";
+import { ChatIcon } from "@/components/contact-icons";
+import SocialIcon from "@/components/social-icon";
 
 // The cue and GitHub links at the bottom, in the card labels' small mono voice
 const bottomLink =

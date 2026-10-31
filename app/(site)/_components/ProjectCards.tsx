@@ -10,7 +10,7 @@ import {
 import { toTag } from "@/lib/format";
 import type { Image as ContentImage } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import Tags from "./Tags";
+import Tags from "@/components/tags";
 
 const wideColumns = { 2: "wide:grid-cols-2", 3: "wide:grid-cols-3" };
 

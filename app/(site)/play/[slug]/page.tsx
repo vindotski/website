@@ -6,13 +6,13 @@ import {
   getPlayContent,
   getStaticSlugs,
 } from "@/lib/api";
-import DraftBadge from "../../_components/DraftBadge";
-import DetailImage from "../../_components/detail/DetailImage";
-import DetailIntro from "../../_components/detail/DetailIntro";
-import DetailPage from "../../_components/detail/DetailPage";
-import Facts from "../../_components/detail/Facts";
-import NextLink from "../../_components/detail/NextLink";
-import Prose from "../../_components/detail/Prose";
+import DraftBadge from "@/components/draft-badge";
+import DetailImage from "@/components/detail/detail-image";
+import DetailIntro from "@/components/detail/detail-intro";
+import DetailPage from "@/components/layouts/detail-page";
+import Facts from "@/components/detail/facts";
+import NextLink from "@/components/detail/next-link";
+import Prose from "@/components/layouts/prose";
 
 // Every page is prebuilt, so a navigation that waits for it is still quick.
 // Opts out of instant-navigation checks rather than streaming it behind Suspense

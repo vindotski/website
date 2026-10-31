@@ -1,8 +1,8 @@
 import Image from "next/image";
 import portrait from "@/public/images/portrait-teaser.png";
-import ButtonLink from "../(site)/_components/ButtonLink";
-import { MailIcon } from "../(site)/_components/ContactIcons";
-import SocialIcon from "../(site)/_components/SocialIcon";
+import ButtonLink from "@/components/button-link";
+import { MailIcon } from "@/components/contact-icons";
+import SocialIcon from "@/components/social-icon";
 
 // Shown by the auth guard at / until launch. A copy of the site's hero, made
 // to stand alone: no header to carry the name, no footer to scroll to, and

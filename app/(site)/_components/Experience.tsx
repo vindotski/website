@@ -1,7 +1,7 @@
 import { getAbout, getExperience } from "@/lib/api";
 import { formatYears } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import Section from "./Section";
+import Section from "@/components/layouts/section";
 
 export default async function Experience() {
   const [about, roles] = await Promise.all([getAbout(), getExperience()]);

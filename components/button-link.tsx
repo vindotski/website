@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { trackAttributes, type Track } from "@/lib/track";
-import ScrollLink from "./ScrollLink";
+import ScrollLink from "./scroll-link";
 
 // shadcn's Button look on a real link. The Button component itself always
 // says role="button", which hides that it's a link, so shadcn recommends

@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/api";
 import { formatDate } from "@/lib/format";
-import DraftBadge from "./DraftBadge";
-import Section from "./Section";
-import Tags from "./Tags";
+import DraftBadge from "@/components/draft-badge";
+import Section from "@/components/layouts/section";
+import Tags from "@/components/tags";
 
 export default async function Blog() {
   const posts = await getPosts();

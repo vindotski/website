@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import ButtonLink from "./ButtonLink";
-import { ChatIcon } from "./ContactIcons";
+import ButtonLink from "@/components/button-link";
+import { ChatIcon } from "@/components/contact-icons";
 import MobileNav from "./MobileNav";
 import NavLinks, { NavLinksFallback } from "./NavLinks";
-import ScrollLink from "./ScrollLink";
+import ScrollLink from "@/components/scroll-link";
 import Search from "./Search";
 
 // The name, the section links, search and Get in touch. Below md the links

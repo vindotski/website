@@ -3,9 +3,9 @@ import Image from "next/image";
 import { getContact, getSocials } from "@/lib/api";
 import portrait from "@/public/images/portrait.jpg";
 import ContactActions from "./ContactActions";
-import ScrollLink from "./ScrollLink";
-import { PersonIcon } from "./ContactIcons";
-import SocialIcon from "./SocialIcon";
+import ScrollLink from "@/components/scroll-link";
+import { PersonIcon } from "@/components/contact-icons";
+import SocialIcon from "@/components/social-icon";
 import { Separator } from "@/components/ui/separator";
 import { trackAttributes } from "@/lib/track";
 
