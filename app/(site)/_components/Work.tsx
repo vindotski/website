@@ -1,4 +1,4 @@
-import { getPlay, getWork } from "@/lib/api";
+import { getPlay, getWork } from "@/lib/content/api";
 import { formatYears } from "@/lib/format";
 import {
   ProjectCard,

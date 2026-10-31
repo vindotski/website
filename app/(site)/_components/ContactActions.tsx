@@ -1,4 +1,4 @@
-import { getContact } from "@/lib/api";
+import { getContact } from "@/features/profile/api/profile";
 import ButtonLink from "@/components/button-link";
 import { CalendarIcon, MailIcon } from "@/components/contact-icons";
 

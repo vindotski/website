@@ -1,4 +1,4 @@
-import { getAbout, getExperience } from "@/lib/api";
+import { getAbout, getExperience } from "@/features/profile/api/profile";
 import { formatYears } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import Section from "@/components/layouts/section";

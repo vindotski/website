@@ -10,7 +10,7 @@
 
 import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
-import { CONTENT_TYPES, type ContentType } from "../lib/content-types";
+import { CONTENT_TYPES, type ContentType } from "../config/content-types";
 import { loadItems, type Item } from "../lib/content/load";
 import type { Database } from "../lib/supabase/database.types";
 

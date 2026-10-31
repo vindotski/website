@@ -1,4 +1,4 @@
-import type { YearRange } from "./types";
+import type { YearRange } from "@/types/common";
 
 // "2022–2025", "2025–present", or "2025" when it started and ended that year
 export function formatYears({ start, end }: YearRange) {

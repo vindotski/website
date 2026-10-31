@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
-import { isProduction, siteUrl } from "@/lib/site";
+import { isProduction, siteUrl } from "@/config/site";
 import AnalyticsEvents from "./_components/AnalyticsEvents";
 import VercelInsights from "./_components/VercelInsights";
 import "./globals.css";

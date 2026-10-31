@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Image as ContentImage } from "@/lib/types";
+import type { Image as ContentImage } from "@/types/common";
 
 type DetailImageProps = {
   image: ContentImage;

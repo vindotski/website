@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Fragment } from "react";
-import { getServices } from "@/lib/api";
+import { getServices } from "@/features/profile/api/profile";
 import Section from "@/components/layouts/section";
 
 export default async function Services() {

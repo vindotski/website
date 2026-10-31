@@ -1,30 +1,12 @@
 import type { MDXContent } from "mdx/types";
 import { cacheLife } from "next/cache";
-import { CONTENT_TYPES, type ContentType } from "./content-types";
-import { loadItems, type Item } from "./content/load";
-import { isPublished, showDrafts, todayUtc } from "./content/publish";
-import {
-  about,
-  contact,
-  experience,
-  hero,
-  services,
-  socials,
-} from "./data";
-import type {
-  About,
-  Contact,
-  Entry,
-  Hero,
-  Play,
-  Post,
-  ResolvedService,
-  Role,
-  Social,
-  Work,
-} from "./types";
+import { CONTENT_TYPES, type ContentType } from "@/config/content-types";
+import { loadItems, type Item } from "./load";
+import { isPublished, showDrafts, todayUtc } from "./publish";
+import type { Entry, Play, Post, Work } from "./types";
 
-// Async so callers stay the same when content moves out of local data
+// Reads the MDX content in content/: cached, sorted, with drafts and
+// scheduled items left out of production
 
 // MDX content only changes on deploy, so cache for as long as possible (the
 // default profile would refresh every 15 minutes)
@@ -58,46 +40,6 @@ function nextAfter<T extends { slug: string }>(items: T[], slug: string) {
   const index = items.findIndex((item) => item.slug === slug);
   if (index === -1 || items.length < 2) return null;
   return items[(index + 1) % items.length];
-}
-
-export async function getHero(): Promise<Hero> {
-  return hero;
-}
-
-export async function getExperience(): Promise<Role[]> {
-  return experience;
-}
-
-export async function getAbout(): Promise<About> {
-  return about;
-}
-
-export async function getContact(): Promise<Contact> {
-  return contact;
-}
-
-export async function getSocials(): Promise<Social[]> {
-  return socials;
-}
-
-// Proof slugs become links; any that no longer match a project are dropped,
-// so renaming or removing a project can't leave a broken link
-export async function getServices(): Promise<ResolvedService[]> {
-  return Promise.all(
-    services.map(async (service) => {
-      const items = await Promise.all(
-        service.proof.map(({ type, slug }) => getItem(type, slug)),
-      );
-      return {
-        ...service,
-        proof: service.proof.flatMap(({ type, slug }, index) => {
-          const item = items[index];
-          const href = `${CONTENT_TYPES[type].route}/${slug}`;
-          return item ? [{ name: item.title, href }] : [];
-        }),
-      };
-    }),
-  );
 }
 
 export async function getWork(): Promise<Work[]> {

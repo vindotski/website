@@ -1,11 +1,11 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
-import { CONTENT_TYPES, type ContentType } from "../content-types";
+import { CONTENT_TYPES, type ContentType } from "../../config/content-types";
 import { parseMdx, type Section } from "./sections";
 
 // Reads content/<type>/*.mdx. Kept free of Next.js imports so scripts can use
-// it too; lib/api.ts adds caching, sorting and the published filter
+// it too; lib/content/api.ts adds caching, sorting and the published filter
 
 export type Item<T extends ContentType = ContentType> = z.infer<
   (typeof CONTENT_TYPES)[T]["schema"]

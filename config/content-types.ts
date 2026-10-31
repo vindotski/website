@@ -1,4 +1,4 @@
-import { playSchema, postSchema, workSchema } from "./content/schemas";
+import { playSchema, postSchema, workSchema } from "../lib/content/schemas";
 
 // Every kind of MDX content. The key is the folder under content/ and the
 // value of `type` in the search index; nothing else should list the types.

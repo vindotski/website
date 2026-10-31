@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { CONTENT_TYPES, isContentType } from "@/lib/content-types";
+import { CONTENT_TYPES, isContentType } from "@/config/content-types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 

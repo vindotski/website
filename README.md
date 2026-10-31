@@ -10,7 +10,7 @@ Until launch, visitors see a teaser at `/` and every other page answers 404. Aft
 
 | Domain        | What it is                                                                                |
 | ------------- | ----------------------------------------------------------------------------------------- |
-| `www.vin.ski` | The app, on Vercel. The canonical address (`siteUrl` in [`lib/site.ts`](lib/site.ts))    |
+| `www.vin.ski` | The app, on Vercel. The canonical address (`siteUrl` in [`config/site.ts`](config/site.ts))    |
 | `vin.ski`     | Redirects (301) to `www.vin.ski`                                                          |
 | `api.vin.ski` | Custom domain of the hosted Supabase project, and the app's production `NEXT_PUBLIC_SUPABASE_URL` |
 
@@ -74,7 +74,7 @@ Tailwind CSS v4 and shadcn/ui, set up in [`app/globals.css`](app/globals.css). T
 
 Work, Play and blog posts are MDX files in `content/<type>/<slug>.mdx`. The folder is the type and the file name is the slug.
 
-- **Types** are defined once, in `CONTENT_TYPES` in [`lib/content-types.ts`](lib/content-types.ts): label, route, Zod schema and sort order. Nothing else should list them. Adding a type means a folder, an entry there and a `[slug]` page.
+- **Types** are defined once, in `CONTENT_TYPES` in [`config/content-types.ts`](config/content-types.ts): label, route, Zod schema and sort order. Nothing else should list them. Adding a type means a folder, an entry there and a `[slug]` page.
 - **Front matter** is validated against the type's schema in [`lib/content/schemas.ts`](lib/content/schemas.ts). Every type has `title`, `date`, `tags`, `tldr` and optional `order`, `repoUrl`, `demoUrl`; Work and Play add their own fields. A bad field fails the build and names the file.
 - **Publishing** follows `isPublished()` in [`lib/content/publish.ts`](lib/content/publish.ts): no `date` is a draft, a future `date` is scheduled, today or earlier (UTC) is public. `next dev` shows drafts and scheduled items with a badge; builds leave them out everywhere.
 - **Scheduled items go live by themselves.** The published filter is cached hourly, so the item and its links appear within the hour of its date, without a redeploy. The very first request after that can still get a not-found page, until the page regenerates.
@@ -109,7 +109,7 @@ Still to build:
 [Vercel Web Analytics](https://vercel.com/docs/analytics) and Speed Insights, rendered by [`VercelInsights.tsx`](app/_components/VercelInsights.tsx) in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
 
 - **Your own visits don't count.** [`VercelInsights.tsx`](app/_components/VercelInsights.tsx) drops every page view, event and Speed Insights report while a Supabase session cookie exists (sign-ups are off, so that's you) and on `/auth/*`. Before launch this keeps `/` meaning the teaser.
-- **Events.** Mark an element with `trackAttributes({ event, …properties })` from [`lib/track.ts`](lib/track.ts) (`ButtonLink` takes it as `track`); one listener in [`AnalyticsEvents.tsx`](app/_components/AnalyticsEvents.tsx) sends it on click and adds `page` (`teaser`, `home`, `work`, `play`, `blog`) and `path`. Plus allows 8 properties per event. No personal data goes into events.
+- **Events.** Mark an element with `trackAttributes({ event, …properties })` from [`lib/analytics/track.ts`](lib/analytics/track.ts) (`ButtonLink` takes it as `track`); one listener in [`AnalyticsEvents.tsx`](app/_components/AnalyticsEvents.tsx) sends it on click and adds `page` (`teaser`, `home`, `work`, `play`, `blog`) and `path`. Plus allows 8 properties per event. No personal data goes into events.
 
   | Event | Properties | Fires on |
   | --- | --- | --- |
@@ -195,7 +195,7 @@ Act on a pattern only once it holds for more than a month: traffic is small, so 
 
 ## Search engines
 
-- **Only production is indexable.** `isProduction` in [`lib/site.ts`](lib/site.ts) drives the robots meta tag in the root layout and the rules in [`app/robots.ts`](app/robots.ts). Vercel previews and local builds return `noindex` and `Disallow: /`.
+- **Only production is indexable.** `isProduction` in [`config/site.ts`](config/site.ts) drives the robots meta tag in the root layout and the rules in [`app/robots.ts`](app/robots.ts). Vercel previews and local builds return `noindex` and `Disallow: /`.
 - **The teaser is indexable.** Nothing needs removing at launch, and Google doesn't have to rediscover the page.
 - **No site-wide canonical or `og:url`.** Every page would inherit it and point Google at `/`.
 - **Login is `noindex`,** but it isn't blocked in robots.txt, so crawlers can still read that tag.

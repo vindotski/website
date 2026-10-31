@@ -1,4 +1,4 @@
-import type { SocialName } from "@/lib/types";
+import type { SocialName } from "@/types/common";
 
 // Outline marks from Lucide (ISC), drawn at the same 2px stroke as the
 // site's other icons, so the three read as one set

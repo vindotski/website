@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { getHero, getSocials } from "@/lib/api";
-import { trackAttributes } from "@/lib/track";
+import { getHero, getSocials } from "@/features/profile/api/profile";
+import { trackAttributes } from "@/lib/analytics/track";
 import { cn } from "@/lib/utils";
 // TODO: replace with a larger cut-out (1500–2048px); this one is 500px
 import portrait from "@/public/images/portrait-cutout.png";

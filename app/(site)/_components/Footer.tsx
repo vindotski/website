@@ -1,13 +1,13 @@
 import { cacheLife } from "next/cache";
 import Image from "next/image";
-import { getContact, getSocials } from "@/lib/api";
+import { getContact, getSocials } from "@/features/profile/api/profile";
 import portrait from "@/public/images/portrait.jpg";
 import ContactActions from "./ContactActions";
 import ScrollLink from "@/components/scroll-link";
 import { PersonIcon } from "@/components/contact-icons";
 import SocialIcon from "@/components/social-icon";
 import { Separator } from "@/components/ui/separator";
-import { trackAttributes } from "@/lib/track";
+import { trackAttributes } from "@/lib/analytics/track";
 
 // Cached so the page can still be prerendered; refreshed daily for the new year
 async function CurrentYear() {

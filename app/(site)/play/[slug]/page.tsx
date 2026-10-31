@@ -5,7 +5,7 @@ import {
   getPlayBySlug,
   getPlayContent,
   getStaticSlugs,
-} from "@/lib/api";
+} from "@/lib/content/api";
 import DraftBadge from "@/components/draft-badge";
 import DetailImage from "@/components/detail/detail-image";
 import DetailIntro from "@/components/detail/detail-intro";

@@ -1,4 +1,4 @@
-import { trackViewAttributes } from "@/lib/track";
+import { trackViewAttributes } from "@/lib/analytics/track";
 
 type SectionProps = {
   id: string;

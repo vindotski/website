@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getPosts } from "@/lib/api";
+import { getPosts } from "@/lib/content/api";
 import { formatDate } from "@/lib/format";
 import DraftBadge from "@/components/draft-badge";
 import Section from "@/components/layouts/section";

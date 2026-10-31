@@ -5,7 +5,7 @@ import {
   getStaticSlugs,
   getWorkBySlug,
   getWorkContent,
-} from "@/lib/api";
+} from "@/lib/content/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatYears } from "@/lib/format";
 import DraftBadge from "@/components/draft-badge";

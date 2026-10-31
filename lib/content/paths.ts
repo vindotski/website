@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { parse as parseYaml } from "yaml";
-import { CONTENT_TYPES, type ContentType } from "../content-types";
+import { CONTENT_TYPES, type ContentType } from "../../config/content-types";
 import { isPublished, showDrafts, todayUtc } from "./publish";
 
 // Lets the proxy answer a content URL that doesn't exist or isn't public yet

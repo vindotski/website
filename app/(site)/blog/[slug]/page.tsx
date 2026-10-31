@@ -5,10 +5,10 @@ import {
   getPostBySlug,
   getPostContent,
   getStaticSlugs,
-} from "@/lib/api";
+} from "@/lib/content/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatDate } from "@/lib/format";
-import { trackViewAttributes } from "@/lib/track";
+import { trackViewAttributes } from "@/lib/analytics/track";
 import DraftBadge from "@/components/draft-badge";
 import Tags from "@/components/tags";
 import DetailIntro from "@/components/detail/detail-intro";

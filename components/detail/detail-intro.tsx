@@ -1,4 +1,4 @@
-import { trackAttributes } from "@/lib/track";
+import { trackAttributes } from "@/lib/analytics/track";
 
 // kind names the link in Analytics: product, demo, source, repo
 type ExternalLink = { href: string; label: string; kind: string };

@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toTag } from "@/lib/format";
-import type { Image as ContentImage } from "@/lib/types";
+import type { Image as ContentImage } from "@/types/common";
 import { cn } from "@/lib/utils";
 import Tags from "@/components/tags";
 

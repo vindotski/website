@@ -3,7 +3,7 @@
 import { track } from "@vercel/analytics";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { pageFromPath } from "@/lib/track";
+import { pageFromPath } from "@/lib/analytics/track";
 
 // Which part of the site an event came from: a [data-track-page] around it
 // (the teaser, which shares "/" with the home page), or the path

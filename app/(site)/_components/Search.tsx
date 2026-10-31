@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { pageFromPath } from "@/lib/track";
+import { pageFromPath } from "@/lib/analytics/track";
 
 // One result from /api/search
 type Result = {
