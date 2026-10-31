@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import { trackAttributes, type Track } from "@/lib/track";
 import ScrollLink from "./ScrollLink";
 
 // shadcn's Button look on a real link. The Button component itself always
@@ -16,8 +17,8 @@ type ButtonLinkProps = {
   // Accessible name for an icon-only button
   label?: string;
   newTab?: boolean;
-  // Sent to Analytics as contact_click's method when clicked
-  event?: string;
+  // Sent to Vercel Analytics when clicked (see lib/track.ts)
+  track?: Track;
   children?: React.ReactNode;
 };
 
@@ -34,15 +35,14 @@ export default function ButtonLink({
   icon,
   label,
   newTab = false,
-  event,
+  track,
   children,
 }: ButtonLinkProps) {
   const className = buttonVariants({
     variant: variants[variant],
     size: children ? "lg" : "icon-lg",
   });
-  // Read by the Analytics click listener; nothing is sent without it
-  const tracking = event ? { "data-analytics-event": event } : {};
+  const tracking = trackAttributes(track);
   const content = (
     <>
       {/* data-icon gives the icon side its tighter padding */}

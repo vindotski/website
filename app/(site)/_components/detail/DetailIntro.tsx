@@ -1,4 +1,7 @@
-type ExternalLink = { href: string; label: string };
+import { trackAttributes } from "@/lib/track";
+
+// kind names the link in Analytics: product, demo, source, repo
+type ExternalLink = { href: string; label: string; kind: string };
 
 type DetailIntroProps = {
   title: string;
@@ -26,6 +29,11 @@ export default function DetailIntro({
             <a
               key={link.href}
               href={link.href}
+              {...trackAttributes({
+                event: "outbound_click",
+                kind: link.kind,
+                location: "intro",
+              })}
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium underline underline-offset-4"

@@ -45,8 +45,8 @@ export default async function PlayPage({ params }: PageProps<"/play/[slug]">) {
         title={item.title}
         summary={item.summary}
         links={[
-          { href: item.demoUrl, label: "Live demo" },
-          ...(item.repoUrl ? [{ href: item.repoUrl, label: "Source" }] : []),
+          { href: item.demoUrl, label: "Live demo", kind: "demo" },
+          ...(item.repoUrl ? [{ href: item.repoUrl, label: "Source", kind: "source" }] : []),
         ]}
       >
         <DraftBadge item={item} />

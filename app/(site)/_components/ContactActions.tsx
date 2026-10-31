@@ -19,7 +19,7 @@ export default async function ContactActions({
         href={`mailto:${contact.email}`}
         variant={tone === "light" ? "primary" : "inverse"}
         icon={<MailIcon />}
-        event="contact_email"
+        track={{ event: "contact_click", method: "contact_email", location: "footer" }}
       >
         Email me
       </ButtonLink>
@@ -27,7 +27,7 @@ export default async function ContactActions({
         href={contact.callUrl}
         variant={secondary}
         icon={<CalendarIcon />}
-        event="contact_call"
+        track={{ event: "contact_click", method: "contact_call", location: "footer" }}
         newTab
       >
         Book a call

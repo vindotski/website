@@ -109,9 +109,69 @@ Still to build:
 [Vercel Web Analytics](https://vercel.com/docs/analytics) and Speed Insights, rendered by [`VercelInsights.tsx`](app/_components/VercelInsights.tsx) in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
 
 - **Your own visits don't count.** [`VercelInsights.tsx`](app/_components/VercelInsights.tsx) drops every page view, event and Speed Insights report while a Supabase session cookie exists (sign-ups are off, so that's you) and on `/auth/*`. Before launch this keeps `/` meaning the teaser.
-- **Events:** `contact_click`, with `method` set to `contact_open` (Get in touch), `contact_email` or `contact_call`. Mark a `ButtonLink` with `event="…"` to track another button; one listener in [`AnalyticsEvents.tsx`](app/_components/AnalyticsEvents.tsx) sends it with `track()`. Custom events need a Pro plan. No personal data goes into events.
+- **Events.** Mark an element with `trackAttributes({ event, …properties })` from [`lib/track.ts`](lib/track.ts) (`ButtonLink` takes it as `track`); one listener in [`AnalyticsEvents.tsx`](app/_components/AnalyticsEvents.tsx) sends it on click and adds `page` (`teaser`, `home`, `work`, `play`, `blog`) and `path`. Plus allows 8 properties per event. No personal data goes into events.
+
+  | Event | Properties | Fires on |
+  | --- | --- | --- |
+  | `contact_click` | `method` (`contact_open`, `contact_email`, `contact_call`), `location` (`header`, `sheet`, `hero`, `footer`, `teaser`) | Get in touch, Email me, Book a call |
+  | `outbound_click` | `kind` (`linkedin`, `github`, `figma`, `product`, `demo`, `source`, `repo`), `location` (`hero`, `footer`, `teaser`, `intro`) | Social links; project and post links |
 - **Speed Insights** reports Core Web Vitals from real visits. The data shows under **Speed Insights** in the project, after it's enabled there.
 - **Checking it:** in production, the Network tab shows a request to `/_vercel/insights/view` on every page and `/_vercel/insights/event` on a contact click; the data shows under **Analytics** in the project.
+
+### Analytics strategy
+
+The site has one job: get the right people to get in touch. Analytics is there to show whether it does, and why or why not. It isn't there to grow traffic for its own sake.
+
+**The questions, and where the answers are:**
+
+| Question | Answered by |
+| --- | --- |
+| Who comes, and from where? | Visitors, referrers, countries and devices; UTM source and medium (see below) |
+| What do they look at? | Page views per route (work, play, blog); `section_view`, `post_read` and `search`*  |
+| Do they get in touch, and from where on the site? | `contact_click` split by `method`, `location` and `page` |
+| Where do they go instead? | `outbound_click` split by `kind`: LinkedIn and GitHub (checking me out) vs product and demo links (checking the work out) |
+| Is it fast for them? | Speed Insights (Core Web Vitals from real visits) |
+
+\* Planned, not built yet.
+
+**The number that matters most is the contact rate:** visitors with at least one `contact_click`, divided by all visitors, per month. Everything else explains it:
+- **Which source** brings people who get in touch: UTM and referrers.
+- **Which work** they read first: page views and `section_view`.
+- **Which button** they use: `location` and `method`.
+
+Before launch, the teaser is measured the same way: its page views and its e-mail, LinkedIn and GitHub clicks (`page: teaser`).
+
+**Rules for adding to it:**
+- **Track decisions, not activity.** Add an event only if its answer could change something on the site. Page views already cover "they opened it".
+- **One small vocabulary.** Events are `noun_verb` in snake_case (`contact_click`). Properties are lowercase values from a fixed list, never free text. Use at most 8 properties per event (Plus); `page` and `path` are added automatically.
+- **No personal data, ever.** No e-mail addresses, names, search queries or anything a visitor typed. Vercel counts visitors without cookies, which is why there's no consent banner. Keep it that way.
+- **Own visits stay out.** Test as a guest, or check the debug log in `pnpm dev`, where nothing is sent.
+- **Update the event table above** in the same commit that adds or changes an event.
+
+**UTM links.** Use these instead of the bare address whenever sharing the site. Web Analytics Plus breaks visits down by them. The convention:
+- `utm_source` is where the link lives;
+- `utm_medium` is what kind of place that is;
+- `utm_campaign` is optional, for one specific post or application;
+- all lowercase, no spaces.
+
+| Where | Link |
+| --- | --- |
+| LinkedIn profile (website field) | `https://www.vin.ski/?utm_source=linkedin&utm_medium=profile` |
+| LinkedIn post | `https://www.vin.ski/?utm_source=linkedin&utm_medium=social&utm_campaign=<post-slug>` |
+| CV (PDF) | `https://www.vin.ski/?utm_source=cv&utm_medium=pdf` |
+| GitHub profile | `https://www.vin.ski/?utm_source=github&utm_medium=profile` |
+| E-mail signature | `https://www.vin.ski/?utm_source=email&utm_medium=signature` |
+| Job application | `https://www.vin.ski/?utm_source=<company>&utm_medium=application` |
+
+The teaser keeps the tags: the proxy rewrites on the server, so the address in the browser, and with it the page view, still carries them.
+
+**Reviewing it:** once a month, in **Analytics** for the project:
+1. Check the contact rate.
+2. Split `contact_click` by `location` and `page`.
+3. Check which UTM sources and referrers led to contact.
+4. Compare the most-viewed work with the order on the home page.
+
+Act on a pattern only once it holds for more than a month: traffic is small, so single weeks are noise.
 
 ## Supabase
 

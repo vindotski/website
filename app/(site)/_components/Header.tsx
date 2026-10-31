@@ -26,7 +26,7 @@ export default function Header() {
           <Search />
           <span className="hidden md:block">
             {/* Leads to the contact prompt in the footer, on any page */}
-            <ButtonLink href="#contact" icon={<ChatIcon />} event="contact_open">
+            <ButtonLink href="#contact" icon={<ChatIcon />} track={{ event: "contact_click", method: "contact_open", location: "header" }}>
               Get in touch
             </ButtonLink>
           </span>

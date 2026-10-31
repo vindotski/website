@@ -7,6 +7,7 @@ import ScrollLink from "./ScrollLink";
 import { PersonIcon } from "./ContactIcons";
 import SocialIcon from "./SocialIcon";
 import { Separator } from "@/components/ui/separator";
+import { trackAttributes } from "@/lib/track";
 
 // Cached so the page can still be prerendered; refreshed daily for the new year
 async function CurrentYear() {
@@ -81,6 +82,11 @@ export default async function Footer() {
               <li key={social.name}>
                 <a
                   href={social.href}
+                  {...trackAttributes({
+                    event: "outbound_click",
+                    kind: social.name.toLowerCase(),
+                    location: "footer",
+                  })}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.name}

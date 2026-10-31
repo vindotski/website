@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getHero, getSocials } from "@/lib/api";
+import { trackAttributes } from "@/lib/track";
 import { cn } from "@/lib/utils";
 // TODO: replace with a larger cut-out (1500–2048px); this one is 500px
 import portrait from "@/public/images/portrait-cutout.png";
@@ -50,13 +51,14 @@ export default async function Hero() {
               once the cue is centred; below that it sits by the cue */}
           <div className="grid grid-cols-2 gap-3 self-stretch *:nth-3:hidden sm:flex sm:flex-wrap split:self-auto md:*:nth-3:inline-flex">
             {/* Leads to the contact prompt in the footer */}
-            <ButtonLink href="#contact" icon={<ChatIcon />} event="contact_open">
+            <ButtonLink href="#contact" icon={<ChatIcon />} track={{ event: "contact_click", method: "contact_open", location: "hero" }}>
               Get in touch
             </ButtonLink>
             {linkedIn && (
               <ButtonLink
                 href={linkedIn.href}
                 variant="secondary"
+                track={{ event: "outbound_click", kind: "linkedin", location: "hero" }}
                 icon={<SocialIcon name="LinkedIn" />}
                 newTab
               >
@@ -67,6 +69,7 @@ export default async function Hero() {
               <ButtonLink
                 href={gitHub.href}
                 variant="secondary"
+                track={{ event: "outbound_click", kind: "github", location: "hero" }}
                 icon={<SocialIcon name="GitHub" />}
                 label="GitHub"
                 newTab
@@ -118,6 +121,11 @@ export default async function Hero() {
           {gitHub && (
             <a
               href={gitHub.href}
+              {...trackAttributes({
+                event: "outbound_click",
+                kind: "github",
+                location: "hero",
+              })}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(bottomLink, "gap-2 split:-ml-1 md:hidden [&_svg]:size-4")}

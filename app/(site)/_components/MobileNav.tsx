@@ -40,7 +40,7 @@ export default function MobileNav() {
           <NavLinks orientation="column" onNavigate={close} />
         </nav>
         <SheetFooter onClick={close}>
-          <ButtonLink href="#contact" icon={<ChatIcon />} event="contact_open">
+          <ButtonLink href="#contact" icon={<ChatIcon />} track={{ event: "contact_click", method: "contact_open", location: "sheet" }}>
             Get in touch
           </ButtonLink>
         </SheetFooter>

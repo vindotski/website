@@ -48,7 +48,7 @@ export default async function WorkPage({ params }: PageProps<"/work/[slug]">) {
         summary={item.summary}
         links={
           item.productUrl
-            ? [{ href: item.productUrl, label: "Visit product" }]
+            ? [{ href: item.productUrl, label: "Visit product", kind: "product" }]
             : []
         }
       >

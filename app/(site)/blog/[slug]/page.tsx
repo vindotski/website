@@ -46,8 +46,8 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
       <DetailIntro
         title={post.title}
         links={[
-          ...(post.repoUrl ? [{ href: post.repoUrl, label: "Repo" }] : []),
-          ...(post.demoUrl ? [{ href: post.demoUrl, label: "Demo" }] : []),
+          ...(post.repoUrl ? [{ href: post.repoUrl, label: "Repo", kind: "repo" }] : []),
+          ...(post.demoUrl ? [{ href: post.demoUrl, label: "Demo", kind: "demo" }] : []),
         ]}
       >
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">

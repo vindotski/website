@@ -13,7 +13,11 @@ import SocialIcon from "../(site)/_components/SocialIcon";
 export default function TeaserPage() {
   return (
     // The dark theme, filling the screen
-    <main className="dark relative flex-1 bg-background text-foreground">
+    <main
+      className="dark relative flex-1 bg-background text-foreground"
+      // Shares "/" with the home page; events say which one
+      data-track-page="teaser"
+    >
       <section
         // svh is the height with the phone toolbars showing, so the hero
         // never hides under them or jumps on scroll
@@ -39,13 +43,14 @@ export default function TeaserPage() {
             <ButtonLink
               href="mailto:ivan@vin.ski"
               icon={<MailIcon />}
-              event="contact_email"
+              track={{ event: "contact_click", method: "contact_email", location: "teaser" }}
             >
               ivan@vin.ski
             </ButtonLink>
             <ButtonLink
               href="https://www.linkedin.com/in/vindotski"
               variant="secondary"
+              track={{ event: "outbound_click", kind: "linkedin", location: "teaser" }}
               icon={<SocialIcon name="LinkedIn" />}
               newTab
             >
@@ -55,6 +60,7 @@ export default function TeaserPage() {
             <ButtonLink
               href="https://github.com/vindotski"
               variant="secondary"
+              track={{ event: "outbound_click", kind: "github", location: "teaser" }}
               icon={<SocialIcon name="GitHub" />}
               label="GitHub"
               newTab
