@@ -51,7 +51,7 @@ Then open [http://localhost:3000](http://localhost:3000). You'll see the teaser.
 
 ## How the teaser works
 
-[`proxy.ts`](proxy.ts) runs [`lib/supabase/proxy.ts`](lib/supabase/proxy.ts) on every request. It refreshes the Supabase session, then:
+[`proxy.ts`](proxy.ts) runs the auth gate in [`features/auth/utils/session.ts`](features/auth/utils/session.ts) on every request. It refreshes the Supabase session, then:
 
 - **Signed in:** the request goes through to the real page, unless it's a content URL with no file behind it or one that isn't published yet. Those get a real 404 (see [Content](#content)).
 - **Signed out:** `/` is rewritten to the teaser (200). Every other path, `/teaser` included, returns 404. `/auth/*` stays open so you can log in.
@@ -247,7 +247,7 @@ Infrastructure:
 
 Going public:
 
-- [ ] Remove the signed-out branch from `lib/supabase/proxy.ts` and delete `app/teaser/`
+- [ ] Remove the signed-out branch from `features/auth/utils/session.ts` and delete `app/teaser/`
 - [ ] Replace the placeholder `date`, `tags` and `tldr` on Work and Play (marked `# TODO`), and check post dates
 - [ ] Generate `app/sitemap.ts` from `CONTENT_TYPES` and the published items
 - [ ] Open the search route to guests
