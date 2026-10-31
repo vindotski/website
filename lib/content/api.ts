@@ -3,7 +3,7 @@ import { cacheLife } from "next/cache";
 import { CONTENT_TYPES, type ContentType } from "@/config/content-types";
 import { loadItems, type Item } from "./load";
 import { isPublished, showDrafts, todayUtc } from "./publish";
-import type { Entry, Play, Post, Work } from "./types";
+import type { Entry, Post, Project } from "./types";
 
 // Reads the MDX content in content/: cached, sorted, with drafts and
 // scheduled items left out of production
@@ -42,36 +42,21 @@ function nextAfter<T extends { slug: string }>(items: T[], slug: string) {
   return items[(index + 1) % items.length];
 }
 
-export async function getWork(): Promise<Work[]> {
-  return getItems("work");
+export async function getProjects(): Promise<Project[]> {
+  return getItems("projects");
 }
 
-export async function getWorkBySlug(slug: string): Promise<Work | null> {
-  return getItem("work", slug);
+export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  return getItem("projects", slug);
 }
 
-export async function getWorkContent(slug: string): Promise<MDXContent> {
-  return getContent("work", slug);
+export async function getProjectContent(slug: string): Promise<MDXContent> {
+  return getContent("projects", slug);
 }
 
-export async function getNextWork(slug: string): Promise<Work | null> {
-  return getNext("work", slug);
-}
-
-export async function getPlay(): Promise<Play[]> {
-  return getItems("play");
-}
-
-export async function getPlayBySlug(slug: string): Promise<Play | null> {
-  return getItem("play", slug);
-}
-
-export async function getPlayContent(slug: string): Promise<MDXContent> {
-  return getContent("play", slug);
-}
-
-export async function getNextPlay(slug: string): Promise<Play | null> {
-  return getNext("play", slug);
+// Through all projects, work then play, in their order
+export async function getNextProject(slug: string): Promise<Project | null> {
+  return getNext("projects", slug);
 }
 
 // In the type's display order. Undated drafts sort last; ISO dates sort

@@ -51,8 +51,8 @@ export const services: Service[] = [
     headline: "Interfaces that keep up.",
     line: "Real-time, data-heavy UIs with complex state, fast and built to last.",
     proof: [
-      { type: "work", slug: "huddleos" },
-      { type: "play", slug: "spotcraft" },
+      { type: "projects", slug: "huddleos" },
+      { type: "projects", slug: "spotcraft" },
     ],
   },
   {
@@ -60,8 +60,8 @@ export const services: Service[] = [
     headline: "From idea to MVP.",
     line: "Scope, trade-offs, shipping and measuring, the way I work, step by step.", // TODO
     proof: [
-      { type: "work", slug: "kalistenio" },
-      { type: "play", slug: "vinui" },
+      { type: "projects", slug: "kalistenio" },
+      { type: "projects", slug: "vinui" },
     ],
   },
   {
@@ -69,8 +69,8 @@ export const services: Service[] = [
     headline: "From the screen to the database.",
     line: "UI, API and data, built as one piece.",
     proof: [
-      { type: "work", slug: "odjeca-hr" },
-      { type: "play", slug: "sokobanko" },
+      { type: "projects", slug: "odjeca-hr" },
+      { type: "projects", slug: "sokobanko" },
     ],
   },
 ];

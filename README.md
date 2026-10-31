@@ -72,10 +72,10 @@ Tailwind CSS v4 and shadcn/ui, set up in [`app/globals.css`](app/globals.css). T
 
 ## Content
 
-Work, Play and blog posts are MDX files in `content/<type>/<slug>.mdx`. The folder is the type and the file name is the slug.
+Projects and blog posts are MDX files in `content/<type>/<slug>.mdx`. The folder is the type and the file name is the slug.
 
 - **Types** are defined once, in `CONTENT_TYPES` in [`config/content-types.ts`](config/content-types.ts): label, route, Zod schema and sort order. Nothing else should list them. Adding a type means a folder, an entry there and a `[slug]` page.
-- **Front matter** is validated against the type's schema in [`lib/content/schemas.ts`](lib/content/schemas.ts). Every type has `title`, `date`, `tags`, `tldr` and optional `order`, `repoUrl`, `demoUrl`; Work and Play add their own fields. A bad field fails the build and names the file.
+- **Front matter** is validated against the type's schema in [`lib/content/schemas.ts`](lib/content/schemas.ts). Every type has `title`, `date`, `tags`, `tldr` and optional `order`, `repoUrl`, `demoUrl`; projects add a `category`, `work` (a job: `company`, `role`, `years`, `impact`) or `play` (a side project: `year`, `status`), and each category checks its own fields. A bad field fails the build and names the file.
 - **Publishing** follows `isPublished()` in [`lib/content/publish.ts`](lib/content/publish.ts): no `date` is a draft, a future `date` is scheduled, today or earlier (UTC) is public. `next dev` shows drafts and scheduled items with a badge; builds leave them out everywhere.
 - **Scheduled items go live by themselves.** The published filter is cached hourly, so the item and its links appear within the hour of its date, without a redeploy. The very first request after that can still get a not-found page, until the page regenerates.
 - **404s.** A page that isn't prebuilt can only answer 200 (Next.js streams it). So [`next.config.ts`](next.config.ts) inlines every file's slug and date as `CONTENT_PATHS`, and the proxy returns a real 404 for unknown or unpublished slugs ([`lib/content/paths.ts`](lib/content/paths.ts)). New files need a rebuild to be known, which a deploy does.
@@ -109,16 +109,16 @@ Still to build:
 [Vercel Web Analytics](https://vercel.com/docs/analytics) and Speed Insights, rendered by [`vercel-insights.tsx`](app/_components/vercel-insights.tsx) in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
 
 - **Your own visits don't count.** [`vercel-insights.tsx`](app/_components/vercel-insights.tsx) drops every page view, event and Speed Insights report while a Supabase session cookie exists (sign-ups are off, so that's you) and on `/auth/*`. Before launch this keeps `/` meaning the teaser.
-- **Events.** Mark an element with `trackAttributes({ event, …properties })` from [`lib/analytics/track.ts`](lib/analytics/track.ts) (`ButtonLink` takes it as `track`); one listener in [`analytics-events.tsx`](app/_components/analytics-events.tsx) sends it on click and adds `page` (`teaser`, `home`, `work`, `play`, `blog`) and `path`. Plus allows 8 properties per event. No personal data goes into events.
+- **Events.** Mark an element with `trackAttributes({ event, …properties })` from [`lib/analytics/track.ts`](lib/analytics/track.ts) (`ButtonLink` takes it as `track`); one listener in [`analytics-events.tsx`](app/_components/analytics-events.tsx) sends it on click and adds `page` (`teaser`, `home`, `projects`, `blog`) and `path`. Plus allows 8 properties per event. No personal data goes into events.
 
   | Event | Properties | Fires on |
   | --- | --- | --- |
   | `contact_click` | `method` (`contact_open`, `contact_email`, `contact_call`), `location` (`header`, `sheet`, `hero`, `footer`, `teaser`) | Get in touch, Email me, Book a call |
   | `outbound_click` | `kind` (`linkedin`, `github`, `figma`, `product`, `demo`, `source`, `repo`), `location` (`hero`, `footer`, `teaser`, `intro`) | Social links; project and post links |
-  | `section_view` | `section` (`work`, `services`, `experience`, `process`, `blog`) | A home section seen: half of it visible, or filling half the screen. Once per page load |
+  | `section_view` | `section` (`projects`, `services`, `experience`, `process`, `blog`) | A home section seen: half of it visible, or filling half the screen. Once per page load |
   | `post_read` | `slug` | Reaching the end of a post. Once per page load |
   | `search` | `results` (count) | A completed search, once per distinct query. Never the query text |
-  | `search_select` | `type` (`work`, `play`, `blog`), `position` (1-based) | Opening a search result |
+  | `search_select` | `type` (`projects`, `blog`), `position` (1-based) | Opening a search result |
 
   Views are marked with `trackViewAttributes()` and sent by the same listener; search events are sent from [`Search.tsx`](app/(site)/_components/Search.tsx) with `track()`.
 - **Speed Insights** reports Core Web Vitals from real visits. The data shows under **Speed Insights** in the project, after it's enabled there.
@@ -133,14 +133,14 @@ The site has one job: get the right people to get in touch. Analytics is there t
 | Question | Answered by |
 | --- | --- |
 | Who comes, and from where? | Visitors, referrers, countries and devices; UTM source and medium (see below) |
-| What do they look at? | Page views per route (work, play, blog); `section_view`, `post_read` and `search` |
+| What do they look at? | Page views per route (projects, blog); `section_view`, `post_read` and `search` |
 | Do they get in touch, and from where on the site? | `contact_click` split by `method`, `location` and `page` |
 | Where do they go instead? | `outbound_click` split by `kind`: LinkedIn and GitHub (checking me out) vs product and demo links (checking the work out) |
 | Is it fast for them? | Speed Insights (Core Web Vitals from real visits) |
 
 **The number that matters most is the contact rate:** visitors with at least one `contact_click`, divided by all visitors, per month. Everything else explains it:
 - **Which source** brings people who get in touch: UTM and referrers.
-- **Which work** they read first: page views and `section_view`.
+- **Which projects** they read first: page views and `section_view`.
 - **Which button** they use: `location` and `method`.
 
 Before launch, the teaser is measured the same way: its page views and its e-mail, LinkedIn and GitHub clicks (`page: teaser`).
@@ -173,7 +173,7 @@ The teaser keeps the tags: the proxy rewrites on the server, so the address in t
 1. Check the contact rate.
 2. Split `contact_click` by `location` and `page`.
 3. Check which UTM sources and referrers led to contact.
-4. Compare the most-viewed work with the order on the home page.
+4. Compare the most-viewed projects with the order on the home page.
 
 Act on a pattern only once it holds for more than a month: traffic is small, so single weeks are noise.
 
@@ -225,21 +225,21 @@ app/                  Routes and site chrome (the app layer)
   (site)/             The portfolio, with header and footer (group omitted from URLs)
     _components/      header, footer, nav-links, mobile-nav
     page.tsx          Home (/): composes profile, projects and blog
-    work/ play/ blog/ Detail pages ([slug])
+    projects/ blog/ Detail pages ([slug])
   api/search/         Search route: session check and parameters, then features/search
   teaser/             Pre-launch page, shown at / to signed-out visitors
   auth/login/         Login page, rendered bare and centred
   robots.ts sitemap.ts
 features/
   profile/            Hero, services, experience, process, contact actions; their copy and getters
-  projects/           Work section and project cards
+  projects/           Projects section and project cards
   blog/               Blog section and a post's table of contents
   search/             Search dialog and the semantic search itself
   auth/               Login form and the session gate used by proxy.ts
 components/
   ui/                 shadcn/ui components (add more with `pnpm dlx shadcn@latest add`)
   layouts/            section, detail-page, prose
-  detail/             Parts of a work, play or post page
+  detail/             Parts of a project or post page
   button-link.tsx …   Small shared pieces: links, tags, badges, icons
 config/
   site.ts             Site URL and production check
@@ -249,7 +249,7 @@ lib/
   analytics/          Tracking attributes for Vercel Analytics
   supabase/           Browser, server and admin clients, generated database types
 types/                Shared types
-content/              work/ play/ posts/ (MDX, one file per item)
+content/              projects/ posts/ (MDX, one file per item)
 scripts/              embed.mts: syncs the search index
 supabase/
   config.toml         Local stack, plus production overrides
@@ -277,7 +277,7 @@ Infrastructure:
 Going public:
 
 - [ ] Remove the signed-out branch from `features/auth/utils/session.ts` and delete `app/teaser/`
-- [ ] Replace the placeholder `date`, `tags` and `tldr` on Work and Play (marked `# TODO`), and check post dates
+- [ ] Replace the placeholder `date`, `tags` and `tldr` on projects (marked `# TODO`), and check post dates
 - [ ] Generate `app/sitemap.ts` from `CONTENT_TYPES` and the published items
 - [ ] Open the search route to guests
 - [ ] Add OG images, RSS and `llms.txt` if wanted

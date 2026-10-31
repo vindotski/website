@@ -4,13 +4,13 @@ import Experience from "@/features/profile/components/experience";
 import Hero from "@/features/profile/components/hero";
 import Process from "@/features/profile/components/process";
 import Services from "@/features/profile/components/services";
-import WorkSection from "@/features/projects/components/work-section";
+import ProjectsSection from "@/features/projects/components/projects-section";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <WorkSection />
+      <ProjectsSection />
       <Services />
       <Experience />
       <Process />

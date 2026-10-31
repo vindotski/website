@@ -12,8 +12,9 @@ export type Entry<T extends ContentType = ContentType> = Item<T> & {
   published: boolean;
 };
 
-export type Work = Entry<"work">;
-
-export type Play = Entry<"play">;
+// Work and play share one type; `category` tells them apart
+export type Project = Entry<"projects">;
+export type WorkProject = Extract<Project, { category: "work" }>;
+export type PlayProject = Extract<Project, { category: "play" }>;
 
 export type Post = Entry<"posts">;

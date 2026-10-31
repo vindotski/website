@@ -41,7 +41,7 @@ function message(status: Status, query: string, count: number) {
   }
   return query.trim().length > 0
     ? `Type at least ${minLength} characters`
-    : "Search work, play and posts";
+    : "Search projects and posts";
 }
 
 // The search button in the header, and ⌘K / Ctrl+K anywhere, open a command
@@ -178,13 +178,13 @@ export default function SearchDialog() {
       >
         <DialogTitle className="sr-only">Search</DialogTitle>
         <DialogDescription className="sr-only">
-          Search work, play and posts. Use the arrow keys to pick a result.
+          Search projects and posts. Use the arrow keys to pick a result.
         </DialogDescription>
         <Command shouldFilter={false} className="rounded-none!">
           <CommandInput
             value={query}
             onValueChange={onValueChange}
-            placeholder="Search work, play and posts"
+            placeholder="Search projects and posts"
             // 16px or more keeps iOS from zooming in on focus
             className="text-base"
           />

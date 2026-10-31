@@ -9,7 +9,7 @@ type NavLink = { href: string; label: string };
 
 // Paths include "/" so the links also work from project and blog pages
 export const navLinks: NavLink[] = [
-  { href: "/#work", label: "Work" },
+  { href: "/#projects", label: "Projects" },
   { href: "/#services", label: "Services" },
   { href: "/#experience", label: "Experience" },
   { href: "/#process", label: "Process" },
@@ -18,8 +18,7 @@ export const navLinks: NavLink[] = [
 
 // Pages under these paths belong to a home section
 const owners: Record<string, string> = {
-  work: "work",
-  play: "work",
+  projects: "projects",
   blog: "blog",
 };
 

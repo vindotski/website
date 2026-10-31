@@ -50,4 +50,11 @@ export const playSchema = core.extend({
   image,
 });
 
+// Work and play side by side: `category` picks which fields apply, so a work
+// project needs a company and a play project needs a status
+export const projectSchema = z.discriminatedUnion("category", [
+  workSchema.extend({ category: z.literal("work") }),
+  playSchema.extend({ category: z.literal("play") }),
+]);
+
 export const postSchema = core;

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-// Wraps an MDX body: posts, work and play pages. The typography plugin styles
+// Wraps an MDX body: posts and project pages. The typography plugin styles
 // the plain elements MDX outputs. Headings stop below the sticky header when
 // the table of contents jumps to them; images are spaced like paragraphs.
 // The backticks rule is the plugin's documented opt-out

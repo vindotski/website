@@ -101,13 +101,13 @@ export default async function Hero() {
             GitHub right beside it */}
         <div className="absolute inset-x-[calc(var(--gutter)-8px)] bottom-4 flex items-center justify-between split:right-auto split:left-1/2 split:-translate-x-1/2 short-landscape:left-[calc(var(--gutter)-8px)] short-landscape:translate-x-0">
           <ScrollLink
-            href="#work"
+            href="#projects"
             className={cn(
               bottomLink,
               "gap-2 split:flex-col split:gap-1 short-landscape:flex-row short-landscape:gap-2",
             )}
           >
-            See work
+            See projects
             {/* After the label in the HTML, before it on phones; nudges down */}
             <span
               className="order-first font-sans text-xl leading-none motion-safe:animate-nudge split:order-none short-landscape:order-first"
