@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { isProduction, siteUrl } from "@/lib/site";
 import AnalyticsEvents from "./_components/AnalyticsEvents";
@@ -42,7 +43,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         {children}
         <VercelInsights />
-        <AnalyticsEvents />
+        {/* Reads the URL, which waits on pages with dynamic params */}
+        <Suspense fallback={null}>
+          <AnalyticsEvents />
+        </Suspense>
       </body>
     </html>
   );

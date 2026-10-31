@@ -1,3 +1,5 @@
+import { trackViewAttributes } from "@/lib/track";
+
 type SectionProps = {
   id: string;
   title: string;
@@ -11,6 +13,7 @@ export default function Section({ id, title, children }: SectionProps) {
       id={id}
       className="mx-auto w-full max-w-content scroll-mt-header px-gutter py-20"
       aria-labelledby={`${id}-title`}
+      {...trackViewAttributes({ event: "section_view", section: id })}
     >
       <h2
         id={`${id}-title`}

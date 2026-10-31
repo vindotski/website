@@ -8,6 +8,7 @@ import {
 } from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { formatDate } from "@/lib/format";
+import { trackViewAttributes } from "@/lib/track";
 import DraftBadge from "../../_components/DraftBadge";
 import Tags from "../../_components/Tags";
 import DetailIntro from "../../_components/detail/DetailIntro";
@@ -94,6 +95,11 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
       <Prose>
         <Content />
       </Prose>
+      {/* Seen once someone reaches the end of the post */}
+      <div
+        aria-hidden="true"
+        {...trackViewAttributes({ event: "post_read", slug: post.slug })}
+      />
 
       {next && <NextLink href={`/blog/${next.slug}`} name={next.title} />}
     </DetailPage>

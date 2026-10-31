@@ -115,6 +115,12 @@ Still to build:
   | --- | --- | --- |
   | `contact_click` | `method` (`contact_open`, `contact_email`, `contact_call`), `location` (`header`, `sheet`, `hero`, `footer`, `teaser`) | Get in touch, Email me, Book a call |
   | `outbound_click` | `kind` (`linkedin`, `github`, `figma`, `product`, `demo`, `source`, `repo`), `location` (`hero`, `footer`, `teaser`, `intro`) | Social links; project and post links |
+  | `section_view` | `section` (`work`, `services`, `experience`, `process`, `blog`) | A home section seen: half of it visible, or filling half the screen. Once per page load |
+  | `post_read` | `slug` | Reaching the end of a post. Once per page load |
+  | `search` | `results` (count) | A completed search, once per distinct query. Never the query text |
+  | `search_select` | `type` (`work`, `play`, `blog`), `position` (1-based) | Opening a search result |
+
+  Views are marked with `trackViewAttributes()` and sent by the same listener; search events are sent from [`Search.tsx`](app/(site)/_components/Search.tsx) with `track()`.
 - **Speed Insights** reports Core Web Vitals from real visits. The data shows under **Speed Insights** in the project, after it's enabled there.
 - **Checking it:** in production, the Network tab shows a request to `/_vercel/insights/view` on every page and `/_vercel/insights/event` on a contact click; the data shows under **Analytics** in the project.
 
@@ -127,12 +133,10 @@ The site has one job: get the right people to get in touch. Analytics is there t
 | Question | Answered by |
 | --- | --- |
 | Who comes, and from where? | Visitors, referrers, countries and devices; UTM source and medium (see below) |
-| What do they look at? | Page views per route (work, play, blog); `section_view`, `post_read` and `search`*  |
+| What do they look at? | Page views per route (work, play, blog); `section_view`, `post_read` and `search` |
 | Do they get in touch, and from where on the site? | `contact_click` split by `method`, `location` and `page` |
 | Where do they go instead? | `outbound_click` split by `kind`: LinkedIn and GitHub (checking me out) vs product and demo links (checking the work out) |
 | Is it fast for them? | Speed Insights (Core Web Vitals from real visits) |
-
-\* Planned, not built yet.
 
 **The number that matters most is the contact rate:** visitors with at least one `contact_click`, divided by all visitors, per month. Everything else explains it:
 - **Which source** brings people who get in touch: UTM and referrers.

@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@vercel/analytics";
 import { Search as SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { pageFromPath } from "@/lib/track";
 
 // One result from /api/search
 type Result = {
@@ -64,6 +66,20 @@ export default function Search() {
   const request = useRef<AbortController | null>(null);
   // Results by query, so going back to an earlier query doesn't search again
   const cache = useRef(new Map<string, Result[]>());
+  // The last query sent to Analytics, so Enter on the same one isn't counted
+  // twice
+  const lastTracked = useRef<string | null>(null);
+
+  // How many results a search found; never the query itself, which is
+  // whatever the visitor typed
+  function trackSearch(key: string, found: Result[]) {
+    if (lastTracked.current === key) return;
+    lastTracked.current = key;
+    track("search", {
+      results: found.length,
+      page: pageFromPath(window.location.pathname),
+    });
+  }
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -96,6 +112,7 @@ export default function Search() {
     if (cached) {
       setResults(cached);
       setStatus("done");
+      trackSearch(key, cached);
       return;
     }
 
@@ -117,6 +134,7 @@ export default function Search() {
       cache.current.set(key, data.results);
       setResults(data.results);
       setStatus("done");
+      trackSearch(key, data.results);
     } catch {
       if (controller.signal.aborted) return;
       setResults([]);
@@ -139,6 +157,12 @@ export default function Search() {
       search(query);
       return;
     }
+    const index = results.findIndex((result) => result.url === url);
+    track("search_select", {
+      type: results[index]?.type.toLowerCase() ?? "unknown",
+      position: index + 1,
+      page: pageFromPath(window.location.pathname),
+    });
     setOpen(false);
     router.push(url);
   }
