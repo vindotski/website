@@ -109,6 +109,7 @@ Still to build:
 [Vercel Web Analytics](https://vercel.com/docs/analytics): `<Analytics />` from `@vercel/analytics/next` in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
 
 - **Events:** `contact_click`, with `method` set to `contact_open` (Get in touch), `contact_email` or `contact_call`. Mark a `ButtonLink` with `event="…"` to track another button; one listener in [`AnalyticsEvents.tsx`](app/_components/AnalyticsEvents.tsx) sends it with `track()`. Custom events need a Pro plan. No personal data goes into events.
+- **Speed Insights:** `<SpeedInsights />` from `@vercel/speed-insights/next`, next to `<Analytics />`, reports Core Web Vitals from real visits. The data shows under **Speed Insights** in the project, after it's enabled there.
 - **Checking it:** in production, the Network tab shows a request to `/_vercel/insights/view` on every page and `/_vercel/insights/event` on a contact click; the data shows under **Analytics** in the project.
 
 ## Supabase
@@ -174,7 +175,7 @@ Infrastructure:
 - [ ] Create your user in the hosted Supabase dashboard
 - [ ] Run `supabase db push` and `supabase functions deploy embed`
 - [ ] Set `SUPABASE_SECRET_KEY` in Vercel
-- [ ] Enable Web Analytics for the project in the Vercel dashboard
+- [ ] Enable Web Analytics and Speed Insights for the project in the Vercel dashboard
 - [ ] Turnstile, in this order: add the site in Cloudflare (www.vin.ski, vin.ski; Managed); set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in Vercel and deploy; **then** turn on CAPTCHA in Supabase (Authentication → Bot and Abuse Protection, Turnstile, the secret key). The other way round locks everyone out
 - [ ] Add the GitHub repository secrets `NEXT_PUBLIC_SUPABASE_URL` (`https://api.vin.ski` once the custom domain is active, otherwise `https://<ref>.supabase.co`) and `SUPABASE_SECRET_KEY` (the hosted project's secret key named `default`, which the embed function checks against)
 - [ ] Set the repository variable `SEARCH_SYNC` to `on`, run the Search sync workflow once by hand, and check that the next production deploy's run prints the `Production` environment

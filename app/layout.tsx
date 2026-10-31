@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { isProduction, siteUrl } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import AnalyticsEvents from "./_components/AnalyticsEvents";
 import "./globals.css";
 
@@ -41,10 +42,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body>
         {children}
-        {/* Vercel Web Analytics: cookieless, so no consent banner. Reports
-            only from Vercel deployments */}
+        {/* Vercel Web Analytics and Speed Insights: cookieless, so no
+            consent banner. Both report only from Vercel deployments */}
         <Analytics />
         <AnalyticsEvents />
+        <SpeedInsights />
       </body>
     </html>
   );
