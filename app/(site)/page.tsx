@@ -1,9 +1,9 @@
 import Blog from "./_components/Blog";
-import Experience from "./_components/Experience";
-import Hero from "./_components/Hero";
-import Process from "./_components/Process";
+import Experience from "@/features/profile/components/experience";
+import Hero from "@/features/profile/components/hero";
+import Process from "@/features/profile/components/process";
 import ScrollOnArrival from "@/components/scroll-on-arrival";
-import Services from "./_components/Services";
+import Services from "@/features/profile/components/services";
 import Work from "./_components/Work";
 
 export default function Home() {

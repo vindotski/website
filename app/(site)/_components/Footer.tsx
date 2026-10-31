@@ -2,7 +2,7 @@ import { cacheLife } from "next/cache";
 import Image from "next/image";
 import { getContact, getSocials } from "@/features/profile/api/profile";
 import portrait from "@/public/images/portrait.jpg";
-import ContactActions from "./ContactActions";
+import ContactActions from "@/features/profile/components/contact-actions";
 import ScrollLink from "@/components/scroll-link";
 import { PersonIcon } from "@/components/contact-icons";
 import SocialIcon from "@/components/social-icon";
