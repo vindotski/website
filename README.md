@@ -104,6 +104,15 @@ Still to build:
 - [x] Search route, [`app/api/search/route.ts`](app/api/search/route.ts)
 - [x] Search UI, [`Search.tsx`](app/(site)/_components/Search.tsx)
 
+## Analytics
+
+Google Analytics 4 through `@next/third-parties`, with Google Consent Mode v2, since visitors are in the EU.
+
+- **Only on the live site:** it renders when the build is production (`isProduction` in [`lib/site.ts`](lib/site.ts)) and `NEXT_PUBLIC_GA_ID` is set, so dev and Vercel previews send nothing.
+- **Nothing stored until consent.** An inline script in the root layout's `<head>` sets every consent signal to `denied` before `gtag.js` loads ([`app/_components/Analytics.tsx`](app/_components/Analytics.tsx)). The [banner](app/_components/ConsentBanner.tsx) grants `analytics_storage` only; ads signals stay denied. The choice is kept in `localStorage` (`analytics-consent`) and applied before the first page view on later visits.
+- **Changing your mind:** "Cookie settings" in the footer clears the choice and shows the banner again.
+- **Checking it:** in the browser console, `dataLayer` should start with `consent default` (all denied), then an `update` if the visitor accepted, then `config`.
+
 ## Supabase
 
 - **Auth, the Data API and Edge Functions.** [`supabase/config.toml`](supabase/config.toml) turns off what the app doesn't use: Realtime, Storage, Analytics and the test inbox. Each has a comment on how to turn it back on. The Data API is on for search only; `anon` and `authenticated` have no grants on its table or function.
@@ -166,6 +175,7 @@ Infrastructure:
 - [ ] Create your user in the hosted Supabase dashboard
 - [ ] Run `supabase db push` and `supabase functions deploy embed`
 - [ ] Set `SUPABASE_SECRET_KEY` in Vercel
+- [ ] Create a GA4 property and set `NEXT_PUBLIC_GA_ID` in Vercel (Production only)
 - [ ] Add the GitHub repository secrets `NEXT_PUBLIC_SUPABASE_URL` (`https://api.vin.ski` once the custom domain is active, otherwise `https://<ref>.supabase.co`) and `SUPABASE_SECRET_KEY` (the hosted project's secret key named `default`, which the embed function checks against)
 - [ ] Set the repository variable `SEARCH_SYNC` to `on`, run the Search sync workflow once by hand, and check that the next production deploy's run prints the `Production` environment
 
@@ -176,4 +186,5 @@ Going public:
 - [ ] Generate `app/sitemap.ts` from `CONTENT_TYPES` and the published items
 - [ ] Open the search route to guests
 - [ ] Add OG images, RSS and `llms.txt` if wanted
+- [ ] Add a privacy page that names Google Analytics and how to withdraw consent, and keep "Cookie settings" on every public page (the teaser has no footer)
 - [ ] Submit the sitemap in Google Search Console and request indexing of `/`

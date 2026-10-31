@@ -3,9 +3,11 @@ import Image from "next/image";
 import { getContact, getSocials } from "@/lib/api";
 import portrait from "@/public/images/portrait.jpg";
 import ContactActions from "./ContactActions";
+import CookieSettingsButton from "./CookieSettingsButton";
 import ScrollLink from "./ScrollLink";
 import { PersonIcon } from "./ContactIcons";
 import SocialIcon from "./SocialIcon";
+import { analyticsEnabled } from "@/app/_components/Analytics";
 import { Separator } from "@/components/ui/separator";
 
 // Cached so the page can still be prerendered; refreshed daily for the new year
@@ -91,12 +93,17 @@ export default async function Footer() {
               </li>
             ))}
           </ul>
-          <ScrollLink
-            href="#top"
-            className="[grid-area:top] underline-offset-4 hover:text-foreground hover:underline sm:justify-self-end"
-          >
-            Back to top
-          </ScrollLink>
+          <div className="flex [grid-area:top] gap-4 sm:justify-self-end">
+            {analyticsEnabled && (
+              <CookieSettingsButton className="underline-offset-4 hover:text-foreground hover:underline" />
+            )}
+            <ScrollLink
+              href="#top"
+              className="underline-offset-4 hover:text-foreground hover:underline"
+            >
+              Back to top
+            </ScrollLink>
+          </div>
         </div>
       </div>
     </footer>
