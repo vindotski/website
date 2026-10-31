@@ -22,16 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { pageFromPath } from "@/lib/analytics/track";
-
-// One result from /api/search
-type Result = {
-  url: string;
-  title: string;
-  // Null for an item's summary, which links to the page itself
-  heading: string | null;
-  type: string;
-  snippet: string;
-};
+import type { SearchResult } from "../types";
 
 type Status = "idle" | "loading" | "done" | "error" | "signed-out";
 
@@ -56,23 +47,23 @@ function message(status: Status, query: string, count: number) {
 // The search button in the header, and ⌘K / Ctrl+K anywhere, open a command
 // palette that searches as you type. Arrow keys pick a result and Enter opens
 // it. The server ranks the results, so the palette doesn't filter them
-export default function Search() {
+export default function SearchDialog() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Result[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const router = useRouter();
   const timer = useRef<number | undefined>(undefined);
   const request = useRef<AbortController | null>(null);
   // Results by query, so going back to an earlier query doesn't search again
-  const cache = useRef(new Map<string, Result[]>());
+  const cache = useRef(new Map<string, SearchResult[]>());
   // The last query sent to Analytics, so Enter on the same one isn't counted
   // twice
   const lastTracked = useRef<string | null>(null);
 
   // How many results a search found; never the query itself, which is
   // whatever the visitor typed
-  function trackSearch(key: string, found: Result[]) {
+  function trackSearch(key: string, found: SearchResult[]) {
     if (lastTracked.current === key) return;
     lastTracked.current = key;
     track("search", {
@@ -130,7 +121,7 @@ export default function Search() {
         return;
       }
       if (!response.ok) throw new Error(`search answered ${response.status}`);
-      const data: { results: Result[] } = await response.json();
+      const data: { results: SearchResult[] } = await response.json();
       cache.current.set(key, data.results);
       setResults(data.results);
       setStatus("done");

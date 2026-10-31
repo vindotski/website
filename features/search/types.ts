@@ -1,0 +1,11 @@
+// One search result, as the API returns it and the dialog shows it
+export type SearchResult = {
+  url: string;
+  title: string;
+  // Null for an item's summary, which links to the page itself
+  heading: string | null;
+  // The content type's label: Work, Play, Blog
+  type: string;
+  snippet: string;
+  similarity: number;
+};
