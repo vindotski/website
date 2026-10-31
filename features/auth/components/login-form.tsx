@@ -1,6 +1,7 @@
 "use client";
 
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+import { isAuthError } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { z } from "zod";
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@/lib/supabase/client";
+import { useLogin } from "../api/login";
 
 const loginInputSchema = z.object({
   email: z.email("Enter a valid email address"),
@@ -40,35 +41,37 @@ const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 export function LoginForm() {
   const router = useRouter();
-  const [authError, setAuthError] = useState<string>();
+  // Turnstile's own failures; sign-in errors come from the mutation
+  const [captchaError, setCaptchaError] = useState<string>();
   const [captchaToken, setCaptchaToken] = useState<string>();
   const turnstile = useRef<TurnstileInstance>(undefined);
   const waitingForCaptcha = Boolean(turnstileSiteKey) && !captchaToken;
+
+  const login = useLogin({
+    mutationConfig: {
+      // Tokens work once, so every attempt needs a fresh one
+      onSettled: () => {
+        if (!turnstileSiteKey) return;
+        setCaptchaToken(undefined);
+        turnstile.current?.reset();
+      },
+      onSuccess: () => router.replace(getRedirectPath()),
+    },
+  });
+  const loginError =
+    login.error &&
+    (isAuthError(login.error) && login.error.code === "captcha_failed"
+      ? "The human check didn't pass. Try again."
+      : login.error.message);
 
   return (
     <Form
       schema={loginInputSchema}
       onSubmit={async (values) => {
-        setAuthError(undefined);
-        const supabase = createClient();
-        const { error } = await supabase.auth.signInWithPassword({
-          ...values,
-          options: { captchaToken },
-        });
-        // Tokens work once, so every attempt needs a fresh one
-        if (turnstileSiteKey) {
-          setCaptchaToken(undefined);
-          turnstile.current?.reset();
-        }
-        if (error) {
-          setAuthError(
-            error.code === "captcha_failed"
-              ? "The human check didn't pass. Try again."
-              : error.message,
-          );
-          return;
-        }
-        router.replace(getRedirectPath());
+        setCaptchaError(undefined);
+        // Awaited so the form stays submitting until it's done; the error
+        // shows from login.error
+        await login.mutateAsync({ ...values, captchaToken }).catch(() => {});
       }}
     >
       {({ register, formState: { errors, isSubmitting } }) => (
@@ -107,7 +110,7 @@ export function LoginForm() {
                 onExpire={() => setCaptchaToken(undefined)}
                 onError={() => {
                   setCaptchaToken(undefined);
-                  setAuthError("The human check failed. Reload and try again.");
+                  setCaptchaError("The human check failed. Reload and try again.");
                 }}
               />
             </Field>
@@ -124,7 +127,7 @@ export function LoginForm() {
                   ? "Checking you're human…"
                   : "Log in"}
             </Button>
-            <FieldError>{authError}</FieldError>
+            <FieldError>{captchaError ?? loginError}</FieldError>
           </Field>
         </FieldGroup>
       )}

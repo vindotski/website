@@ -92,7 +92,7 @@ Supabase holds a search index derived from the MDX. It can be deleted and rebuil
 - **Scores.** gte-small rates even unrelated text around 0.75–0.80, while good matches score 0.85–0.90. A minimum similarity cutoff belongs around 0.82, not 0.5.
 - **Sync.** `pnpm embed` reads `content/`, skips drafts, and keeps scheduled items (`match_documents` hides them until their date). Each chunk's hash covers every stored field and the model name, so only new or changed chunks are embedded; rows for removed chunks, items or types are deleted afterwards. It refuses to run if it finds no content, so a broken path can't wipe the index. Sections are split at ~300 words to stay inside gte-small's 512 tokens.
 - **API.** `GET /api/search?q=…` with optional `type` and `tag` (both repeatable; a result needs every tag and any one type) and `limit` (1–10, default 5). It embeds the query, calls `match_documents`, drops results below 0.82, keeps one result per page section, and returns `{ results: [{ url, title, heading, type, snippet, similarity }] }`. URLs come from the type's route, so `/blog/<slug>#<heading-id>`. Until launch it answers 401 to guests; the proxy already hides it behind a 404.
-- **UI.** The search button in the header, or ⌘K / Ctrl+K, opens a command palette (shadcn `Dialog` with `Command`, filtering off since the server ranks). It searches 400 ms after typing stops, from 3 characters. Arrow keys pick a result and Enter opens it; Enter while a newer search is pending searches instead of opening a stale result. Results are real links, so ⌘-click opens a new tab. A newer query cancels the older request, and results are cached per query for the visit.
+- **UI.** The search button in the header, or ⌘K / Ctrl+K, opens a command palette (shadcn `Dialog` with `Command`, filtering off since the server ranks). It searches 400 ms after typing stops, from 3 characters. Arrow keys pick a result and Enter opens it; Enter while a newer search is pending searches instead of opening a stale result. Results are real links, so ⌘-click opens a new tab. Results come from `useSearchResults` (TanStack Query): a newer query cancels the older request, and results are cached per query, case-insensitively, until five minutes after they were last shown.
 - **In CI.** The [Search sync](.github/workflows/search-sync.yml) workflow runs `pnpm embed` after each successful Vercel production deploy (`deployment_status`), on exactly the deployed commit, so search never links to a page that isn't live yet. It runs only while the repository variable `SEARCH_SYNC` is `on`; otherwise runs show as skipped. Run it by hand from the Actions tab for a full re-sync, e.g. after a Vercel Instant Rollback, which leaves the index on the newer commit until the next deploy.
 
 Still to build:
@@ -102,7 +102,7 @@ Still to build:
 - [x] Sync script, [`scripts/embed.mts`](scripts/embed.mts): chunk, hash, embed what changed, upsert, delete stale rows
 - [x] CI sync, [`.github/workflows/search-sync.yml`](.github/workflows/search-sync.yml)
 - [x] Search route, [`app/api/search/route.ts`](app/api/search/route.ts)
-- [x] Search UI, [`Search.tsx`](app/(site)/_components/Search.tsx)
+- [x] Search UI, [`search-dialog.tsx`](features/search/components/search-dialog.tsx)
 
 ## Analytics
 
@@ -216,11 +216,20 @@ ESLint enforces all of it (`pnpm lint`):
 
 Adding a feature means adding its name to `features` in [`eslint.config.mjs`](eslint.config.mjs).
 
+### Data fetching
+
+Content (projects, posts, profile) is read by server components and prerendered; it never goes through the browser. TanStack Query is only for what the browser asks for after the page loads, set up as in bulletproof-react:
+
+- **Setup.** [`app/provider.tsx`](app/provider.tsx) holds the `QueryClient`, with the devtools in development only. [`lib/react-query.ts`](lib/react-query.ts) sets the defaults (no refetch on focus, no retries, fresh for a minute) and the `QueryConfig` / `MutationConfig` helper types.
+- **Requests.** [`lib/api-client.ts`](lib/api-client.ts) calls the site's own routes and throws `ApiError` with the status, so a 401 can be told apart from a failure.
+- **One file per request** in `features/<name>/api/`: the plain function, its query options (key and function), and a hook that takes `queryConfig` or `mutationConfig`. For example [`get-search-results.ts`](features/search/api/get-search-results.ts) (`useSearchResults`) and [`login.ts`](features/auth/api/login.ts) (`useLogin`). Server-only code can sit in the same folder, like [`search.ts`](features/search/api/search.ts), marked with `server-only`.
+
 ## Project structure
 
 ```
 app/                  Routes and site chrome (the app layer)
   layout.tsx          Root layout: html, body, fonts, metadata, analytics
+  provider.tsx        TanStack Query client, devtools in development
   _components/        analytics-events, vercel-insights
   (site)/             The portfolio, with header and footer (group omitted from URLs)
     _components/      header, footer, nav-links, mobile-nav
@@ -235,7 +244,7 @@ features/
   projects/           Projects section and project cards
   blog/               Blog section and a post's table of contents
   search/             Search dialog and the semantic search itself
-  auth/               Login form and the session gate used by proxy.ts
+  auth/               Login form, its useLogin mutation, and the session gate used by proxy.ts
 components/
   ui/                 shadcn/ui components (add more with `pnpm dlx shadcn@latest add`)
   layouts/            section, detail-page, prose
@@ -248,6 +257,8 @@ lib/
   content/            MDX loading, schemas, publish rule, sections, 404 paths, getters
   analytics/          Tracking attributes for Vercel Analytics
   supabase/           Browser, server and admin clients, generated database types
+  react-query.ts      Query defaults and helper types
+  api-client.ts       Fetch for the site's own API routes
 types/                Shared types
 content/              projects/ posts/ (MDX, one file per item)
 scripts/              embed.mts: syncs the search index
