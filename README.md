@@ -200,33 +200,62 @@ Act on a pattern only once it holds for more than a month: traffic is small, so 
 - **No site-wide canonical or `og:url`.** Every page would inherit it and point Google at `/`.
 - **Login is `noindex`,** but it isn't blocked in robots.txt, so crawlers can still read that tag.
 
+## Architecture
+
+The layout follows [bulletproof-react](https://github.com/alan2207/bulletproof-react): code flows one way, **shared → features → app**.
+
+- **Shared** (`components/`, `config/`, `lib/`, `types/`) can be used anywhere, and imports neither features nor `app/`.
+- **Features** (`features/<name>/`) hold everything one part of the site needs, in `api/`, `components/`, `types.ts`, `utils/` or `data.ts`. A feature uses shared code and itself, **never another feature**.
+- **App** (`app/`) is routes plus the site chrome that composes features: the header uses search, and the footer uses profile.
+
+When two features need the same thing, it moves into shared code, as the MDX content loading in `lib/content/` did, or `app/` passes it in, as the 404 check in `proxy.ts` does. Files are imported directly; there are no `index.ts` barrels. File and folder names are kebab-case; components keep PascalCase names.
+
+ESLint enforces all of it (`pnpm lint`):
+- `import/no-restricted-paths` blocks cross-feature imports and imports that point the wrong way;
+- `eslint-plugin-check-file` enforces kebab-case names, with Next's `(group)`, `[param]` and `_private` folders allowed in `app/`.
+
+Adding a feature means adding its name to `features` in [`eslint.config.mjs`](eslint.config.mjs).
+
 ## Project structure
 
 ```
-app/
-  layout.tsx          Root layout: html, body, fonts, site-wide metadata
+app/                  Routes and site chrome (the app layer)
+  layout.tsx          Root layout: html, body, fonts, metadata, analytics
+  _components/        analytics-events, vercel-insights
   (site)/             The portfolio, with header and footer (group omitted from URLs)
-    layout.tsx
-    page.tsx          Home (/)
+    _components/      header, footer, nav-links, mobile-nav
+    page.tsx          Home (/): composes profile, projects and blog
     work/ play/ blog/ Detail pages ([slug])
-    _components/      Components used only by the portfolio
+  api/search/         Search route: session check and parameters, then features/search
   teaser/             Pre-launch page, shown at / to signed-out visitors
   auth/login/         Login page, rendered bare and centred
-  robots.ts
-  sitemap.ts
-components/ui/        shadcn/ui components (add more with `pnpm dlx shadcn@latest add`), plus form.tsx
-features/auth/        Login form
-lib/
-  data.ts api.ts      Site data (hero, services, experience…) and the functions that read all content
+  robots.ts sitemap.ts
+features/
+  profile/            Hero, services, experience, process, contact actions; their copy and getters
+  projects/           Work section and project cards
+  blog/               Blog section and a post's table of contents
+  search/             Search dialog and the semantic search itself
+  auth/               Login form and the session gate used by proxy.ts
+components/
+  ui/                 shadcn/ui components (add more with `pnpm dlx shadcn@latest add`)
+  layouts/            section, detail-page, prose
+  detail/             Parts of a work, play or post page
+  button-link.tsx …   Small shared pieces: links, tags, badges, icons
+config/
   site.ts             Site URL and production check
   content-types.ts    The content types: label, route, schema, sort order
-  content/            Front matter schemas, loader, publish rule, MDX sections, 404 paths
-  supabase/           Browser, server and proxy clients, generated database types
+lib/
+  content/            MDX loading, schemas, publish rule, sections, 404 paths, getters
+  analytics/          Tracking attributes for Vercel Analytics
+  supabase/           Browser, server and admin clients, generated database types
+types/                Shared types
 content/              work/ play/ posts/ (MDX, one file per item)
+scripts/              embed.mts: syncs the search index
 supabase/
   config.toml         Local stack, plus production overrides
   migrations/         Database schema
   functions/embed/    Embedding Edge Function (Deno)
+proxy.ts              Auth gate and content 404s, composed from features/auth and lib/content
 ```
 
 ## Launch checklist
