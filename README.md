@@ -106,10 +106,11 @@ Still to build:
 
 ## Analytics
 
-[Vercel Web Analytics](https://vercel.com/docs/analytics): `<Analytics />` from `@vercel/analytics/next` in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
+[Vercel Web Analytics](https://vercel.com/docs/analytics) and Speed Insights, rendered by [`VercelInsights.tsx`](app/_components/VercelInsights.tsx) in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
 
+- **Your own visits don't count.** [`VercelInsights.tsx`](app/_components/VercelInsights.tsx) drops every page view, event and Speed Insights report while a Supabase session cookie exists (sign-ups are off, so that's you) and on `/auth/*`. Before launch this keeps `/` meaning the teaser.
 - **Events:** `contact_click`, with `method` set to `contact_open` (Get in touch), `contact_email` or `contact_call`. Mark a `ButtonLink` with `event="…"` to track another button; one listener in [`AnalyticsEvents.tsx`](app/_components/AnalyticsEvents.tsx) sends it with `track()`. Custom events need a Pro plan. No personal data goes into events.
-- **Speed Insights:** `<SpeedInsights />` from `@vercel/speed-insights/next`, next to `<Analytics />`, reports Core Web Vitals from real visits. The data shows under **Speed Insights** in the project, after it's enabled there.
+- **Speed Insights** reports Core Web Vitals from real visits. The data shows under **Speed Insights** in the project, after it's enabled there.
 - **Checking it:** in production, the Network tab shows a request to `/_vercel/insights/view` on every page and `/_vercel/insights/event` on a contact click; the data shows under **Analytics** in the project.
 
 ## Supabase
