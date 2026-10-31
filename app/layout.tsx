@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { isProduction, siteUrl } from "@/lib/site";
-import Analytics, { analyticsEnabled, consentScript } from "./_components/Analytics";
+import { Analytics } from "@vercel/analytics/next";
+import AnalyticsEvents from "./_components/AnalyticsEvents";
 import "./globals.css";
 
 // Self-hosted at build time; exposed as CSS variables used in globals.css
@@ -38,19 +39,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geist.variable} ${geistMono.variable}`}
       data-scroll-behavior="smooth"
     >
-      {/* Consent defaults, before anything else runs. A plain inline
-          script: the browser runs it while parsing, ahead of gtag.js */}
-      {analyticsEnabled && (
-        <head>
-          <script
-            id="ga-consent"
-            dangerouslySetInnerHTML={{ __html: consentScript }}
-          />
-        </head>
-      )}
       <body>
         {children}
+        {/* Vercel Web Analytics: cookieless, so no consent banner. Reports
+            only from Vercel deployments */}
         <Analytics />
+        <AnalyticsEvents />
       </body>
     </html>
   );

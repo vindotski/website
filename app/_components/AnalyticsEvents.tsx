@@ -1,6 +1,6 @@
 "use client";
 
-import { sendGAEvent } from "@next/third-parties/google";
+import { track } from "@vercel/analytics";
 import { useEffect } from "react";
 
 // One listener for the whole page: a click on anything marked
@@ -15,7 +15,7 @@ export default function AnalyticsEvents() {
         "[data-analytics-event]",
       );
       const method = target?.dataset.analyticsEvent;
-      if (method) sendGAEvent("event", "contact_click", { method });
+      if (method) track("contact_click", { method });
     }
     document.addEventListener("click", onClick, { capture: true });
     return () => document.removeEventListener("click", onClick, { capture: true });
