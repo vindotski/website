@@ -1,7 +1,8 @@
 "use client";
 
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,9 +33,17 @@ function getRedirectPath() {
   return url.pathname + url.search + url.hash;
 }
 
+// Cloudflare Turnstile, checked by Supabase Auth before the password. Without
+// a site key the form signs in as before; Supabase only asks for a token once
+// CAPTCHA is turned on there, after the key is live
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
 export function LoginForm() {
   const router = useRouter();
   const [authError, setAuthError] = useState<string>();
+  const [captchaToken, setCaptchaToken] = useState<string>();
+  const turnstile = useRef<TurnstileInstance>(undefined);
+  const waitingForCaptcha = Boolean(turnstileSiteKey) && !captchaToken;
 
   return (
     <Form
@@ -42,9 +51,21 @@ export function LoginForm() {
       onSubmit={async (values) => {
         setAuthError(undefined);
         const supabase = createClient();
-        const { error } = await supabase.auth.signInWithPassword(values);
+        const { error } = await supabase.auth.signInWithPassword({
+          ...values,
+          options: { captchaToken },
+        });
+        // Tokens work once, so every attempt needs a fresh one
+        if (turnstileSiteKey) {
+          setCaptchaToken(undefined);
+          turnstile.current?.reset();
+        }
         if (error) {
-          setAuthError(error.message);
+          setAuthError(
+            error.code === "captcha_failed"
+              ? "The human check didn't pass. Try again."
+              : error.message,
+          );
           return;
         }
         router.replace(getRedirectPath());
@@ -74,9 +95,34 @@ export function LoginForm() {
             />
             <FieldError errors={[errors.password]} />
           </Field>
+          {turnstileSiteKey && (
+            <Field>
+              {/* Usually invisible; shows a checkbox when Cloudflare is
+                  unsure. Flexible, so it fills the narrow column */}
+              <Turnstile
+                ref={turnstile}
+                siteKey={turnstileSiteKey}
+                options={{ size: "flexible" }}
+                onSuccess={setCaptchaToken}
+                onExpire={() => setCaptchaToken(undefined)}
+                onError={() => {
+                  setCaptchaToken(undefined);
+                  setAuthError("The human check failed. Reload and try again.");
+                }}
+              />
+            </Field>
+          )}
           <Field>
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? "Logging in…" : "Log in"}
+            <Button
+              type="submit"
+              disabled={isSubmitting || waitingForCaptcha}
+              className="w-full"
+            >
+              {isSubmitting
+                ? "Logging in…"
+                : waitingForCaptcha
+                  ? "Checking you're human…"
+                  : "Log in"}
             </Button>
             <FieldError>{authError}</FieldError>
           </Field>

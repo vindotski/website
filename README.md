@@ -117,6 +117,7 @@ Google Analytics 4 through `@next/third-parties`, with Google Consent Mode v2, s
 ## Supabase
 
 - **Auth, the Data API and Edge Functions.** [`supabase/config.toml`](supabase/config.toml) turns off what the app doesn't use: Realtime, Storage, Analytics and the test inbox. Each has a comment on how to turn it back on. The Data API is on for search only; `anon` and `authenticated` have no grants on its table or function.
+- **Bot protection on login.** Cloudflare Turnstile on the login form; Supabase Auth checks the token before the password (`[auth.captcha]` in `config.toml`, secret from `SUPABASE_AUTH_CAPTCHA_SECRET`). Locally, Cloudflare's always-pass test keys: `NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA` in `.env.local` and `SUPABASE_AUTH_CAPTCHA_SECRET=1x0000000000000000000000000000000AA` in `supabase/.env` (gitignored), then restart the stack. Scripts that sign in through the Auth API need a `gotrue_meta_security.captcha_token`; any value passes with the test secret.
 - **Sign-ups are off** (`enable_signup = false` under `[auth]`). Otherwise anyone with the public publishable key could create an account and get past the teaser. Leave `enable_signup` under `[auth.email]` set to `true`: setting it to `false` turns off email login entirely.
 - **Hosted project.** Linked with `supabase login` and `supabase link --project-ref jfnmaofecvlajflzwwsv`. The CLI keeps the ref in `supabase/.temp/`, which is gitignored.
 - **Production config.** `[remotes.production]` at the end of `config.toml` overrides only `site_url` (`https://www.vin.ski`) and `additional_redirect_urls` (both domains). Everything else is pushed from the local values. When an auth callback route or OAuth provider is added, put its production URL there too.
@@ -177,6 +178,7 @@ Infrastructure:
 - [ ] Run `supabase db push` and `supabase functions deploy embed`
 - [ ] Set `SUPABASE_SECRET_KEY` in Vercel
 - [ ] Create a GA4 property and set `NEXT_PUBLIC_GA_ID` in Vercel (Production only)
+- [ ] Turnstile, in this order: add the site in Cloudflare (www.vin.ski, vin.ski; Managed); set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in Vercel and deploy; **then** turn on CAPTCHA in Supabase (Authentication → Bot and Abuse Protection, Turnstile, the secret key). The other way round locks everyone out
 - [ ] Add the GitHub repository secrets `NEXT_PUBLIC_SUPABASE_URL` (`https://api.vin.ski` once the custom domain is active, otherwise `https://<ref>.supabase.co`) and `SUPABASE_SECRET_KEY` (the hosted project's secret key named `default`, which the embed function checks against)
 - [ ] Set the repository variable `SEARCH_SYNC` to `on`, run the Search sync workflow once by hand, and check that the next production deploy's run prints the `Production` environment
 
