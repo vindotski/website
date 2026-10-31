@@ -9,7 +9,7 @@ export default function Prose({ children }: { children: React.ReactNode }) {
     <div
       className={cn(
         "prose prose-neutral max-w-[720px]",
-        "prose-headings:scroll-mt-[calc(var(--header-height)+16px)]",
+        "prose-headings:scroll-mt-[calc(var(--top-chrome)+16px)]",
         "*:[.not-prose]:my-6",
         // The plugin wraps inline code in literal backticks
         "prose-code:before:content-none prose-code:after:content-none",

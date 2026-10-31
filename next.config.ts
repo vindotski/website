@@ -6,9 +6,13 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
-  // Every content file's slug and date, for the proxy's 404 check. Read when
-  // the build or dev server starts
-  env: { CONTENT_PATHS: JSON.stringify(readContentPaths()) },
+  // Every content file's slug and date, for the proxy's 404 check and the
+  // admin toolbar. Read when the build or dev server starts. DEPLOY_ENV is
+  // Vercel's production / preview, or development anywhere else
+  env: {
+    CONTENT_PATHS: JSON.stringify(readContentPaths()),
+    DEPLOY_ENV: process.env.VERCEL_ENV ?? "development",
+  },
   async redirects() {
     // Section paths have no page of their own; send them to the home section.
     // Temporary until the URL structure settles, since browsers cache 308s.

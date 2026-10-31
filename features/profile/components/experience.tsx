@@ -11,7 +11,7 @@ export default async function Experience() {
       {/* Tablets and up: intro left, staying in view while the timeline
           scrolls past; timeline right */}
       <div className="grid gap-8 md:grid-cols-[2fr_3fr] md:items-start md:gap-12">
-        <p className="max-w-[640px] text-xl leading-normal md:sticky md:top-[calc(var(--header-height)+24px)]">
+        <p className="max-w-[640px] text-xl leading-normal md:sticky md:top-[calc(var(--top-chrome)+24px)]">
           {about.intro}
         </p>
         <ol className="max-w-[640px]">

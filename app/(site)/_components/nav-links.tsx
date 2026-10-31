@@ -34,13 +34,13 @@ function subscribe(callback: () => void) {
 }
 
 // The section under the header: the last one whose top has scrolled up to
-// it and whose bottom hasn't. None on the hero or the footer
+// it and whose bottom hasn't. None on the hero or the footer. Adds the two
+// heights itself: a custom property holding calc() reads back unresolved
 function sectionUnderHeader() {
-  const header = parseFloat(
-    getComputedStyle(document.documentElement).getPropertyValue(
-      "--header-height",
-    ),
-  );
+  const style = getComputedStyle(document.documentElement);
+  const header =
+    parseFloat(style.getPropertyValue("--admin-bar-height")) +
+    parseFloat(style.getPropertyValue("--header-height"));
   let current: string | null = null;
   for (const id of navLinks.map(idOf)) {
     const box = document.getElementById(id)?.getBoundingClientRect();

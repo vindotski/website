@@ -30,7 +30,7 @@ export default async function Hero() {
         // At least the screen below the header. svh is the height with the
         // phone toolbars showing, so the hero never hides under them or jumps
         // on scroll. Bottom padding leaves room for the scroll cue
-        className="relative mx-auto flex min-h-[calc(100svh-var(--header-height))] max-w-content flex-col items-center justify-center gap-6 px-gutter pt-12 pb-20 split:grid split:items-center short-landscape:grid-cols-[1fr_200px] short-landscape:gap-8 short-landscape:pt-4 short-landscape:pb-14 md:grid-cols-[1fr_280px] md:gap-8 wide:grid-cols-[1fr_380px] wide:gap-12"
+        className="relative mx-auto flex min-h-[calc(100svh-var(--top-chrome))] max-w-content flex-col items-center justify-center gap-6 px-gutter pt-12 pb-20 split:grid split:items-center short-landscape:grid-cols-[1fr_200px] short-landscape:gap-8 short-landscape:pt-4 short-landscape:pb-14 md:grid-cols-[1fr_280px] md:gap-8 wide:grid-cols-[1fr_380px] wide:gap-12"
         aria-label="Introduction"
       >
         {/* Phones: one left edge for everything under the photo */}
@@ -92,7 +92,7 @@ export default async function Hero() {
             // Phones: a square as big as the area allows (max 480px), so the
             // photo never zooms in. Beside the text: 4:5, which trims the
             // sides of the square photo; as tall as a sideways phone allows
-            className="portrait-mask size-[min(100cqw,100cqh,480px)] object-cover grayscale split:aspect-[4/5] split:h-auto split:w-full split:grayscale-0 short-landscape:max-h-[calc(100svh-var(--header-height)-72px)]"
+            className="portrait-mask size-[min(100cqw,100cqh,480px)] object-cover grayscale split:aspect-[4/5] split:h-auto split:w-full split:grayscale-0 short-landscape:max-h-[calc(100svh-var(--top-chrome)-72px)]"
           />
         </div>
         {/* The scroll cue and GitHub. Phones: the cue at the left edge and

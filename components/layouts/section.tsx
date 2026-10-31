@@ -11,7 +11,7 @@ export default function Section({ id, title, children }: SectionProps) {
   return (
     <section
       id={id}
-      className="mx-auto w-full max-w-content scroll-mt-header px-gutter py-20"
+      className="mx-auto w-full max-w-content scroll-mt-chrome px-gutter py-20"
       aria-labelledby={`${id}-title`}
       {...trackViewAttributes({ event: "section_view", section: id })}
     >

@@ -3,6 +3,7 @@ import path from "node:path";
 import { parse as parseYaml } from "yaml";
 import { CONTENT_TYPES, type ContentType } from "../../config/content-types";
 import { isPublished, showDrafts, todayUtc } from "./publish";
+import { contentAt } from "./status";
 
 // Lets the proxy answer a content URL that doesn't exist or isn't public yet
 // with a real 404. A page that isn't prebuilt starts streaming before it can
@@ -46,11 +47,8 @@ export function readContentPaths(): ContentPaths {
 // started; the page's own notFound() covers it there
 export function isMissingContent(paths: ContentPaths, pathname: string) {
   if (showDrafts) return false;
-  for (const [type, { route }] of Object.entries(CONTENT_TYPES)) {
-    if (!pathname.startsWith(`${route}/`)) continue;
-    const date = paths[type as ContentType]?.[pathname.slice(route.length + 1)];
-    if (date === undefined) return true;
-    return !isPublished(date ?? undefined, todayUtc());
-  }
-  return false;
+  const item = contentAt(paths, pathname);
+  if (!item) return false;
+  if (item.date === undefined) return true;
+  return !isPublished(item.date ?? undefined, todayUtc());
 }

@@ -59,6 +59,21 @@ Then open [http://localhost:3000](http://localhost:3000). You'll see the teaser.
 
 Robots, the sitemap and generated icons skip the guard, so crawlers always get the real files. That also means anything served at those paths is public before launch: keep `app/sitemap.ts` to `/`, and don't add per-page OG images, RSS or `llms.txt` until the site opens.
 
+## Admin toolbar
+
+Signed in, every page gets a WordPress-style toolbar fixed above the header ([`admin-bar.tsx`](app/_components/admin-bar.tsx)):
+
+- **Admin menu:** Vercel Analytics, the Supabase dashboard (Studio locally), the GitHub repo, and New post (GitHub's new-file page in `content/posts`).
+- **Where you are:** Production, Preview or Local, from `VERCEL_ENV`.
+- **On a project or post page:** its status (Draft, Scheduled or Published, with the date) and Edit, which opens the MDX file in GitHub's editor on `main`.
+- **Account:** your email and Log out. Log out loads `/` in full, so no page rendered for the session stays in the router cache.
+
+Pages stay prerendered; the toolbar is added in the browser:
+
+- **Room before the first paint.** A script in the root layout's `<head>` sets `data-signed-in` on `<html>` when the Supabase session cookie exists. CSS then sets `--admin-bar-height` (32px, 0 for guests), pads the body, and paints a placeholder strip, so nothing moves when the toolbar loads.
+- **Offsets.** `--top-chrome` is the toolbar and header together. The sticky header sits below the toolbar, and the hero, jumped-to headings (`scroll-mt-chrome`) and sticky elements use `--top-chrome`, so use it for anything new that has to clear the top of the screen.
+- **Guests download nothing.** [`admin-bar-loader.tsx`](app/_components/admin-bar-loader.tsx) loads the toolbar with `next/dynamic` only when the cookie is there, and checks again after client navigations, such as the one after logging in.
+
 ## Styling
 
 Tailwind CSS v4 and shadcn/ui, set up in [`app/globals.css`](app/globals.css). There are no CSS Modules.
@@ -230,7 +245,7 @@ Content (projects, posts, profile) is read by server components and prerendered;
 app/                  Routes and site chrome (the app layer)
   layout.tsx          Root layout: html, body, fonts, metadata, analytics
   provider.tsx        TanStack Query client, devtools in development
-  _components/        analytics-events, vercel-insights
+  _components/        admin-bar and its loader, analytics-events, vercel-insights
   (site)/             The portfolio, with header and footer (group omitted from URLs)
     _components/      header, footer, nav-links, mobile-nav
     page.tsx          Home (/): composes profile, projects and blog
@@ -244,7 +259,7 @@ features/
   projects/           Projects section and project cards
   blog/               Blog section and a post's table of contents
   search/             Search dialog and the semantic search itself
-  auth/               Login form, its useLogin mutation, and the session gate used by proxy.ts
+  auth/               Login form, log out, their mutations, useUser, and the session gate used by proxy.ts
 components/
   ui/                 shadcn/ui components (add more with `pnpm dlx shadcn@latest add`)
   layouts/            section, detail-page, prose
@@ -254,9 +269,9 @@ config/
   site.ts             Site URL and production check
   content-types.ts    The content types: label, route, schema, sort order
 lib/
-  content/            MDX loading, schemas, publish rule, sections, 404 paths, getters
+  content/            MDX loading, schemas, publish rule, sections, 404 paths and page status, getters
   analytics/          Tracking attributes for Vercel Analytics
-  supabase/           Browser, server and admin clients, generated database types
+  supabase/           Browser, server and admin clients, the session cookie check, generated database types
   react-query.ts      Query defaults and helper types
   api-client.ts       Fetch for the site's own API routes
 types/                Shared types
