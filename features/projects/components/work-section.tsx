@@ -6,12 +6,12 @@ import {
   ProjectImpact,
   ProjectSummary,
   ProjectTags,
-} from "./ProjectCards";
+} from "./project-cards";
 import DraftBadge from "@/components/draft-badge";
 import Section from "@/components/layouts/section";
 
 // Jobs first, then side projects (Play) as plain cards after them
-export default async function Work() {
+export default async function WorkSection() {
   const [work, play] = await Promise.all([getWork(), getPlay()]);
 
   return (

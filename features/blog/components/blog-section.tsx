@@ -5,7 +5,7 @@ import DraftBadge from "@/components/draft-badge";
 import Section from "@/components/layouts/section";
 import Tags from "@/components/tags";
 
-export default async function Blog() {
+export default async function BlogSection() {
   const posts = await getPosts();
 
   return (

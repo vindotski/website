@@ -7,13 +7,13 @@ import {
   getStaticSlugs,
 } from "@/lib/content/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import TableOfContents from "@/features/blog/components/table-of-contents";
 import { formatDate } from "@/lib/format";
 import { trackViewAttributes } from "@/lib/analytics/track";
 import DraftBadge from "@/components/draft-badge";
 import Tags from "@/components/tags";
 import DetailIntro from "@/components/detail/detail-intro";
 import DetailPage from "@/components/layouts/detail-page";
-import ScrollLink from "@/components/scroll-link";
 import NextLink from "@/components/detail/next-link";
 import Prose from "@/components/layouts/prose";
 
@@ -68,29 +68,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         </AlertDescription>
       </Alert>
 
-      {/* From the post's ## headings, with the ids rehype-slug gives them */}
-      {post.sections.length > 0 && (
-        <nav
-          className="flex max-w-[720px] flex-col gap-2 text-sm"
-          aria-label="Contents"
-        >
-          <p className="font-mono text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            Contents
-          </p>
-          <ol className="flex flex-col gap-1 pl-5">
-            {post.sections.map((section) => (
-              <li key={section.id}>
-                <ScrollLink
-                  href={`#${section.id}`}
-                  className="underline-offset-4 hover:underline"
-                >
-                  {section.title}
-                </ScrollLink>
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )}
+      <TableOfContents sections={post.sections} />
 
       <Prose>
         <Content />
