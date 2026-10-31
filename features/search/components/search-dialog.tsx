@@ -1,5 +1,6 @@
 "use client";
 
+import { keepPreviousData } from "@tanstack/react-query";
 import { track } from "@vercel/analytics";
 import { Search as SearchIcon } from "lucide-react";
 import Link from "next/link";
@@ -22,7 +23,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { pageFromPath } from "@/lib/analytics/track";
-import type { SearchResult } from "../types";
+import { ApiError } from "@/lib/api-client";
+import { useSearchResults } from "../api/get-search-results";
 
 type Status = "idle" | "loading" | "done" | "error" | "signed-out";
 
@@ -49,28 +51,50 @@ function message(status: Status, query: string, count: number) {
 // it. The server ranks the results, so the palette doesn't filter them
 export default function SearchDialog() {
   const [open, setOpen] = useState(false);
+  // What's typed, and what's searched: the typed query after a pause
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [status, setStatus] = useState<Status>("idle");
+  const [submitted, setSubmitted] = useState("");
   const router = useRouter();
   const timer = useRef<number | undefined>(undefined);
-  const request = useRef<AbortController | null>(null);
-  // Results by query, so going back to an earlier query doesn't search again
-  const cache = useRef(new Map<string, SearchResult[]>());
-  // The last query sent to Analytics, so Enter on the same one isn't counted
-  // twice
+  // The last query sent to Analytics, so a query isn't counted twice in a row
   const lastTracked = useRef<string | null>(null);
 
+  const typed = query.trim();
+  const searched = submitted.trim();
+  // The results on screen stay until the next ones arrive
+  const search = useSearchResults({
+    query: searched,
+    limit,
+    queryConfig: {
+      enabled: searched.length >= minLength,
+      placeholderData: keepPreviousData,
+    },
+  });
+
+  const status: Status =
+    typed.length < minLength
+      ? "idle"
+      : typed !== searched || search.isPending || search.isPlaceholderData
+        ? "loading"
+        : search.error instanceof ApiError && search.error.status === 401
+          ? "signed-out"
+          : search.isError
+            ? "error"
+            : "done";
+  const results = status === "idle" ? [] : (search.data ?? []);
+
   // How many results a search found; never the query itself, which is
-  // whatever the visitor typed
-  function trackSearch(key: string, found: SearchResult[]) {
+  // whatever the visitor typed. Also when the results come from the cache
+  useEffect(() => {
+    if (!search.isSuccess || search.isPlaceholderData) return;
+    const key = searched.toLowerCase();
     if (lastTracked.current === key) return;
     lastTracked.current = key;
     track("search", {
-      results: found.length,
+      results: search.data.length,
       page: pageFromPath(window.location.pathname),
     });
-  }
+  }, [search.isSuccess, search.isPlaceholderData, search.data, searched]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -83,69 +107,21 @@ export default function SearchDialog() {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       window.clearTimeout(timer.current);
-      request.current?.abort();
     };
   }, []);
 
-  async function search(value: string) {
-    window.clearTimeout(timer.current);
-    // A newer query wins, so results never arrive out of order
-    request.current?.abort();
-
-    const trimmed = value.trim();
-    const key = trimmed.toLowerCase();
-    if (trimmed.length < minLength) {
-      setResults([]);
-      setStatus("idle");
-      return;
-    }
-    const cached = cache.current.get(key);
-    if (cached) {
-      setResults(cached);
-      setStatus("done");
-      trackSearch(key, cached);
-      return;
-    }
-
-    const controller = new AbortController();
-    request.current = controller;
-    setStatus("loading");
-    try {
-      const params = new URLSearchParams({ q: trimmed, limit: String(limit) });
-      const response = await fetch(`/api/search?${params}`, {
-        signal: controller.signal,
-      });
-      if (response.status === 401) {
-        setResults([]);
-        setStatus("signed-out");
-        return;
-      }
-      if (!response.ok) throw new Error(`search answered ${response.status}`);
-      const data: { results: SearchResult[] } = await response.json();
-      cache.current.set(key, data.results);
-      setResults(data.results);
-      setStatus("done");
-      trackSearch(key, data.results);
-    } catch {
-      if (controller.signal.aborted) return;
-      setResults([]);
-      setStatus("error");
-    }
-  }
-
   function onValueChange(value: string) {
     setQuery(value);
-    // The results on screen are for an older query from here on
-    if (value.trim().length >= minLength) setStatus("loading");
     window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => search(value), debounceMs);
+    timer.current = window.setTimeout(() => setSubmitted(value), debounceMs);
   }
 
   // cmdk always highlights the first result, so Enter while a newer search
   // is pending would open a stale one; search straight away instead
   function onSelect(url: string) {
     if (status === "loading") {
-      search(query);
+      window.clearTimeout(timer.current);
+      setSubmitted(query);
       return;
     }
     const index = results.findIndex((result) => result.url === url);

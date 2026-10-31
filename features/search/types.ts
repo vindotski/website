@@ -4,7 +4,7 @@ export type SearchResult = {
   title: string;
   // Null for an item's summary, which links to the page itself
   heading: string | null;
-  // The content type's label: Work, Play, Blog
+  // The content type's label: Projects, Blog
   type: string;
   snippet: string;
   similarity: number;
