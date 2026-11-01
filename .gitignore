@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Spotcraft export, written by apps/website/scripts/to-spotcraft.mts
+spotcraft-content/
