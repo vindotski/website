@@ -28,7 +28,7 @@ import { useSearchResults } from "../api/get-search-results";
 
 type Status = "idle" | "loading" | "done" | "error" | "signed-out";
 
-// Each search embeds the query on the server, so wait for a pause in typing
+// Each search is a request to Spotcraft, so wait for a pause in typing
 const minLength = 3;
 const debounceMs = 400;
 const limit = 8;

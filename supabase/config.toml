@@ -5,9 +5,9 @@
 project_id = "portfolio"
 
 [api]
-# Search reads and writes the documents table through it with the secret key.
-# anon and authenticated have no grants on it
-enabled = true
+# Off: the app only uses Auth, which doesn't need the Data API. Set to true
+# and restart to bring it back
+enabled = false
 # Port to use for the API URL.
 port = 54321
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
@@ -384,8 +384,9 @@ authorization_url_path = "/oauth/consent"
 allow_dynamic_registration = false
 
 [edge_runtime]
-# Runs the embed function for semantic search
-enabled = true
+# Off: no Edge Functions since search moved to Spotcraft. Set to true and
+# restart to bring it back
+enabled = false
 # Supported request policies: `oneshot`, `per_worker`.
 # `per_worker` (default) — enables hot reload during local development.
 # `oneshot` — fallback mode if hot reload causes issues (e.g. in large repos or with symlinks).
@@ -397,11 +398,6 @@ deno_version = 2
 
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
-
-# Called only with the secret key on `apikey`, which withSupabase checks in the
-# function; the platform JWT check would reject it
-[functions.embed]
-verify_jwt = false
 
 [analytics]
 # Off: the app only uses Auth for now. Set to true and restart to bring it back

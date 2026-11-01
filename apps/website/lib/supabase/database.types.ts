@@ -34,74 +34,13 @@ export type Database = {
   }
   public: {
     Tables: {
-      documents: {
-        Row: {
-          content: string
-          content_hash: string
-          created_at: string
-          embedding: string
-          heading: string | null
-          id: string
-          published_at: string | null
-          slug: string
-          tags: string[]
-          title: string
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          content: string
-          content_hash: string
-          created_at?: string
-          embedding: string
-          heading?: string | null
-          id: string
-          published_at?: string | null
-          slug: string
-          tags?: string[]
-          title: string
-          type: string
-          updated_at?: string
-        }
-        Update: {
-          content?: string
-          content_hash?: string
-          created_at?: string
-          embedding?: string
-          heading?: string | null
-          id?: string
-          published_at?: string | null
-          slug?: string
-          tags?: string[]
-          title?: string
-          type?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      match_documents: {
-        Args: {
-          filter_tags?: string[]
-          filter_types?: string[]
-          match_count?: number
-          query_embedding: string
-        }
-        Returns: {
-          content: string
-          heading: string
-          id: string
-          published_at: string
-          similarity: number
-          slug: string
-          title: string
-          type: string
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

@@ -7,7 +7,7 @@ import type { SearchResult } from "../types";
 // Search over the content, by Spotcraft: by words, and by meaning too when
 // Spotcraft has an OpenAI key. Turns its results into one per page section
 
-// Long enough for a question, short enough to keep embedding cheap
+// Long enough for a question
 export const maxQueryLength = 200;
 export const defaultLimit = 5;
 // Spotcraft's own maximum
