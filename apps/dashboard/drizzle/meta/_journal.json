@@ -71,6 +71,13 @@
       "when": 1793554332034,
       "tag": "0009_default_site",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793569260866,
+      "tag": "0010_jwks",
+      "breakpoints": true
     }
   ]
 }

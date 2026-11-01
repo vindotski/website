@@ -7,6 +7,7 @@ import { getCurrentUser } from "./auth.server";
 import { getAuth } from "./better-auth.server";
 import { serverEnv } from "./env.server";
 import { createFirstSuperadmin, hasSuperadmin } from "./onboarding.server";
+import { setTokenCookie } from "./session-token.server";
 import { currentSite, namedSiteMissing } from "./site.server";
 
 export const needsOnboarding = createServerFn({ method: "GET" }).handler(
@@ -60,10 +61,8 @@ export const completeOnboarding = createServerFn({ method: "POST" })
 
 		const signedIn = await getAuth()
 			.api.signInEmail({ body: { email, password: newPassword }, headers: getRequestHeaders() })
-			.then(
-				() => true,
-				() => false,
-			);
+			.catch(() => null);
+		if (signedIn) await setTokenCookie(signedIn.user);
 		// The dashboard goes on to /new-site while there's no site.
 		throw redirect({ to: signedIn ? "/" : "/login" });
 	});

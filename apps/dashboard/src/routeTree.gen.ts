@@ -13,6 +13,7 @@ import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as AcceptInviteRouteImport } from './routes/accept-invite'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as NewSiteRouteImport } from './routes/new-site'
 import { Route as OnboardRouteImport } from './routes/onboard'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -20,6 +21,7 @@ import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
 import { Route as DashboardSiteRouteImport } from './routes/_dashboard/$site'
 import { Route as DashboardAccountRouteImport } from './routes/_dashboard/account'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
+import { Route as ApiSessionRouteImport } from './routes/api/session'
 import { Route as FilesSplatRouteImport } from './routes/files.$'
 import { Route as MediaSplatRouteImport } from './routes/media/$'
 import { Route as SettingsSplatRouteImport } from './routes/settings.$'
@@ -58,6 +60,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewSiteRoute = NewSiteRouteImport.update({
   id: '/new-site',
   path: '/new-site',
@@ -91,6 +98,11 @@ const DashboardAccountRoute = DashboardAccountRouteImport.update({
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSessionRoute = ApiSessionRouteImport.update({
+  id: '/api/session',
+  path: '/api/session',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FilesSplatRoute = FilesSplatRouteImport.update({
@@ -195,12 +207,14 @@ export interface FileRoutesByFullPath {
   '/accept-invite': typeof AcceptInviteRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/new-site': typeof NewSiteRoute
   '/onboard': typeof OnboardRoute
   '/reset-password': typeof ResetPasswordRoute
   '/$site': typeof DashboardSiteRouteWithChildren
   '/account': typeof DashboardAccountRouteWithChildren
   '/api/$': typeof ApiSplatRoute
+  '/api/session': typeof ApiSessionRoute
   '/files/$': typeof FilesSplatRoute
   '/media/$': typeof MediaSplatRoute
   '/settings/$': typeof SettingsSplatRoute
@@ -224,10 +238,12 @@ export interface FileRoutesByTo {
   '/accept-invite': typeof AcceptInviteRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/new-site': typeof NewSiteRoute
   '/onboard': typeof OnboardRoute
   '/reset-password': typeof ResetPasswordRoute
   '/api/$': typeof ApiSplatRoute
+  '/api/session': typeof ApiSessionRoute
   '/files/$': typeof FilesSplatRoute
   '/media/$': typeof MediaSplatRoute
   '/settings/$': typeof SettingsSplatRoute
@@ -252,12 +268,14 @@ export interface FileRoutesById {
   '/accept-invite': typeof AcceptInviteRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/new-site': typeof NewSiteRoute
   '/onboard': typeof OnboardRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_dashboard/$site': typeof DashboardSiteRouteWithChildren
   '/_dashboard/account': typeof DashboardAccountRouteWithChildren
   '/api/$': typeof ApiSplatRoute
+  '/api/session': typeof ApiSessionRoute
   '/files/$': typeof FilesSplatRoute
   '/media/$': typeof MediaSplatRoute
   '/settings/$': typeof SettingsSplatRoute
@@ -285,12 +303,14 @@ export interface FileRouteTypes {
     | '/accept-invite'
     | '/forgot-password'
     | '/login'
+    | '/logout'
     | '/new-site'
     | '/onboard'
     | '/reset-password'
     | '/$site'
     | '/account'
     | '/api/$'
+    | '/api/session'
     | '/files/$'
     | '/media/$'
     | '/settings/$'
@@ -314,10 +334,12 @@ export interface FileRouteTypes {
     | '/accept-invite'
     | '/forgot-password'
     | '/login'
+    | '/logout'
     | '/new-site'
     | '/onboard'
     | '/reset-password'
     | '/api/$'
+    | '/api/session'
     | '/files/$'
     | '/media/$'
     | '/settings/$'
@@ -341,12 +363,14 @@ export interface FileRouteTypes {
     | '/accept-invite'
     | '/forgot-password'
     | '/login'
+    | '/logout'
     | '/new-site'
     | '/onboard'
     | '/reset-password'
     | '/_dashboard/$site'
     | '/_dashboard/account'
     | '/api/$'
+    | '/api/session'
     | '/files/$'
     | '/media/$'
     | '/settings/$'
@@ -373,10 +397,12 @@ export interface RootRouteChildren {
   AcceptInviteRoute: typeof AcceptInviteRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
   NewSiteRoute: typeof NewSiteRoute
   OnboardRoute: typeof OnboardRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  ApiSessionRoute: typeof ApiSessionRoute
   FilesSplatRoute: typeof FilesSplatRoute
   MediaSplatRoute: typeof MediaSplatRoute
   SettingsSplatRoute: typeof SettingsSplatRoute
@@ -413,6 +439,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/new-site': {
@@ -462,6 +495,13 @@ declare module '@tanstack/react-router' {
       path: '/api/$'
       fullPath: '/api/$'
       preLoaderRoute: typeof ApiSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/session': {
+      id: '/api/session'
+      path: '/api/session'
+      fullPath: '/api/session'
+      preLoaderRoute: typeof ApiSessionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/files/$': {
@@ -677,10 +717,12 @@ const rootRouteChildren: RootRouteChildren = {
   AcceptInviteRoute: AcceptInviteRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  LogoutRoute: LogoutRoute,
   NewSiteRoute: NewSiteRoute,
   OnboardRoute: OnboardRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ApiSplatRoute: ApiSplatRoute,
+  ApiSessionRoute: ApiSessionRoute,
   FilesSplatRoute: FilesSplatRoute,
   MediaSplatRoute: MediaSplatRoute,
   SettingsSplatRoute: SettingsSplatRoute,

@@ -11,6 +11,17 @@ function load() {
 			BETTER_AUTH_SECRET: z.string().min(32, "Use at least 32 random characters"),
 			/** Where this app is served; email links point there. */
 			BETTER_AUTH_URL: z.url().optional(),
+			/**
+			 * Shares sign-in with a frontend on the same domain (`example.com` for
+			 * `cms.example.com` and `www.example.com`). Unset: cookies are this host's only.
+			 */
+			AUTH_COOKIE_DOMAIN: z
+				.string()
+				.regex(/^[a-z0-9.-]+$/i, "A domain, such as example.com")
+				.optional(),
+			/** Cloudflare Turnstile on sign-in and forgot-password (both, or neither). */
+			TURNSTILE_SITE_KEY: z.string().optional(),
+			TURNSTILE_SECRET_KEY: z.string().optional(),
 			SMTP_URL: z.url(),
 			MAIL_FROM: z.string().default("Spotcraft <noreply@localhost>"),
 			/** Search by meaning (/api/search searches by words without it). */

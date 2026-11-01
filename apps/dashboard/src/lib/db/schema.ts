@@ -25,8 +25,8 @@ import { EMBEDDING_DIMENSIONS } from "../search/model.ts";
 // Drizzle schema — the source of truth for app tables.
 // After editing: `pnpm db:generate --name=<change>`, review the SQL, `pnpm db:migrate`.
 //
-// Accounts (`user`, `session`, `account`, `verification`: Better Auth's tables, see
-// src/lib/auth/server.ts; `user.role` is 'superadmin' or null). Sites (`sites`, with their
+// Accounts (`user`, `session`, `account`, `verification`, `jwks`: Better Auth's tables, see
+// src/server/better-auth.server.ts; `user.role` is 'superadmin' or null). Sites (`sites`, with their
 // settings) and their teams (`site_members`, with a role per site: admin or editor). Each
 // site's content is a file system in one table, `entries`: folders (which may carry a
 // `_config.json` defining fields for the documents below them), documents (a folder with an
@@ -102,6 +102,17 @@ export const verification = pgTable(
 	},
 	(t) => [index("verification_identifier_idx").on(t.identifier)],
 );
+
+/** The jwt plugin's signing keys (the private key encrypted with BETTER_AUTH_SECRET). */
+export const jwks = pgTable("jwks", {
+	id: text().primaryKey(),
+	publicKey: text().notNull(),
+	privateKey: text().notNull(),
+	createdAt: timestamp({ withTimezone: true }).notNull(),
+	expiresAt: timestamp({ withTimezone: true }),
+	alg: text(),
+	crv: text(),
+});
 
 // Sites: one database holds several, each at its own path (`/<slug>/…`: dashboard, API, images;
 // see src/server/site.server.ts). One is the default, served at the bare `/api` and `/media`. A

@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { FormMessage, TextField } from "#/components/form";
+import { FormMessage, formError, TextField } from "#/components/form";
 import { Button } from "#/components/ui/button";
 import { CardContent, CardFooter } from "#/components/ui/card";
 import { slugify } from "#/lib/content/slugify";
@@ -64,7 +64,7 @@ export function NewSiteForm({ cancel = false }: { cancel?: boolean }) {
 						/>
 					)}
 				</form.Field>
-				<form.Subscribe selector={(s) => s.errorMap.onSubmit}>
+				<form.Subscribe selector={(s) => formError(s.errorMap.onSubmit)}>
 					{(error) => <FormMessage errors={typeof error === "string" ? [error] : []} />}
 				</form.Subscribe>
 			</CardContent>

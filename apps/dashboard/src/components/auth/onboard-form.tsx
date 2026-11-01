@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useServerFn } from "@tanstack/react-start";
-import { FormMessage, TextField } from "#/components/form";
+import { FormMessage, formError, TextField } from "#/components/form";
 import { Button } from "#/components/ui/button";
 import { CardContent, CardFooter } from "#/components/ui/card";
 import { SOMETHING_WENT_WRONG, toFormErrors } from "#/lib/form";
@@ -68,7 +68,7 @@ export function OnboardForm() {
 						/>
 					)}
 				</form.Field>
-				<form.Subscribe selector={(s) => s.errorMap.onSubmit}>
+				<form.Subscribe selector={(s) => formError(s.errorMap.onSubmit)}>
 					{(error) => <FormMessage errors={typeof error === "string" ? [error] : []} />}
 				</form.Subscribe>
 			</CardContent>

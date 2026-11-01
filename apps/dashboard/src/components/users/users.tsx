@@ -4,7 +4,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { FormMessage, TextField } from "#/components/form";
+import { FormMessage, formError, TextField } from "#/components/form";
 import { LIST_ROW } from "#/components/layouts/master-detail";
 import { RoleNotice } from "#/components/layouts/role-notice";
 import { ScreenHeader } from "#/components/layouts/screen-header";
@@ -348,7 +348,7 @@ export function InviteForm({ actorRole }: { actorRole: Role }) {
 						</div>
 					)}
 				</form.Field>
-				<form.Subscribe selector={(s) => s.errorMap.onSubmit}>
+				<form.Subscribe selector={(s) => formError(s.errorMap.onSubmit)}>
 					{(error) => <FormMessage errors={typeof error === "string" ? [error] : []} />}
 				</form.Subscribe>
 				<form.Subscribe selector={(s) => s.isSubmitting}>

@@ -9,6 +9,7 @@ export const RESERVED_SLUGS = new Set([
 	"api",
 	"media",
 	"login",
+	"logout",
 	"onboard",
 	"new-site",
 	"account",

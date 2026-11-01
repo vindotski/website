@@ -1,7 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { FormMessage, TextField } from "#/components/form";
+import { FormMessage, formError, TextField } from "#/components/form";
 import { ScreenHeader } from "#/components/layouts/screen-header";
 import { Button } from "#/components/ui/button";
 import {
@@ -89,7 +89,7 @@ function ChangePasswordCard() {
 					{passwordField("currentPassword", "Current password", "current-password")}
 					{passwordField("newPassword", "New password", "new-password")}
 					{passwordField("confirmPassword", "Confirm new password", "new-password")}
-					<form.Subscribe selector={(s) => s.errorMap.onSubmit}>
+					<form.Subscribe selector={(s) => formError(s.errorMap.onSubmit)}>
 						{(error) =>
 							typeof error === "string" ? (
 								<FormMessage errors={[error]} />

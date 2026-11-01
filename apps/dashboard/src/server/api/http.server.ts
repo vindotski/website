@@ -1,6 +1,7 @@
 import { OpenAPIHandler } from "@orpc/openapi/fetch";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
+import { clientIp } from "#/lib/client-ip";
 import { serverEnv } from "../env.server";
 import { publicSite } from "../public.server";
 import { siteSlugInPath } from "../site.server";
@@ -28,12 +29,6 @@ function getHandler() {
 	});
 	return handler;
 }
-
-/** The caller, for rate limits: the first proxy hop if behind one (a CDN, a load balancer). */
-const clientIp = (request: Request) =>
-	request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-	request.headers.get("x-real-ip") ||
-	"unknown";
 
 const notFound = (message: string) =>
 	Response.json({ code: "NOT_FOUND", status: 404, message }, { status: 404 });

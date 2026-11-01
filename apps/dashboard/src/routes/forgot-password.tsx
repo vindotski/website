@@ -2,12 +2,13 @@ import { useForm } from "@tanstack/react-form";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import { Turnstile } from "#/components/auth/turnstile";
 import { AuthCard } from "#/components/auth-card";
 import { TextField } from "#/components/form";
 import { Button } from "#/components/ui/button";
 import { CardContent, CardFooter } from "#/components/ui/card";
 import { SOMETHING_WENT_WRONG } from "#/lib/form";
-import { fetchUser } from "#/server/auth.functions";
+import { authPageOptions, fetchUser } from "#/server/auth.functions";
 import { requestPasswordReset } from "#/server/password-reset.functions";
 
 export const Route = createFileRoute("/forgot-password")({
@@ -15,21 +16,31 @@ export const Route = createFileRoute("/forgot-password")({
 		// Signed-in users change their password on /account (with their current password).
 		if (await fetchUser()) throw redirect({ to: "/account" });
 	},
+	loader: () => authPageOptions(),
 	head: () => ({ meta: [{ title: "Reset password · Spotcraft" }] }),
 	component: ForgotPasswordPage,
 });
 
 function ForgotPasswordPage() {
+	const { turnstileSiteKey } = Route.useLoaderData();
 	const requestResetFn = useServerFn(requestPasswordReset);
 	const [message, setMessage] = useState<string | null>(null);
+	const [turnstile, setTurnstile] = useState<string | null>(null);
+	const [attempt, setAttempt] = useState(0);
 	const form = useForm({
 		defaultValues: { email: "" },
 		onSubmit: async ({ value }) => {
 			try {
-				setMessage((await requestResetFn({ data: value })).message);
+				const result = await requestResetFn({
+					data: { ...value, turnstile: turnstile ?? undefined },
+				});
+				setMessage(
+					result.sent ? `${result.message} The link works once, for an hour.` : result.message,
+				);
 			} catch {
 				setMessage(SOMETHING_WENT_WRONG);
 			}
+			setAttempt((n) => n + 1);
 		},
 	});
 
@@ -58,14 +69,21 @@ function ForgotPasswordPage() {
 							/>
 						)}
 					</form.Field>
+					{turnstileSiteKey && (
+						<Turnstile siteKey={turnstileSiteKey} attempt={attempt} onToken={setTurnstile} />
+					)}
 					<p aria-live="polite" className="min-h-5 text-sm">
-						{message && `${message} The link works once, for an hour.`}
+						{message}
 					</p>
 				</CardContent>
 				<CardFooter className="flex-col gap-3">
 					<form.Subscribe selector={(s) => s.isSubmitting}>
 						{(pending) => (
-							<Button type="submit" className="w-full" disabled={pending}>
+							<Button
+								type="submit"
+								className="w-full"
+								disabled={pending || (!!turnstileSiteKey && !turnstile)}
+							>
 								{pending ? "Sending…" : "Send reset link"}
 							</Button>
 						)}

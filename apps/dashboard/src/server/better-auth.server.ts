@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { jwt } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { eq } from "drizzle-orm";
 import { getDb } from "#/lib/db/client.server";
@@ -11,15 +12,37 @@ import { sendMail } from "./mail.server";
 // Accounts and sessions (Better Auth), in our own Postgres. Invite-only: nobody signs up; the
 // first account comes from onboarding, everyone else from an invite (users.server.ts). Both
 // invites and password resets are reset-password links; the link's destination tells them apart.
+// Signing in, out and resetting go through server functions (with Turnstile and rate limits), so
+// Better Auth's own HTTP endpoints for them are off. Frontends get a signed token too
+// (session-token.server.ts), with keys from the jwt plugin.
 
 /** Where an invite link lands (the reset-password flow, with a welcome instead). */
 export const INVITE_PATH = "/accept-invite";
 
+/** How long a frontend's token lasts: how long a sign-out or revoked session takes to reach it. */
+export const TOKEN_LIFETIME_SECONDS = 10 * 60;
+
+/** Better Auth's HTTP endpoints that server functions replace (they'd skip Turnstile and limits). */
+const SERVER_FUNCTION_PATHS = [
+	"/sign-in/email",
+	"/sign-up/email",
+	"/request-password-reset",
+	"/reset-password",
+	"/change-password",
+	"/token",
+];
+
 function createAuth() {
+	const env = serverEnv();
 	return betterAuth({
-		secret: serverEnv().BETTER_AUTH_SECRET,
-		baseURL: serverEnv().BETTER_AUTH_URL,
+		secret: env.BETTER_AUTH_SECRET,
+		baseURL: env.BETTER_AUTH_URL,
 		database: drizzleAdapter(getDb(), { provider: "pg" }),
+		disabledPaths: SERVER_FUNCTION_PATHS,
+		// Opt-in: the session cookie on the whole domain, so a frontend's server receives it.
+		advanced: env.AUTH_COOKIE_DOMAIN
+			? { crossSubDomainCookies: { enabled: true, domain: env.AUTH_COOKIE_DOMAIN } }
+			: undefined,
 		user: {
 			additionalFields: {
 				// 'superadmin' or null — set by the server only (onboarding, the Users page).
@@ -56,8 +79,17 @@ function createAuth() {
 				await getDb().update(user).set({ emailVerified: true }).where(eq(user.id, reset.id));
 			},
 		},
-		// Must be the last plugin: writes cookies through TanStack Start.
-		plugins: [tanstackStartCookies()],
+		plugins: [
+			jwt({
+				// ES256: every runtime's Web Crypto verifies it.
+				jwks: { keyPairConfig: { alg: "ES256" } },
+				// The issuer and audience come with each token (session-token.server.ts).
+				jwt: { expirationTime: `${TOKEN_LIFETIME_SECONDS}s` },
+				disableSettingJwtHeader: true,
+			}),
+			// Must be the last plugin: writes cookies through TanStack Start.
+			tanstackStartCookies(),
+		],
 	});
 }
 

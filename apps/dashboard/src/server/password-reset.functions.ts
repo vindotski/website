@@ -1,9 +1,13 @@
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeaders } from "@tanstack/react-start/server";
+import { getRequest, getRequestHeaders } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { clientIp } from "#/lib/client-ip";
 import { type ResetPasswordFieldErrors, validateResetPassword } from "#/lib/password";
+import { createRateLimit } from "#/lib/rate-limit";
 import { getAuth } from "./better-auth.server";
+import { setTokenCookie } from "./session-token.server";
+import { verifyTurnstile } from "./turnstile.server";
 
 // Email links: a password reset and an invite are both a reset-password token. The link goes to
 // Better Auth (/api/auth/reset-password/<token>), which checks the token and sends the browser on
@@ -12,9 +16,22 @@ import { getAuth } from "./better-auth.server";
 const RESET_SENT_MESSAGE =
 	"If an account exists for that email, we've sent a link to reset your password.";
 
+// Per instance (src/lib/rate-limit.ts): each request sends an email.
+const requestsFromIp = createRateLimit({ limit: 5, windowMs: 15 * 60_000 });
+
+/** `sent`: false when the request was refused (too many, or Turnstile), which says nothing about the account. */
 export const requestPasswordReset = createServerFn({ method: "POST" })
-	.validator(z.object({ email: z.string().trim().max(320) }))
+	.validator(
+		z.object({ email: z.string().trim().max(320), turnstile: z.string().max(4096).optional() }),
+	)
 	.handler(async ({ data }) => {
+		const ip = clientIp(getRequest());
+		if (!requestsFromIp(ip)) {
+			return { sent: false, message: "Too many requests. Try again in a few minutes." };
+		}
+		if (!(await verifyTurnstile(data.turnstile, ip))) {
+			return { sent: false, message: "Couldn't confirm you're not a bot. Try again." };
+		}
 		try {
 			await getAuth().api.requestPasswordReset({
 				body: { email: data.email, redirectTo: "/reset-password" },
@@ -24,7 +41,7 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
 			// Malformed email and the like: same answer, so it doesn't reveal anything.
 		}
 		// Same answer whether or not the account exists.
-		return { message: RESET_SENT_MESSAGE };
+		return { sent: true, message: RESET_SENT_MESSAGE };
 	});
 
 const token = z.string().max(256);
@@ -71,9 +88,10 @@ export const setPasswordFromEmailLink = createServerFn({ method: "POST" })
 		} catch {
 			return expired;
 		}
-		await auth.api.signInEmail({
+		const signedIn = await auth.api.signInEmail({
 			body: { email: account.email, password: data.newPassword },
 			headers: getRequestHeaders(),
 		});
+		await setTokenCookie(signedIn.user);
 		throw redirect({ to: "/" });
 	});

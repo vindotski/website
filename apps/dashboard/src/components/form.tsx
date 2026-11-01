@@ -66,6 +66,16 @@ export function TextField({
 }
 
 /** The form-wide message (e.g. "Something went wrong"), announced to screen readers. */
+/**
+ * A form's submit error, as a message: its validators return `{ form: message }`, which
+ * TanStack Form keeps as given in `errorMap.onSubmit`.
+ */
+export function formError(error: unknown): string | undefined {
+	if (typeof error === "string") return error;
+	const form = (error as { form?: unknown } | null | undefined)?.form;
+	return typeof form === "string" ? form : undefined;
+}
+
 export function FormMessage({ errors }: { errors: readonly unknown[] }) {
 	const [message] = messagesOf(errors);
 	return (
