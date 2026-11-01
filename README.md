@@ -2,7 +2,7 @@
 
 Portfolio site of Ivan Vinski, product engineer: frontend by trade, full-stack by habit, product by focus. Live at [www.vin.ski](https://www.vin.ski).
 
-Built with [Next.js](https://nextjs.org) 16 (App Router, Cache Components), React 19 and TypeScript. It's styled with Tailwind CSS v4 and shadcn/ui (Base UI primitives). Content is MDX in the repo. Login runs on Supabase Auth, and semantic search over the content runs on Supabase pgvector.
+Built with [Next.js](https://nextjs.org) 16 (App Router, Cache Components), React 19 and TypeScript. It's styled with Tailwind CSS v4 and shadcn/ui (Base UI primitives). Content and its search live in [Spotcraft](https://github.com/vindotski/spotcraft), a self-hosted CMS running next to it as `apps/dashboard`. Login runs on Supabase Auth.
 
 Until launch, visitors see a teaser at `/` and every other page answers 404. After logging in, you see the full site.
 
@@ -18,18 +18,24 @@ Until launch, visitors see a teaser at `/` and every other page answers 404. Aft
 
 ## Requirements
 
-- Node.js
+- Node.js 26 (Spotcraft needs it)
 - pnpm 12 (the exact version is pinned in `package.json` under `packageManager`)
-- Docker and the [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started), for the local auth backend
+- Docker, for Spotcraft's services and local Supabase, and the [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started), for the local auth backend
+- A Spotcraft checkout at `../spotcraft`, until `@spotcraft/client` is on npm (see [Content](#content))
 
 ## Getting started
 
 ```bash
 pnpm install
-cp apps/website/.env.example apps/website/.env.local   # already holds the local Supabase URL and key
-supabase start               # local Supabase in Docker: database, Auth, gateway and Studio
-pnpm dev
+cp apps/website/.env.example apps/website/.env.local   # then fill in the two Spotcraft secrets, below
+supabase start                          # local Supabase in Docker: database, Auth, gateway and Studio
+pnpm --filter dashboard db:start        # Spotcraft's Postgres, Mailpit and S3 in Docker
+pnpm --filter dashboard db:migrate
+pnpm dashboard                          # Spotcraft, http://localhost:3000
+pnpm dev                                # the site, http://localhost:3001
 ```
+
+`apps/dashboard/.env` (gitignored) holds Spotcraft's settings. In `apps/website/.env.local`, set `SPOTCRAFT_API_TOKEN` to its `SPOTCRAFT_API_TOKEN`, and `SPOTCRAFT_WEBHOOK_SECRET` to its `WEBHOOK_SECRET`. Its `WEBHOOK_URL` is `http://localhost:3001/api/spotcraft`.
 
 Then open [http://localhost:3001](http://localhost:3001). You'll see the teaser. To see the full site:
 
@@ -38,36 +44,42 @@ Then open [http://localhost:3001](http://localhost:3001). You'll see the teaser.
 
 `supabase stop` shuts the local stack down. Its data stays in Docker volumes named `supabase_*_portfolio`.
 
+**Spotcraft's Docker stack is shared** with the `../spotcraft` checkout: its compose file is named `spotcraft`, so both use the same containers and database. vin.ski is the `vinski` site in it, at `http://localhost:3000/vinski`; the checkout's `example` and `docs` sites sit beside it. Both dashboards serve on port 3000, so run one at a time.
+
 ## Scripts
 
-Run from the repository root. Each one runs in `apps/website`, except `db:types`.
+Run from the repository root.
 
 | Command      | What it does                         |
 | ------------ | ------------------------------------ |
-| `pnpm dev`   | Start the development server         |
-| `pnpm build` | Create a production build            |
-| `pnpm start` | Serve the production build           |
-| `pnpm lint`  | Run ESLint                           |
-| `pnpm db:types` | Regenerate `apps/website/lib/supabase/database.types.ts` from the local database |
-| `pnpm embed` | Sync the search index with `content/` (`--dry-run` to only list changes) |
+| `pnpm dev`   | Start the site's development server, on port 3001 |
+| `pnpm build` | Create a production build of the site (Spotcraft must be running) |
+| `pnpm start` | Serve the production build, on port 3001 |
+| `pnpm lint`  | Run ESLint on the site               |
+| `pnpm dashboard` | Start Spotcraft, on port 3000     |
+| `pnpm cms:export <dir> --site vinski` | Write the content out as files (Markdown and images): a backup |
+| `pnpm cms:import <dir> --site vinski` | Read an export back in; a dry run until `--apply` |
+| `pnpm db:types` | Regenerate `apps/website/lib/supabase/database.types.ts` from the local Supabase database |
+
+Spotcraft's own scripts run with `pnpm --filter dashboard <script>`, e.g. `search:sync`. Paths given to `cms:*` are relative to `apps/dashboard`.
 
 ## How the teaser works
 
 [`proxy.ts`](apps/website/proxy.ts) runs the auth gate in [`features/auth/utils/session.ts`](apps/website/features/auth/utils/session.ts) on every request. It refreshes the Supabase session, then:
 
-- **Signed in:** the request goes through to the real page, unless it's a content URL with no file behind it or one that isn't published yet. Those get a real 404 (see [Content](#content)).
+- **Signed in:** the request goes through to the real page. A content URL with nothing published behind it shows the not-found page (see [Content](#content)).
 - **Signed out:** `/` is rewritten to the teaser (200). Every other path, `/teaser` included, returns 404. `/auth/*` stays open so you can log in.
 - **Always:** every response gets `Cache-Control: private, no-store`. The same URL serves different pages to different visitors, so no cache may keep one visitor's version for another, or for a crawler.
 
-Robots, the sitemap and generated icons skip the guard, so crawlers always get the real files. That also means anything served at those paths is public before launch: keep `app/sitemap.ts` to `/`, and don't add per-page OG images, RSS or `llms.txt` until the site opens.
+Robots, the sitemap, generated icons and Spotcraft's webhook (`/api/spotcraft`, which checks its own signature) skip the guard, so crawlers always get the real files. That also means anything served at those paths is public before launch: keep `app/sitemap.ts` to `/`, and don't add per-page OG images, RSS or `llms.txt` until the site opens.
 
 ## Admin toolbar
 
 Signed in, every page gets a WordPress-style toolbar fixed above the header ([`admin-bar.tsx`](apps/website/app/_components/admin-bar.tsx)):
 
-- **Admin menu:** Vercel Analytics, the Supabase dashboard (Studio locally), the GitHub repo, and New post (GitHub's new-file page in `content/posts`).
+- **Admin menu:** Spotcraft, New post (Spotcraft's `posts` folder), Vercel Analytics, the Supabase dashboard (Studio locally) and the GitHub repo.
 - **Where you are:** Production, Preview or Local, from `VERCEL_ENV`.
-- **On a project or post page:** its status (Draft, Scheduled or Published, with the date) and Edit, which opens the MDX file in GitHub's editor on `main`.
+- **On a project or post page:** its status (Draft, Scheduled or Published, with the date) and Edit, which opens the document in Spotcraft. Both come from [`/api/admin/content-status`](apps/website/app/api/admin/content-status/route.ts), signed-in only, through `useContentStatus` in `features/admin`.
 - **Account:** your email and Log out. Log out loads `/` in full, so no page rendered for the session stays in the router cache.
 
 Pages stay prerendered; the toolbar is added in the browser:
@@ -83,43 +95,33 @@ Tailwind CSS v4 and shadcn/ui, set up in [`app/globals.css`](apps/website/app/gl
 - **Look.** shadcn's semantic tokens (`bg-background`, `text-muted-foreground`, …) from the `base-nova` preset: neutral, Geist, square corners. The Hero, teaser and footer carry the `dark` class, so the same tokens turn light-on-dark inside them. Light theme only for now; the tokens make dark mode cheap to add.
 - **Layout tokens.** `--content-width`, `--gutter` and `--header-height` live on `:root` (the section menu reads `--header-height` from JS) and are exposed as `max-w-content`, `px-gutter`, `h-header`, `top-header` and `scroll-mt-header`.
 - **Breakpoints.** Tailwind's `sm` (640) and `md` (768), plus `wide` (900, written as `56.25rem`: a px breakpoint can't be sorted against Tailwind's rem ones). Two custom variants for the Hero and teaser: `split` (tablets, or a phone held sideways) and `short-landscape` (a sideways phone). Custom variants are emitted after breakpoints, so a value that both a breakpoint and a custom variant set has to use variants that never overlap.
-- **MDX bodies** use the typography plugin (`prose`, in [`Prose.tsx`](apps/website/app/(site)/_components/detail/Prose.tsx)).
-- **Buttons as links** use `buttonVariants()` on the link ([`ButtonLink.tsx`](apps/website/app/(site)/_components/ButtonLink.tsx)): shadcn's `Button` always sets `role="button"`.
+- **Bodies** use the typography plugin (`prose`, in [`prose.tsx`](apps/website/components/layouts/prose.tsx)).
+- **Buttons as links** use `buttonVariants()` on the link ([`button-link.tsx`](apps/website/components/button-link.tsx)): shadcn's `Button` always sets `role="button"`.
 - **Animations** (`animate-nudge`, `animate-ticker`) and the `portrait-mask` utility are defined in `globals.css` and used with `motion-safe:`.
 
 ## Content
 
-Projects and blog posts are MDX files in `content/<type>/<slug>.mdx`. The folder is the type and the file name is the slug.
+Projects and blog posts are documents in Spotcraft, edited in its dashboard. The site reads them with `@spotcraft/client` ([`lib/cms.ts`](apps/website/lib/cms.ts), server-only) and keeps its own routes and components.
 
-- **Types** are defined once, in `CONTENT_TYPES` in [`config/content-types.ts`](apps/website/config/content-types.ts): label, route, Zod schema and sort order. Nothing else should list them. Adding a type means a folder, an entry there and a `[slug]` page.
-- **Front matter** is validated against the type's schema in [`lib/content/schemas.ts`](apps/website/lib/content/schemas.ts). Every type has `title`, `date`, `tags`, `tldr` and optional `order`, `repoUrl`, `demoUrl`; projects add a `category`, `work` (a job: `company`, `role`, `years`, `impact`) or `play` (a side project: `year`, `status`), and each category checks its own fields. A bad field fails the build and names the file.
-- **Publishing** follows `isPublished()` in [`lib/content/publish.ts`](apps/website/lib/content/publish.ts): no `date` is a draft, a future `date` is scheduled, today or earlier (UTC) is public. `next dev` shows drafts and scheduled items with a badge; builds leave them out everywhere.
-- **Scheduled items go live by themselves.** The published filter is cached hourly, so the item and its links appear within the hour of its date, without a redeploy. The very first request after that can still get a not-found page, until the page regenerates.
-- **404s.** A page that isn't prebuilt can only answer 200 (Next.js streams it). So [`next.config.ts`](apps/website/next.config.ts) inlines every file's slug and date as `CONTENT_PATHS`, and the proxy returns a real 404 for unknown or unpublished slugs ([`lib/content/paths.ts`](apps/website/lib/content/paths.ts)). New files need a rebuild to be known, which a deploy does.
-- **Body.** The `##` headings become the table of contents and the search chunks, with the same ids `rehype-slug` gives them ([`lib/content/sections.ts`](apps/website/lib/content/sections.ts)). Images are plain markdown (`![alt](/images/…)`) and render in the 16:10 frame.
+- **Folders.** `posts/<slug>`, and `projects/work/<slug>` or `projects/play/<slug>`. The top folder is the type and the document's folder name is the slug. Each folder's `_config.json` in Spotcraft declares its fields; a document gets every config on its path, so work and play each keep their own required fields.
+- **Types** are defined once, in `CONTENT_TYPES` in [`config/content-types.ts`](apps/website/config/content-types.ts): label, route, Zod schema and sort order. Nothing else should list them. Adding a type means a folder in Spotcraft, an entry there and a `[slug]` page.
+- **Fields.** [`lib/content/api.ts`](apps/website/lib/content/api.ts) maps each document back into the shape [`lib/content/schemas.ts`](apps/website/lib/content/schemas.ts) describes: snake_case keys become camelCase, `category` comes from the folder, play's `stage` becomes `status` (Spotcraft reserves `status`), and the date comes from `publishedAt`. The schemas then validate it, so a bad field fails the build and names the document. Every type has `title`, `date`, `tags`, `tldr` and optional `order`, `repoUrl`, `demoUrl`; projects add `work` (a job: `company`, `role`, `years`, `impact`) or `play` (a side project: `year`, `status`) fields.
+- **Publishing** follows `isPublished()` in [`lib/content/publish.ts`](apps/website/lib/content/publish.ts): a Spotcraft draft has no date, a future date is scheduled, today or earlier (UTC) is public. Spotcraft has no scheduling of its own, so the site applies this rule. `next dev` fetches drafts too (with the API token) and shows them with a badge; builds leave drafts and scheduled items out everywhere.
+- **Caching.** Content is cached under the `spotcraft` tag. Publishing in Spotcraft sends a signed webhook to [`/api/spotcraft`](apps/website/app/api/spotcraft/route.ts), which drops that cache, so the next visit shows the change without a deploy. Webhooks for Spotcraft's other sites are ignored. The published filter is also cached hourly, so a scheduled item goes live within the hour of its date.
+- **404s.** An unknown or unpublished slug shows the not-found page through `notFound()`. A page that isn't prebuilt starts streaming before that, so its status is 200 with `noindex`, not a real 404. Guests never see it: the gate gives them a 404 for everything but `/`.
+- **Body.** Spotcraft returns it as a Markdown syntax tree, and [`body.tsx`](apps/website/components/detail/body.tsx) renders it: headings get Spotcraft's ids (`headingAnchors`, the same ones search links to), and an image alone in a paragraph renders in the 16:10 frame. The `##` headings are the table of contents.
+- **Images** are uploaded next to their document in Spotcraft and served from `<SPOTCRAFT_URL>/media/…`, which `next.config.ts` allows. SVGs skip the image optimizer.
 - **When nothing is published** for a type, `generateStaticParams` returns a `__none__` placeholder that 404s, because Cache Components fails the build on an empty list.
+- **The client is a `file:` dependency** on `../spotcraft/packages/client` until it's on npm (not `link:`: Turbopack won't follow a link out of the project). After rebuilding it there (`pnpm client:build`), run `pnpm install` here.
+- **Backups.** `pnpm cms:export ../../spotcraft-content --site vinski` writes every document and image out as files; `spotcraft-content/` is gitignored.
 
 ## Search
 
-Supabase holds a search index derived from the MDX. It can be deleted and rebuilt from the repo at any time.
+Spotcraft searches the content: by words (Postgres full text), and by meaning too once `OPENAI_API_KEY` is set in `apps/dashboard/.env`. Saving a document re-indexes it; `pnpm --filter dashboard search:sync --site vinski` rebuilds the whole index.
 
-- **Table.** `documents` ([migration](supabase/migrations/20261030121450_create_documents_table.sql)) has one row per chunk: a summary chunk per item (`type/slug#tldr`) and one per `##` section (`type/slug#heading-id`, `:2`, `:3`… when a long section is split). It has an HNSW index on `vector(384)` with inner product.
-- **Access.** Only the service role. RLS is on with no policies, `anon` and `authenticated` are revoked, and `match_documents()` is executable by `service_role` only. It returns only rows published by today. Grants are explicit because since 2026-10-30 hosted Supabase no longer grants new `public` tables to any API role by default.
-- **Embeddings.** The [`embed`](supabase/functions/embed/index.ts) Edge Function runs gte-small (384 dimensions, normalized, English, input truncated at ~512 tokens). Callers send the secret key on the `apikey` header; `verify_jwt` is off for it in `config.toml` because the platform JWT check would reject a secret key. Locally: `supabase functions serve embed`. The first call takes ~10 s while the model loads.
-- **Scores.** gte-small rates even unrelated text around 0.75–0.80, while good matches score 0.85–0.90. A minimum similarity cutoff belongs around 0.82, not 0.5.
-- **Sync.** `pnpm embed` reads `content/`, skips drafts, and keeps scheduled items (`match_documents` hides them until their date). Each chunk's hash covers every stored field and the model name, so only new or changed chunks are embedded; rows for removed chunks, items or types are deleted afterwards. It refuses to run if it finds no content, so a broken path can't wipe the index. Sections are split at ~300 words to stay inside gte-small's 512 tokens.
-- **API.** `GET /api/search?q=…` with optional `type` and `tag` (both repeatable; a result needs every tag and any one type) and `limit` (1–10, default 5). It embeds the query, calls `match_documents`, drops results below 0.82, keeps one result per page section, and returns `{ results: [{ url, title, heading, type, snippet, similarity }] }`. URLs come from the type's route, so `/blog/<slug>#<heading-id>`. Until launch it answers 401 to guests; the proxy already hides it behind a 404.
-- **UI.** The search button in the header, or ⌘K / Ctrl+K, opens a command palette (shadcn `Dialog` with `Command`, filtering off since the server ranks). It searches 400 ms after typing stops, from 3 characters. Arrow keys pick a result and Enter opens it; Enter while a newer search is pending searches instead of opening a stale result. Results are real links, so ⌘-click opens a new tab. Results come from `useSearchResults` (TanStack Query): a newer query cancels the older request, and results are cached per query, case-insensitively, until five minutes after they were last shown.
-- **No CI sync yet.** The GitHub workflow was removed while the repo moves to a monorepo. Until it's back, run `pnpm embed` by hand after a production deploy, with the hosted project's `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SECRET_KEY`.
-
-Still to build:
-
-- [x] Turn the Data API back on (`[api] enabled` in `config.toml`). supabase-js reaches `documents` and `match_documents` through it.
-- [x] Server-only admin client, [`lib/supabase/admin.ts`](apps/website/lib/supabase/admin.ts), with `SUPABASE_SECRET_KEY`
-- [x] Sync script, [`scripts/embed.mts`](apps/website/scripts/embed.mts): chunk, hash, embed what changed, upsert, delete stale rows
-- [ ] CI sync: bring back a workflow that runs `pnpm embed` after each production deploy (removed during the monorepo move)
-- [x] Search route, [`app/api/search/route.ts`](apps/website/app/api/search/route.ts)
-- [x] Search UI, [`search-dialog.tsx`](apps/website/features/search/components/search-dialog.tsx)
+- **API.** `GET /api/search?q=…` with optional `type` and `limit` (1–10, default 5). [`search.ts`](apps/website/features/search/api/search.ts) calls `cms.search`, keeps only results the site currently shows (Spotcraft would also return future-dated items), keeps one result per URL, and returns `{ results: [{ url, title, heading, type, snippet, score }] }`. URLs come from the type's route, so `/blog/<slug>#<heading-id>`; a match on the document itself links to the page. `score` is 0–1 and comparable within one search only. Until launch it answers 401 to guests; the proxy already hides it behind a 404.
+- **Limit.** Spotcraft returns at most 10 results, and the future-dated ones are dropped after that, so while scheduled posts exist a search can come back short.
+- **UI.** The search button in the header, or ⌘K / Ctrl+K, opens a command palette (shadcn `Dialog` with `Command`, filtering off since the server ranks). It searches 400 ms after typing stops, from 3 characters. Arrow keys pick a result and Enter opens it; Enter while a newer search is pending searches instead of opening a stale result. Results are real links, so ⌘-click opens a new tab. Results come from `useSearchResults` (TanStack Query): a newer query cancels the older request, and results are cached per query, case-insensitively, fresh for a minute.
 
 ## Analytics
 
@@ -196,19 +198,18 @@ Act on a pattern only once it holds for more than a month: traffic is small, so 
 
 ## Supabase
 
-- **Auth, the Data API and Edge Functions.** [`supabase/config.toml`](supabase/config.toml) turns off what the app doesn't use: Realtime, Storage, Analytics and the test inbox. Each has a comment on how to turn it back on. The Data API is on for search only; `anon` and `authenticated` have no grants on its table or function.
+- **Auth only.** [`supabase/config.toml`](supabase/config.toml) turns off what the app doesn't use: the Data API, Edge Functions, Realtime, Storage, Analytics and the test inbox. Each has a comment on how to turn it back on. Content and search moved to Spotcraft; the [last migration](supabase/migrations/20261101211725_drop_documents.sql) drops the old search index.
 - **Bot protection on login.** Cloudflare Turnstile on the login form; Supabase Auth checks the token before the password (`[auth.captcha]` in `config.toml`, secret from `SUPABASE_AUTH_CAPTCHA_SECRET`). Locally, Cloudflare's always-pass test keys: `NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA` in `apps/website/.env.local` and `SUPABASE_AUTH_CAPTCHA_SECRET=1x0000000000000000000000000000000AA` in `supabase/.env` (gitignored), then restart the stack. Scripts that sign in through the Auth API need a `gotrue_meta_security.captcha_token`; any value passes with the test secret.
 - **Sign-ups are off** (`enable_signup = false` under `[auth]`). Otherwise anyone with the public publishable key could create an account and get past the teaser. Leave `enable_signup` under `[auth.email]` set to `true`: setting it to `false` turns off email login entirely.
 - **Hosted project.** Linked with `supabase login` and `supabase link --project-ref jfnmaofecvlajflzwwsv`. The CLI keeps the ref in `supabase/.temp/`, which is gitignored.
 - **Production config.** `[remotes.production]` at the end of `config.toml` overrides only `site_url` (`https://www.vin.ski`) and `additional_redirect_urls` (both domains). Everything else is pushed from the local values. When an auth callback route or OAuth provider is added, put its production URL there too.
 - **Pushing config.** Run `supabase config push` and read the diff before confirming. It changes the live project.
 - **Migrations.** Locally, apply new ones with `supabase migration up --local`. Avoid `supabase db reset`: there is no seed, so it deletes your local user. In production, `supabase db push`. Then run `pnpm db:types`.
-- **Edge Functions.** Deploy with `supabase functions deploy embed`.
 - **Production env vars**, set in Vercel:
   - `NEXT_PUBLIC_SUPABASE_URL=https://api.vin.ski`
   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, the hosted project's publishable key
 
-  Never use the secret key here: every `NEXT_PUBLIC_` variable is sent to the browser. Search will also need `SUPABASE_SECRET_KEY` (server-only, no prefix) in Vercel and in CI.
+  Never use the secret key here: every `NEXT_PUBLIC_` variable is sent to the browser. The site doesn't need the secret key at all.
 
 ## Search engines
 
@@ -225,7 +226,7 @@ The layout follows [bulletproof-react](https://github.com/alan2207/bulletproof-r
 - **Features** (`features/<name>/`) hold everything one part of the site needs, in `api/`, `components/`, `types.ts`, `utils/` or `data.ts`. A feature uses shared code and itself, **never another feature**.
 - **App** (`app/`) is routes plus the site chrome that composes features: the header uses search, and the footer uses profile.
 
-When two features need the same thing, it moves into shared code, as the MDX content loading in `lib/content/` did, or `app/` passes it in, as the 404 check in `proxy.ts` does. Files are imported directly; there are no `index.ts` barrels. File and folder names are kebab-case; components keep PascalCase names.
+When two features need the same thing, it moves into shared code, as the content loading in `lib/content/` did, or `app/` composes them, as the admin toolbar does with `features/admin` and `features/auth`. Files are imported directly; there are no `index.ts` barrels. File and folder names are kebab-case; components keep PascalCase names.
 
 ESLint enforces all of it (`pnpm lint`):
 - `import/no-restricted-paths` blocks cross-feature imports and imports that point the wrong way;
@@ -243,9 +244,10 @@ Content (projects, posts, profile) is read by server components and prerendered;
 
 ## Project structure
 
-A pnpm workspace. Each app lives in `apps/`; `supabase/` sits at the root because it's the backend every app shares. A Dashboard app comes next, and code the two apps share will move to `packages/` then.
+A pnpm workspace. Each app lives in `apps/`: the site, and Spotcraft as `apps/dashboard`, copied from `../spotcraft` (its version is in `apps/dashboard/SPOTCRAFT_VERSION`). `supabase/` sits at the root. Code both apps share would move to `packages/`.
 
 ```
+apps/dashboard/       Spotcraft: the CMS, its API and search (TanStack Start); see its own docs
 apps/website/         The portfolio site (Next.js); everything below up to supabase/ is inside it
 app/                  Routes and site chrome (the app layer)
   layout.tsx          Root layout: html, body, fonts, metadata, analytics
@@ -256,6 +258,8 @@ app/                  Routes and site chrome (the app layer)
     page.tsx          Home (/): composes profile, projects and blog
     projects/ blog/ Detail pages ([slug])
   api/search/         Search route: session check and parameters, then features/search
+  api/spotcraft/      Spotcraft's webhook: drops the content cache
+  api/admin/          The admin toolbar's content status
   teaser/             Pre-launch page, shown at / to signed-out visitors
   auth/login/         Login page, rendered bare and centred
   robots.ts sitemap.ts
@@ -263,30 +267,29 @@ features/
   profile/            Hero, services, experience, process, contact actions; their copy and getters
   projects/           Projects section and project cards
   blog/               Blog section and a post's table of contents
-  search/             Search dialog and the semantic search itself
+  search/             Search dialog and the search itself, through Spotcraft
+  admin/              The admin toolbar's content status query
   auth/               Login form, log out, their mutations, useUser, and the session gate used by proxy.ts
 components/
   ui/                 shadcn/ui components (add more with `pnpm dlx shadcn@latest add`, run in apps/website)
   layouts/            section, detail-page, prose
-  detail/             Parts of a project or post page
+  detail/             Parts of a project or post page, including the body renderer
   button-link.tsx …   Small shared pieces: links, tags, badges, icons
 config/
   site.ts             Site URL and production check
   content-types.ts    The content types: label, route, schema, sort order
 lib/
-  content/            MDX loading, schemas, publish rule, sections, 404 paths and page status, getters
+  content/            Reading from Spotcraft, schemas, publish rule, getters
+  cms.ts              The Spotcraft client (server-only)
   analytics/          Tracking attributes for Vercel Analytics
-  supabase/           Browser, server and admin clients, the session cookie check, generated database types
+  supabase/           Browser and server clients, the session cookie check, generated database types
   react-query.ts      Query defaults and helper types
   api-client.ts       Fetch for the site's own API routes
 types/                Shared types
-content/              projects/ posts/ (MDX, one file per item)
-scripts/              embed.mts: syncs the search index
-proxy.ts              Auth gate and content 404s, composed from features/auth and lib/content
-supabase/             (repository root) Shared backend
+proxy.ts              Auth gate, from features/auth
+supabase/             (repository root) Auth
   config.toml         Local stack, plus production overrides
   migrations/         Database schema
-  functions/embed/    Embedding Edge Function (Deno)
 ```
 
 ## Launch checklist
@@ -298,16 +301,17 @@ Infrastructure:
 - [ ] Set the production env vars in Vercel
 - [ ] Run `supabase config push` (check the diff)
 - [ ] Create your user in the hosted Supabase dashboard
-- [ ] Run `supabase db push` and `supabase functions deploy embed`
-- [ ] Set `SUPABASE_SECRET_KEY` in Vercel
+- [ ] Run `supabase db push` (drops the old search index), then `supabase functions delete embed`
+- [ ] Remove `SUPABASE_SECRET_KEY` from Vercel, if it was set
+- [ ] Spotcraft (guide step 8): publish `@spotcraft/client` and switch the site's dependency from `file:` to the version; production Postgres (with pgvector) and an S3 bucket; deploy `apps/dashboard` (e.g. `cms.vin.ski`) and finish `/onboard` right away; import the content into production and run `search:sync`
+- [ ] Set `SPOTCRAFT_URL`, `SPOTCRAFT_API_TOKEN` and `SPOTCRAFT_WEBHOOK_SECRET` in Vercel, and Spotcraft's `WEBHOOK_URL=https://www.vin.ski/api/spotcraft`. Deploy the site after Spotcraft: the build reads from it
 - [ ] Enable Web Analytics and Speed Insights for the project in the Vercel dashboard
 - [ ] Turnstile, in this order: add the site in Cloudflare (www.vin.ski, vin.ski; Managed); set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in Vercel and deploy; **then** turn on CAPTCHA in Supabase (Authentication → Bot and Abuse Protection, Turnstile, the secret key). The other way round locks everyone out
-- [ ] Once CI sync is back, add the GitHub repository secrets `NEXT_PUBLIC_SUPABASE_URL` (`https://api.vin.ski` once the custom domain is active, otherwise `https://<ref>.supabase.co`) and `SUPABASE_SECRET_KEY` (the hosted project's secret key named `default`, which the embed function checks against)
 
 Going public:
 
 - [ ] Remove the signed-out branch from `features/auth/utils/session.ts` and delete `app/teaser/`
-- [ ] Replace the placeholder `date`, `tags` and `tldr` on projects (marked `# TODO`), and check post dates
+- [ ] Work through [`CONTENT_TODO.md`](CONTENT_TODO.md) in Spotcraft, and check post dates
 - [ ] Generate `app/sitemap.ts` from `CONTENT_TYPES` and the published items
 - [ ] Open the search route to guests
 - [ ] Add OG images, RSS and `llms.txt` if wanted

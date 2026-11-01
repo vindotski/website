@@ -1,8 +1,9 @@
 import { z } from "zod";
 
-// Front matter of the MDX files in content/<type>/. The folder decides which
-// schema applies, so there is no `type` field. Prose lives in the body, as ##
-// sections. Kept free of Next.js imports so scripts can use it too
+// The fields of a Spotcraft document, as lib/content/api.ts maps them back
+// (camelCase, category from the folder). The folder decides which schema
+// applies, so there is no `type` field. Prose lives in the body, as ##
+// sections
 
 const image = z.object({ src: z.string(), alt: z.string() });
 

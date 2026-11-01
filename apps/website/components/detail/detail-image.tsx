@@ -10,7 +10,7 @@ type DetailImageProps = {
   eager?: boolean;
 };
 
-// Fixed 16:10 frame, matching the project cards. not-prose, since MDX images
+// Fixed 16:10 frame, matching the project cards. not-prose, since body images
 // render here too and typography mustn't style the frame
 export default function DetailImage({
   image,

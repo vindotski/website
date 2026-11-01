@@ -19,7 +19,7 @@ export type Item<T extends ContentType = ContentType> = z.infer<
   sections: Section[];
 };
 
-// An item as the site lists it: front matter, slug and ## sections.
+// An item as the site lists it: fields, slug, path and ## sections.
 // `published` is false only for the drafts and scheduled items `next dev` shows
 export type Entry<T extends ContentType = ContentType> = Item<T> & {
   published: boolean;

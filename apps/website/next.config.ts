@@ -1,4 +1,3 @@
-import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 // Spotcraft serves images at <site>/media/…, with a ?v= cache-buster
@@ -43,15 +42,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Plugins are named as strings so Turbopack can load them
-const withMDX = createMDX({
-  options: {
-    // Front matter becomes an exported `frontmatter` object
-    remarkPlugins: ["remark-frontmatter", "remark-mdx-frontmatter"],
-    // Headings get ids, so the table of contents can link to them. Images
-    // lose their wrapping paragraph, since they render as a framed block
-    rehypePlugins: ["rehype-slug", "rehype-unwrap-images"],
-  },
-});
-
-export default withMDX(nextConfig);
+export default nextConfig;

@@ -10,7 +10,7 @@ import {
 import DraftBadge from "@/components/draft-badge";
 import Section from "@/components/layouts/section";
 
-// Jobs first, then side projects, in front matter order
+// Jobs first, then side projects, by their `order`
 export default async function ProjectsSection() {
   const projects = await getProjects();
 
