@@ -22,9 +22,9 @@ export async function getSearchResults({
   return data.results;
 }
 
-// Keyed case-insensitively, so "Pixi" reuses the results for "pixi". Never
-// stale: each search embeds the query on the server, and the index only
-// changes on deploy. The signal cancels a search a newer query replaced
+// Keyed case-insensitively, so "Pixi" reuses the results for "pixi". Fresh
+// for the default minute, since content changes whenever it's published in
+// Spotcraft. The signal cancels a search a newer query replaced
 export function getSearchResultsQueryOptions({
   query,
   limit,
@@ -35,7 +35,6 @@ export function getSearchResultsQueryOptions({
   return queryOptions({
     queryKey: ["search", { query: query.toLowerCase(), limit }],
     queryFn: ({ signal }) => getSearchResults({ query, limit, signal }),
-    staleTime: Infinity,
   });
 }
 

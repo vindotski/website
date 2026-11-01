@@ -7,5 +7,6 @@ export type SearchResult = {
   // The content type's label: Projects, Blog
   type: string;
   snippet: string;
-  similarity: number;
+  // Spotcraft's 0–1 score: comparable within one search only
+  score: number;
 };

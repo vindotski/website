@@ -8,14 +8,14 @@ import {
 } from "@/features/search/api/search";
 import { createClient } from "@/lib/supabase/server";
 
-// Semantic search over the content index.
+// Search over the content, by Spotcraft.
 //
-//   GET /api/search?q=caching&type=posts&tag=nextjs&limit=5
+//   GET /api/search?q=caching&type=posts&limit=5
 //
-// `type` and `tag` may repeat. A result needs every tag given, and any one of
-// the types. Returns { results: [{ url, title, heading, type, snippet,
-// similarity }] }, best match first, one per page section. The search itself
-// is in features/search; this checks access and parameters
+// `type` is optional: one content type, or all. Returns { results: [{ url,
+// title, heading, type, snippet, score }] }, best match first, one per page
+// section. The search itself is in features/search; this checks access and
+// parameters
 
 function badRequest(error: string) {
   return NextResponse.json({ error }, { status: 400 });
@@ -35,18 +35,17 @@ export async function GET(request: NextRequest) {
   if (query.length < 2 || query.length > maxQueryLength) {
     return badRequest(`q must be 2–${maxQueryLength} characters`);
   }
-  const types = params.getAll("type");
-  if (!types.every(isContentType)) {
+  const type = params.get("type") ?? undefined;
+  if (type !== undefined && !isContentType(type)) {
     return badRequest(`type must be one of ${Object.keys(CONTENT_TYPES).join(", ")}`);
   }
-  const tags = params.getAll("tag");
   const limit = Number(params.get("limit") ?? defaultLimit);
   if (!Number.isInteger(limit) || limit < 1 || limit > maxLimit) {
     return badRequest(`limit must be 1–${maxLimit}`);
   }
 
   try {
-    const results = await searchContent({ query, types, tags, limit });
+    const results = await searchContent({ query, type, limit });
     return NextResponse.json({ results });
   } catch (error) {
     console.error("search:", error);
