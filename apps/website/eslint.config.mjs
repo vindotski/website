@@ -69,10 +69,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Deno code, checked by the Supabase CLI
-    "supabase/functions/**",
-    // Files the Supabase CLI generates for the local stack
-    "supabase/.temp/**",
   ]),
 ]);
 
