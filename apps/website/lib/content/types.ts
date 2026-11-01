@@ -1,10 +1,21 @@
 import type { z } from "zod";
-import type { ContentType } from "@/config/content-types";
-import type { Item } from "./load";
+import type { CONTENT_TYPES, ContentType } from "@/config/content-types";
 import type { projectKind } from "./schemas";
 
 // The three kinds of work, shared by work items, play items and services
 export type ProjectType = z.infer<typeof projectKind>;
+
+// A ## heading, for the table of contents. `id` is the heading's id on the page
+export type Section = { id: string; title: string };
+
+// A document from Spotcraft, as the schemas describe it, plus its slug and
+// ## headings
+export type Item<T extends ContentType = ContentType> = z.infer<
+  (typeof CONTENT_TYPES)[T]["schema"]
+> & {
+  slug: string;
+  sections: Section[];
+};
 
 // An item as the site lists it: front matter, slug and ## sections.
 // `published` is false only for the drafts and scheduled items `next dev` shows

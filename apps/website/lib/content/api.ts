@@ -1,19 +1,64 @@
+import type { SpotcraftDocument } from "@spotcraft/client";
 import type { MDXContent } from "mdx/types";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
+import { z } from "zod";
 import { CONTENT_TYPES, type ContentType } from "@/config/content-types";
-import { loadItems, type Item } from "./load";
+import { cms } from "@/lib/cms";
 import { isPublished, showDrafts, todayUtc } from "./publish";
-import type { Entry, Post, Project } from "./types";
+import type { Entry, Item, Post, Project } from "./types";
 
-// Reads the MDX content in content/: cached, sorted, with drafts and
-// scheduled items left out of production
+// Reads the content from Spotcraft: cached, sorted, with drafts and scheduled
+// items left out of production
 
-// MDX content only changes on deploy, so cache for as long as possible (the
-// default profile would refresh every 15 minutes)
+// Spotcraft's webhook clears every entry tagged "spotcraft" when content
+// changes (app/api/spotcraft), so cache for as long as possible
+const tag = "spotcraft";
+
+// Spotcraft's field keys are snake_case; the schemas' are camelCase
+const camelCase = (key: string) =>
+  key.replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
+
+// Back into the shape the schemas describe, then validated by them, so bad
+// data fails loudly, naming the document. Projects take their category from
+// their folder (projects/work/…), and play's `status` is Spotcraft's `stage`
+function toItem<T extends ContentType>(type: T, doc: SpotcraftDocument): Item<T> {
+  const category = type === "projects" ? doc.path.split("/")[1] : undefined;
+  const fields: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(doc.attributes)) {
+    if (value === null) continue;
+    fields[category === "play" && key === "stage" ? "status" : camelCase(key)] = value;
+  }
+  const result = CONTENT_TYPES[type].schema.safeParse({
+    ...fields,
+    title: doc.title,
+    // Drafts have no publish date
+    date: doc.publishedAt?.slice(0, 10),
+    tags: doc.tags,
+    ...(category && { category }),
+  });
+  if (!result.success) {
+    throw new Error(
+      `Invalid fields in Spotcraft document ${doc.path}\n${z.prettifyError(result.error)}`,
+    );
+  }
+  const sections = doc.headings
+    .filter((heading) => heading.depth === 2)
+    .map((heading) => ({ id: heading.anchor, title: heading.text }));
+  return { ...result.data, slug: doc.slug, sections } as Item<T>;
+}
+
+// Drafts are fetched for `next dev` only (they need the API token)
 async function loadAll<T extends ContentType>(type: T): Promise<Item<T>[]> {
   "use cache";
+  cacheTag(tag);
   cacheLife("max");
-  return loadItems(type);
+  const docs = await cms.list({
+    folder: type,
+    deep: true,
+    limit: 100,
+    drafts: showDrafts,
+  });
+  return docs.map((doc) => toItem(type, doc));
 }
 
 // Drops drafts and scheduled items, except in `next dev`. Refreshed hourly, so
@@ -22,6 +67,7 @@ async function loadPublished<T extends ContentType>(
   type: T,
 ): Promise<Entry<T>[]> {
   "use cache";
+  cacheTag(tag);
   cacheLife("hours");
   const today = todayUtc();
   const items = (await loadAll(type)).map((item) => ({

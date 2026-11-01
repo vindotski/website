@@ -1,7 +1,7 @@
 import ScrollLink from "@/components/scroll-link";
-import type { Section } from "@/lib/content/sections";
+import type { Section } from "@/lib/content/types";
 
-// A post's ## headings, linking to the ids rehype-slug gives them. Nothing
+// A post's ## headings, linking to the ids their headings get. Nothing
 // when a post has no sections
 export default function TableOfContents({ sections }: { sections: Section[] }) {
   if (sections.length === 0) return null;
