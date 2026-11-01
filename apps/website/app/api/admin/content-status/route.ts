@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { CONTENT_TYPES, type ContentType } from "@/config/content-types";
 import type { ContentStatus } from "@/features/admin/types";
+import { currentUser } from "@/features/auth/utils/current-user";
 import { getItem } from "@/lib/content/api";
-import { createClient } from "@/lib/supabase/server";
 
 // The content item behind a page, for the admin toolbar: its Spotcraft path
 // and date (null for a draft), or null when the page is no project or post,
@@ -10,9 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 //
 //   GET /api/admin/content-status?pathname=/projects/huddleos
 export async function GET(request: NextRequest) {
-  const supabase = await createClient();
-  const { data: session } = await supabase.auth.getClaims();
-  if (!session?.claims) {
+  if (!(await currentUser())) {
     return NextResponse.json({ error: "Sign in first" }, { status: 401 });
   }
 

@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { repoUrl, supabaseDashboardUrl, vercelProjectUrl } from "@/config/site";
+import { repoUrl, vercelProjectUrl } from "@/config/site";
 import { isPublished, todayUtc } from "@/lib/content/publish";
 import { useContentStatus } from "@/features/admin/api/get-content-status";
 import { useUser } from "@/features/auth/api/get-user";
@@ -31,7 +31,6 @@ const dashboards = [
   { label: "Spotcraft", href: spotcraftUrl },
   { label: "New post", href: `${spotcraftUrl}/files/posts` },
   { label: "Vercel Analytics", href: `${vercelProjectUrl}/analytics` },
-  { label: "Supabase", href: supabaseDashboardUrl() },
   { label: "GitHub", href: repoUrl },
 ];
 

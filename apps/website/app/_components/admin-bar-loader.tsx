@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect, useSyncExternalStore } from "react";
-import { hasSessionCookie } from "@/lib/supabase/session-cookie";
+import { hasSessionCookie } from "@/lib/signed-in-cookie";
 
 // Loaded only with a session, so guests never download it
 const AdminBar = dynamic(() => import("./admin-bar"), { ssr: false });

@@ -1,62 +1,57 @@
-import { createServerClient } from "@supabase/ssr";
+import { getSession } from "@spotcraft/client";
 import { NextResponse, type NextRequest } from "next/server";
-// For proxy.ts. Refreshes the auth session on every request and shows anyone
-// without one the teaser page. Log in at /auth/login to see the site
-export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet, headers) {
-          // Server Components read the refreshed token from the request,
-          // the browser from the response
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options),
-          );
-          // Keeps CDNs from serving one user's session to another
-          Object.entries(headers).forEach(([key, value]) =>
-            response.headers.set(key, value),
-          );
-        },
-      },
-    },
+// For proxy.ts. Who's signed in, from Spotcraft's token (checked here, with no
+// request to Spotcraft unless it has run out), and the teaser for anyone else.
+// Log in at /auth/login, which goes to Spotcraft's sign-in and back
+
+// The signed-in user, for route handlers (current-user.ts). Set by the proxy only
+export const USER_HEADER = "x-vinski-user";
+// Readable by scripts: "probably signed in", for the toolbar's room and
+// analytics. Spotcraft's own cookies are httpOnly
+export const SIGNED_IN_COOKIE = "signed-in";
+
+const spotcraft = { url: process.env.SPOTCRAFT_URL! };
+
+export async function updateSession(request: NextRequest) {
+  const { user, setCookie } = await getSession(
+    request.headers.get("cookie"),
+    spotcraft,
   );
 
-  // Verifies the token and refreshes it if expired. Unlike getSession(),
-  // safe to trust on the server
-  const { data } = await supabase.auth.getClaims();
+  // Never trust the header from the browser: replace it every time
+  const headers = new Headers(request.headers);
+  headers.delete(USER_HEADER);
+  if (user) {
+    headers.set(USER_HEADER, JSON.stringify({ id: user.id, email: user.email }));
+  }
 
   const { pathname } = request.nextUrl;
   const isAuthRoute = pathname === "/auth" || pathname.startsWith("/auth/");
 
+  // Until launch the public site is the homepage alone. Rewrites, not
+  // redirects, so every URL keeps an honest status: 200 for the teaser
+  // page at /, 404 for everything else, /teaser itself included
+  const response =
+    !user && !isAuthRoute
+      ? NextResponse.rewrite(
+          new URL(pathname === "/" ? "/teaser" : "/_not-public", request.url),
+          { request: { headers } },
+        )
+      : NextResponse.next({ request: { headers } });
+
+  // The marker first: response.cookies rewrites Set-Cookie, which would drop
+  // the renewed token appended below
+  if (user) {
+    response.cookies.set(SIGNED_IN_COOKIE, "1", { path: "/", sameSite: "lax" });
+  } else if (request.cookies.has(SIGNED_IN_COOKIE)) {
+    response.cookies.delete(SIGNED_IN_COOKIE);
+  }
+  // A renewed token, or a cleared one once the session has ended
+  for (const cookie of setCookie) response.headers.append("set-cookie", cookie);
+
   // The same URL serves different pages with and without a session, so no
   // CDN or cache may keep one visitor's version for another, or for a crawler
-  const guarded = (next: NextResponse) => {
-    // Carries over cookies cleared or refreshed by getClaims()
-    if (next !== response) {
-      response.cookies.getAll().forEach((cookie) => next.cookies.set(cookie));
-    }
-    next.headers.set("Cache-Control", "private, no-store");
-    return next;
-  };
-
-  if (!data?.claims && !isAuthRoute) {
-    // Until launch the public site is the homepage alone. Rewrites, not
-    // redirects, so every URL keeps an honest status: 200 for the teaser
-    // page at /, 404 for everything else, /teaser itself included
-    const target = pathname === "/" ? "/teaser" : "/_not-public";
-    return guarded(NextResponse.rewrite(new URL(target, request.url)));
-  }
-
-  return guarded(response);
+  response.headers.set("Cache-Control", "private, no-store");
+  return response;
 }

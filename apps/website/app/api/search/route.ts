@@ -1,12 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { CONTENT_TYPES, isContentType } from "@/config/content-types";
+import { currentUser } from "@/features/auth/utils/current-user";
 import {
   defaultLimit,
   maxLimit,
   maxQueryLength,
   searchContent,
 } from "@/features/search/api/search";
-import { createClient } from "@/lib/supabase/server";
 
 // Search over the content, by Spotcraft.
 //
@@ -24,9 +24,7 @@ function badRequest(error: string) {
 export async function GET(request: NextRequest) {
   // Until launch, search is for signed-in users only, like every page but /.
   // The proxy already hides it; this keeps it closed if the proxy changes
-  const supabase = await createClient();
-  const { data: session } = await supabase.auth.getClaims();
-  if (!session?.claims) {
+  if (!(await currentUser())) {
     return NextResponse.json({ error: "Sign in to search" }, { status: 401 });
   }
 

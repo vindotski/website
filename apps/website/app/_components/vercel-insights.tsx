@@ -2,7 +2,7 @@
 
 import { Analytics, type BeforeSendEvent } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { hasSessionCookie } from "@/lib/supabase/session-cookie";
+import { hasSessionCookie } from "@/lib/signed-in-cookie";
 
 // A session means it's me: my own visits stay out of the data. Before launch
 // that also keeps "/" meaning the teaser, since only a session sees the real

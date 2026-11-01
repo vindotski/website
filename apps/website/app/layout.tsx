@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { isProduction, siteUrl } from "@/config/site";
-import { sessionCookie } from "@/lib/supabase/session-cookie";
+import { sessionCookie } from "@/lib/signed-in-cookie";
 import AdminBarLoader from "./_components/admin-bar-loader";
 import AnalyticsEvents from "./_components/analytics-events";
 import VercelInsights from "./_components/vercel-insights";
