@@ -1,5 +1,5 @@
 import type { SpotcraftDocument } from "@spotcraft/client";
-import type { MDXContent } from "mdx/types";
+import type { Root } from "mdast";
 import { cacheLife, cacheTag } from "next/cache";
 import { z } from "zod";
 import { CONTENT_TYPES, type ContentType } from "@/config/content-types";
@@ -47,18 +47,17 @@ function toItem<T extends ContentType>(type: T, doc: SpotcraftDocument): Item<T>
   return { ...result.data, slug: doc.slug, sections } as Item<T>;
 }
 
-// Drafts are fetched for `next dev` only (they need the API token)
-async function loadAll<T extends ContentType>(type: T): Promise<Item<T>[]> {
+// The type's documents, bodies included. Drafts are fetched for `next dev`
+// only (they need the API token)
+async function loadDocuments(type: ContentType): Promise<SpotcraftDocument[]> {
   "use cache";
   cacheTag(tag);
   cacheLife("max");
-  const docs = await cms.list({
-    folder: type,
-    deep: true,
-    limit: 100,
-    drafts: showDrafts,
-  });
-  return docs.map((doc) => toItem(type, doc));
+  return cms.list({ folder: type, deep: true, limit: 100, drafts: showDrafts });
+}
+
+async function loadAll<T extends ContentType>(type: T): Promise<Item<T>[]> {
+  return (await loadDocuments(type)).map((doc) => toItem(type, doc));
 }
 
 // Drops drafts and scheduled items, except in `next dev`. Refreshed hourly, so
@@ -96,7 +95,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
   return getItem("projects", slug);
 }
 
-export async function getProjectContent(slug: string): Promise<MDXContent> {
+export async function getProjectContent(slug: string): Promise<Root | null> {
   return getContent("projects", slug);
 }
 
@@ -143,13 +142,14 @@ export async function getNext<T extends ContentType>(
   return nextAfter(await getItems(type), slug);
 }
 
-// The item's body as a component; front matter comes from getItem
+// The item's body, as a Markdown syntax tree for <Body>; its fields come from
+// getItem, which also decides whether it's published
 export async function getContent(
   type: ContentType,
   slug: string,
-): Promise<MDXContent> {
-  const { default: Content } = await import(`@/content/${type}/${slug}.mdx`);
-  return Content;
+): Promise<Root | null> {
+  const doc = (await loadDocuments(type)).find((d) => d.slug === slug);
+  return doc?.body ?? null;
 }
 
 export async function getPosts(): Promise<Post[]> {
@@ -160,7 +160,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   return getItem("posts", slug);
 }
 
-export async function getPostContent(slug: string): Promise<MDXContent> {
+export async function getPostContent(slug: string): Promise<Root | null> {
   return getContent("posts", slug);
 }
 

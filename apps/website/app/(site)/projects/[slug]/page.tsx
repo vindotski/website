@@ -16,6 +16,7 @@ import DetailPage from "@/components/layouts/detail-page";
 import Facts from "@/components/detail/facts";
 import NextLink from "@/components/detail/next-link";
 import Prose from "@/components/layouts/prose";
+import Body from "@/components/detail/body";
 
 // Every page is prebuilt, so a navigation that waits for it is still quick.
 // Opts out of instant-navigation checks rather than streaming it behind Suspense
@@ -71,7 +72,7 @@ export default async function ProjectPage({
   const item = await getProjectBySlug(slug);
   if (!item) notFound();
 
-  const Content = await getProjectContent(slug);
+  const body = await getProjectContent(slug);
   const next = await getNextProject(slug);
 
   return (
@@ -99,7 +100,7 @@ export default async function ProjectPage({
       )}
 
       <Prose>
-        <Content />
+        <Body body={body} />
       </Prose>
 
       {next && <NextLink href={`/projects/${next.slug}`} name={next.title} />}

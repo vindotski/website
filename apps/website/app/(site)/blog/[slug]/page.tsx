@@ -16,6 +16,7 @@ import DetailIntro from "@/components/detail/detail-intro";
 import DetailPage from "@/components/layouts/detail-page";
 import NextLink from "@/components/detail/next-link";
 import Prose from "@/components/layouts/prose";
+import Body from "@/components/detail/body";
 
 // Every page is prebuilt, so a navigation that waits for it is still quick.
 // Opts out of instant-navigation checks rather than streaming it behind Suspense
@@ -39,7 +40,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
-  const Content = await getPostContent(slug);
+  const body = await getPostContent(slug);
   const next = await getNextPost(slug);
 
   return (
@@ -71,7 +72,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
       <TableOfContents sections={post.sections} />
 
       <Prose>
-        <Content />
+        <Body body={body} />
       </Prose>
       {/* Seen once someone reaches the end of the post */}
       <div

@@ -2,10 +2,25 @@ import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 import { readContentPaths } from "./lib/content/paths";
 
+// Spotcraft serves images at <site>/media/…, with a ?v= cache-buster
+const cms = new URL(process.env.SPOTCRAFT_URL ?? "http://localhost:3000/vinski");
+
 const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: cms.protocol.slice(0, -1) as "http" | "https",
+        hostname: cms.hostname,
+        port: cms.port,
+        pathname: `${cms.pathname.replace(/\/$/, "")}/media/**`,
+      },
+    ],
+    // Locally, Spotcraft is on localhost, which the optimizer refuses
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
+  },
   // Every content file's slug and date, for the proxy's 404 check and the
   // admin toolbar. Read when the build or dev server starts. DEPLOY_ENV is
   // Vercel's production / preview, or development anywhere else
