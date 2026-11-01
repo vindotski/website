@@ -31,10 +31,10 @@ supabase start               # local Supabase in Docker: database, Auth, gateway
 pnpm dev
 ```
 
-Then open [http://localhost:3000](http://localhost:3000). You'll see the teaser. To see the full site:
+Then open [http://localhost:3001](http://localhost:3001). You'll see the teaser. To see the full site:
 
 1. Create a user in Supabase Studio at [http://127.0.0.1:54323](http://127.0.0.1:54323) (Authentication → Add user, tick "Auto confirm"). Sign-ups are off, so this is the only way to get an account.
-2. Log in at [http://localhost:3000/auth/login](http://localhost:3000/auth/login).
+2. Log in at [http://localhost:3001/auth/login](http://localhost:3001/auth/login).
 
 `supabase stop` shuts the local stack down. Its data stays in Docker volumes named `supabase_*_portfolio`.
 
