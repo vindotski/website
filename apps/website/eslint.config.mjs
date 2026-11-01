@@ -5,7 +5,7 @@ import checkFile from "eslint-plugin-check-file";
 
 // bulletproof-react's layers: shared code → features → app. Each feature may
 // use shared code and itself, never another feature; app composes them
-const features = ["auth", "blog", "profile", "projects", "search"];
+const features = ["admin", "auth", "blog", "profile", "projects", "search"];
 const shared = ["components", "config", "hooks", "lib", "types", "utils"];
 
 const eslintConfig = defineConfig([

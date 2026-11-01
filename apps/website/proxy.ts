@@ -1,18 +1,10 @@
 import type { NextRequest } from "next/server";
 import { updateSession } from "@/features/auth/utils/session";
-import { isMissingContent, type ContentPaths } from "@/lib/content/paths";
 
-// Every content file's slug and date, inlined by next.config.ts
-const contentPaths: ContentPaths = JSON.parse(
-  process.env.CONTENT_PATHS ?? "{}",
-);
-
-// The auth gate (teaser for guests), plus a real 404 for content that doesn't
-// exist or isn't published yet
+// The auth gate: the teaser for guests. Content that doesn't exist or isn't
+// published yet is the [slug] pages' notFound()
 export async function proxy(request: NextRequest) {
-  return updateSession(request, {
-    notFound: (pathname) => isMissingContent(contentPaths, pathname),
-  });
+  return updateSession(request);
 }
 
 export const config = {

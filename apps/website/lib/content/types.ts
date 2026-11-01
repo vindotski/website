@@ -8,12 +8,14 @@ export type ProjectType = z.infer<typeof projectKind>;
 // A ## heading, for the table of contents. `id` is the heading's id on the page
 export type Section = { id: string; title: string };
 
-// A document from Spotcraft, as the schemas describe it, plus its slug and
-// ## headings
+// A document from Spotcraft, as the schemas describe it, plus its slug, path
+// and ## headings
 export type Item<T extends ContentType = ContentType> = z.infer<
   (typeof CONTENT_TYPES)[T]["schema"]
 > & {
   slug: string;
+  // In Spotcraft, e.g. projects/work/huddleos
+  path: string;
   sections: Section[];
 };
 

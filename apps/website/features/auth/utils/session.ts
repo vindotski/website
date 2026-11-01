@@ -1,18 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-type SessionOptions = {
-  // For signed-in visitors: paths to answer with a real 404, e.g. content
-  // that doesn't exist or isn't published yet. Passed in by proxy.ts, so this
-  // feature doesn't depend on how content works
-  notFound?: (pathname: string) => boolean;
-};
-
 // For proxy.ts. Refreshes the auth session on every request and shows anyone
 // without one the teaser page. Log in at /auth/login to see the site
-export async function updateSession(
-  request: NextRequest,
-  { notFound }: SessionOptions = {},
-) {
+export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -66,12 +56,6 @@ export async function updateSession(
     // page at /, 404 for everything else, /teaser itself included
     const target = pathname === "/" ? "/teaser" : "/_not-public";
     return guarded(NextResponse.rewrite(new URL(target, request.url)));
-  }
-
-  // A real 404 the page itself couldn't give: a streamed page can only
-  // answer 200
-  if (notFound?.(pathname)) {
-    return guarded(NextResponse.rewrite(new URL("/_not-public", request.url)));
   }
 
   return guarded(response);

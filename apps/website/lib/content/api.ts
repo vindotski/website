@@ -44,7 +44,7 @@ function toItem<T extends ContentType>(type: T, doc: SpotcraftDocument): Item<T>
   const sections = doc.headings
     .filter((heading) => heading.depth === 2)
     .map((heading) => ({ id: heading.anchor, title: heading.text }));
-  return { ...result.data, slug: doc.slug, sections } as Item<T>;
+  return { ...result.data, slug: doc.slug, path: doc.path, sections } as Item<T>;
 }
 
 // The type's documents, bodies included. Drafts are fetched for `next dev`

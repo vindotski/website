@@ -10,15 +10,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { repoUrl, supabaseDashboardUrl, vercelProjectUrl } from "@/config/site";
-import type { ContentPaths } from "@/lib/content/paths";
 import { isPublished, todayUtc } from "@/lib/content/publish";
-import { contentAt } from "@/lib/content/status";
+import { useContentStatus } from "@/features/admin/api/get-content-status";
 import { useUser } from "@/features/auth/api/get-user";
 import LogoutButton from "@/features/auth/components/logout-button";
 
-// Both inlined by next.config.ts
-const contentPaths: ContentPaths = JSON.parse(process.env.CONTENT_PATHS ?? "{}");
+// Both inlined by next.config.ts. Spotcraft's dashboard edits a document at
+// <site>/files/<path>
 const deployEnv = process.env.DEPLOY_ENV;
+const spotcraftUrl = process.env.SPOTCRAFT_URL;
 
 const environment =
   deployEnv === "production"
@@ -27,12 +27,12 @@ const environment =
       ? "Preview"
       : "Local";
 
-// main is what production deploys
 const dashboards = [
+  { label: "Spotcraft", href: spotcraftUrl },
+  { label: "New post", href: `${spotcraftUrl}/files/posts` },
   { label: "Vercel Analytics", href: `${vercelProjectUrl}/analytics` },
   { label: "Supabase", href: supabaseDashboardUrl() },
   { label: "GitHub", href: repoUrl },
-  { label: "New post", href: `${repoUrl}/new/main/content/posts` },
 ];
 
 function statusOf(date: string | null) {
@@ -47,7 +47,7 @@ function statusOf(date: string | null) {
 // and the account
 export default function AdminBar({ pathname }: { pathname: string }) {
   const user = useUser();
-  const item = contentAt(contentPaths, pathname);
+  const { data: item } = useContentStatus({ pathname });
 
   return (
     <div
@@ -78,14 +78,14 @@ export default function AdminBar({ pathname }: { pathname: string }) {
         {environment}
       </Badge>
 
-      {/* A project or post page with a file behind it */}
-      {item && item.date !== undefined && (
+      {/* A project or post page, with its document in Spotcraft */}
+      {item && (
         <>
           <span className="hidden text-muted-foreground sm:inline">
             {statusOf(item.date)}
           </span>
           <a
-            href={`${repoUrl}/edit/main/content/${item.type}/${item.slug}.mdx`}
+            href={`${spotcraftUrl}/files/${item.path}`}
             target="_blank"
             rel="noreferrer"
             className={buttonVariants({ variant: "ghost", size: "xs" })}
