@@ -1,607 +1,384 @@
-# Moving vin.ski onto Spotcraft
+# Moving vin.ski's sign-in from Supabase Auth to Spotcraft
 
-This guide moves vin.ski's content out of the repository and into Spotcraft, a self-hosted
-headless CMS. The website keeps its design, routes and components; only where content comes from
-changes.
+vin.ski's content already lives in Spotcraft. This guide moves its **sign-in** there too, so
+Supabase can go. It answers `SPOTCRAFT_CLIENT_AUTH_REQUIREMENTS.md`: Spotcraft now has everything
+that file asked for (on its `dev` branch, 2026-11-01).
 
-**Today:**
-- 10 MDX files in `apps/website/content/`: 3 posts and 7 projects.
-- Cover and diagram SVGs in `public/images/`.
-- Profile copy hard-coded in `features/profile/data.ts`.
-- Search on a Supabase `documents` table, filled by `pnpm embed` through a gte-small Edge
-  Function.
+**After this guide:**
+- You sign in once, on the Spotcraft dashboard. Locally that's `localhost:3000`; in production,
+  `cms.vin.ski`.
+- vin.ski's proxy knows who you are on every request. It checks a signed token itself, with no
+  request to Spotcraft per page.
+- The gate, the admin toolbar, the signed-in-only API routes and the analytics opt-out all work as
+  before.
+- `lib/supabase/`, the login form, Turnstile on vin.ski, the `supabase/` folder and the hosted
+  Supabase project are gone.
 
-**After:**
-- Spotcraft runs as `apps/dashboard`, next to `apps/website`, on its own Postgres.
-- Content is edited in the Spotcraft dashboard.
-- The website reads it with `@spotcraft/client`, rebuilds its cache when a webhook arrives, and
-  searches with Spotcraft's `/api/search`.
-- The MDX pipeline, the `documents` table, the Edge Function and the embed script are deleted.
-
-Do the steps in order. Each one ends with the site still working, so you can stop between them.
+Do the steps in order. The site is broken between steps 3 and 6 (the gate and the login change
+together), so do those in one sitting.
 
 ---
 
-## 0. Before you start
+## The answers to the open questions
 
-- **Spotcraft isn't on npm yet.** There is no `v0.1.0` tag, `@spotcraft/client` isn't published,
-  and `pnpm create spotcraft` can't download anything. Until they are:
-  - Install from the local checkout at `../spotcraft` (step 1).
-  - Link `@spotcraft/client` from it (step 4).
-  - **Publish both before deploying (step 8):** a `link:` dependency doesn't resolve on Vercel.
-- **What you need:** Node 26, pnpm 12, and Docker (Spotcraft's local Postgres, Mailpit and S3).
-- **Ports:** Spotcraft's dashboard uses **3000**, which is also `next dev`'s default. Move the
-  website to **3001**: in `apps/website/package.json`, set `"dev": "next dev --port 3001"`.
-- **YAML comments are dropped.** Spotcraft keeps no comments in front matter, so the `# TODO` notes
-  in the project files won't survive the import. Copy them somewhere first (an issue, or the
-  document body).
+| Question | Answer |
+| --- | --- |
+| **Which frontend:** does a token name one site, or list them? | It **lists** them. The token's `sites` claim holds the slugs of every site you're a member of, and `role` is `"superadmin"` or `null`. vin.ski accepts only members of `vinski`, and superadmins. `@spotcraft/client` reads the slug from `SPOTCRAFT_URL` (`…/vinski`). The audience is Spotcraft's origin, not a site. |
+| **Redirect allowlist:** `site_url` or an env var? | **`site_url`.** Login and logout may send you to any URL whose exact origin is one of the sites' `site_url` origins. For vin.ski that's `https://www.vin.ski`, and nothing else (not `https://vin.ski`). Locally, set the site URL to `http://localhost:3001` (step 2). Other URLs land on the dashboard instead. |
+| **Mail links:** can reset and invite emails return to the frontend? | **No,** they stay on the dashboard. After a reset you're signed in there; open vin.ski and you're signed in too. |
 
-## 1. Add Spotcraft to the monorepo
+## What Spotcraft now provides
 
-From the Spotcraft checkout:
+- **The token:** `spotcraft_token` is an httpOnly cookie holding an ES256 JWT that lasts 10
+  minutes. Its claims are `sub`, `email`, `role` and `sites`, plus `iss` and `aud`, which are both
+  Spotcraft's origin.
+  - It's set at sign-in, and renewed at `GET /api/session` while the dashboard session lives.
+  - The public keys are at `/api/auth/jwks`.
+- **A shared domain:** `AUTH_COOKIE_DOMAIN=vin.ski` puts Spotcraft's cookies on the whole domain,
+  so `www.vin.ski`'s server receives them.
+  - Leave it unset locally: cookies ignore the port, so `localhost:3000` and `localhost:3001`
+    already share them.
+  - When it's unset, cookies stay host-only, as before.
+- **Login with a way back:** `cms.vin.ski/login?redirect=https://www.vin.ski/…` signs you in and
+  sends you to that page. If you're already signed in, it sends you back at once, with a fresh
+  token.
+- **Logout from the frontend:** `cms.vin.ski/logout?redirect=https://www.vin.ski/` ends the
+  dashboard session, clears the token and sends you back. It's a plain GET link.
+- **Bot protection and limits:** Turnstile is optional (`TURNSTILE_SITE_KEY` and
+  `TURNSTILE_SECRET_KEY`), on sign-in and forgot-password.
+  - Sign-in allows 5 attempts per email and 10 per IP every 15 minutes.
+  - Better Auth's own HTTP sign-in endpoints are off, so nothing gets around those checks.
+- **New in `@spotcraft/client`:**
+  - `getSession(cookieHeader, { url })` returns `{ user, setCookie }`. It checks the token locally
+    and renews it once when it has run out. `setCookie` holds the renewed cookies; pass them on.
+  - `verifySession(cookieHeader, { url })` only checks the token, and never makes a request.
+  - `loginUrl(redirect, { url })` and `logoutUrl(redirect, { url })` build the two links.
+  - `TOKEN_COOKIE` and `SESSION_COOKIES` are the stable cookie names. Both cookies are httpOnly.
+  - `user` is `{ id, email, role, sites }`, or null if you aren't signed in or don't work on
+    `vinski`.
+- **Docs:** "Signing in to your frontend", in Spotcraft's docs (`docs/building/signing-in`).
 
-```bash
-cd ../spotcraft
-pnpm create:local ../vindotski/apps/dashboard --name dashboard --no-example
-```
+---
 
-This copies the app into `apps/dashboard` and writes its `.env`:
-- a new `BETTER_AUTH_SECRET`;
-- `SPOTCRAFT_API_TOKEN`;
-- the local `DATABASE_URL`.
+## 1. Update Spotcraft in the monorepo
 
-It doesn't touch your other files. It prints what to add, mainly the builds pnpm must allow in the
-root `pnpm-workspace.yaml`:
-
-```yaml
-packages:
-  - apps/*
-
-allowBuilds:
-  esbuild: true
-  lightningcss: true
-  koffi: false
-```
-
-Then start it:
+`apps/dashboard` is an unmodified copy of Spotcraft. These are the only files that differ from the
+checkout: the new auth code, one migration and `.env.example`. Bring them over from `../spotcraft`:
 
 ```bash
 cd ../vindotski
+rsync -a ../spotcraft/apps/dashboard/src/ apps/dashboard/src/
+rsync -a ../spotcraft/apps/dashboard/drizzle/ apps/dashboard/drizzle/
+cp ../spotcraft/apps/dashboard/.env.example apps/dashboard/.env.example
+pnpm --filter dashboard db:migrate      # 0010_jwks: the token's signing keys
+```
+
+Then check it: `git diff --stat apps/dashboard` should show only the files named above. Nothing in
+`apps/dashboard/.env` needs to change locally.
+
+`@spotcraft/client` comes from the checkout (`file:../../../spotcraft/packages/client`). Build
+it, then reinstall so vin.ski picks up the new version and its new dependency, `jose`:
+
+```bash
+pnpm --dir ../spotcraft --filter @spotcraft/client build
 pnpm install
-pnpm --filter dashboard db:start      # Postgres (with pgvector), Mailpit and S3, in Docker
-pnpm --filter dashboard db:migrate
-pnpm --filter dashboard dev           # http://localhost:3000
 ```
 
-Open `http://localhost:3000`. It sends you to `/onboard`: create your superadmin account (invite
-emails go to Mailpit at `http://localhost:8025`). **Don't create the site in the dashboard.** The
-import in step 3 creates it from `site.yaml`.
+## 2. Local settings
 
-Root scripts worth adding to `vindotski/package.json`:
+- **The site's address:** set it to `http://localhost:3001`. Open
+  `http://localhost:3000/vinski/settings/site`, then set **Site URL**. This is what lets login send
+  you back to the local site.
+  - **Warning:** `pnpm cms:export` writes the address into `spotcraft-content/site.yaml`. Don't
+    commit `site_url: http://localhost:3001`; production uses `https://www.vin.ski`.
+- **Your account:** you need to be a superadmin, or a member of `vinski`. The account from
+  onboarding is a superadmin.
+- **Turnstile (optional locally):** to see the widget, set Cloudflare's test keys in
+  `apps/dashboard/.env`, then restart the dashboard:
 
-```json
-"dashboard": "pnpm --filter dashboard dev",
-"cms:import": "pnpm --filter dashboard content:import",
-"cms:export": "pnpm --filter dashboard content:export"
-```
+  ```bash
+  TURNSTILE_SITE_KEY=1x00000000000000000000AA
+  TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+  ```
 
-## 2. The content model
+## 3. The gate: `features/auth/utils/session.ts`
 
-Spotcraft content is folders of documents. Each folder's `_config.json` lists typed fields:
-- `text` (optional `multiline`), `markdown`, `number`, `boolean`, `date`, `url`;
-- `select`, `list` (of one item type), `object` (named sub-fields), and `image`.
+Replace the Supabase client with `getSession`. The proxy also:
+- passes the user to pages and route handlers in a request header. It always replaces that
+  header, so a browser can't fake it;
+- sets a readable `signed-in=1` marker for the before-paint script and analytics. The token itself
+  is httpOnly.
 
-A document's fields are every config on its path, from the root down.
+```ts
+import { getSession } from "@spotcraft/client";
+import { NextResponse, type NextRequest } from "next/server";
 
-**Built in, never declared as fields:** `id`, `title`, `status` (`published` or `draft`),
-`published_at` and `tags`.
+// For proxy.ts. Who's signed in, from Spotcraft's token (checked here, no
+// request to Spotcraft unless it has run out), and the teaser for anyone else.
+// Log in at /auth/login, which goes to Spotcraft's sign-in and back
 
-The mapping from today's zod schemas (`lib/content/schemas.ts`):
+/** The signed-in user, for route handlers (current-user.ts). Set by the proxy only */
+export const USER_HEADER = "x-vinski-user";
+/** Readable by scripts: "probably signed in", for the toolbar's room and analytics */
+export const SIGNED_IN_COOKIE = "signed-in";
 
-| vin.ski | Spotcraft |
-|---|---|
-| `title` | `title` (built in) |
-| `date` (absent = draft) | `status` + `published_at`: `published` with `published_at: "<date>T00:00:00.000Z"`, or `draft` |
-| `tags` | `tags` (built in) |
-| `tldr`, `order`, `repoUrl`, `demoUrl` | fields on `posts/` and `projects/` |
-| `category: work \| play` | **the folder**: `projects/work/<slug>` or `projects/play/<slug>` |
-| `years: { start, end? }` | an `object` field with two `number` sub-fields |
-| `stack: string[]` | a `list` of `text` |
-| `image: { src, alt }` | an `image` field; the SVG moves next to the document |
-| `kind`, `status` (play) | `select` fields. **`status` is reserved**, so the play `status` becomes `stage` |
+const spotcraft = { url: process.env.SPOTCRAFT_URL! };
 
-**Why two project folders:** `work/` and `play/` each get their own config, so each keeps its own
-required fields, as the zod union does today. `cms.list({ folder: "projects", deep: true })`
-returns both. Slugs stay unique across the two, so `/projects/:slug` keeps working.
+export async function updateSession(request: NextRequest) {
+  const { user, setCookie } = await getSession(request.headers.get("cookie"), spotcraft);
 
-**Note:** Spotcraft has no scheduling. A document with `status: published` and a future
-`published_at` is public in the API. Keep vin.ski's rule (`publishedAt <= now`) in the website,
-which already hides future dates (see step 4).
+  // Never trust the header from the browser: replace it every time
+  const headers = new Headers(request.headers);
+  headers.delete(USER_HEADER);
+  if (user) headers.set(USER_HEADER, JSON.stringify({ id: user.id, email: user.email }));
 
-### The configs
+  const { pathname } = request.nextUrl;
+  const isAuthRoute = pathname === "/auth" || pathname.startsWith("/auth/");
 
-`posts/_config.json`:
+  // Until launch the public site is the homepage alone. Rewrites, not
+  // redirects, so every URL keeps an honest status: 200 for the teaser
+  // page at /, 404 for everything else, /teaser itself included
+  const response =
+    !user && !isAuthRoute
+      ? NextResponse.rewrite(
+          new URL(pathname === "/" ? "/teaser" : "/_not-public", request.url),
+          { request: { headers } },
+        )
+      : NextResponse.next({ request: { headers } });
 
-```json
-{
-  "fields": [
-    { "key": "tldr", "label": "TL;DR", "type": "text", "multiline": true, "required": true },
-    { "key": "repo_url", "label": "Repository", "type": "url" },
-    { "key": "demo_url", "label": "Demo", "type": "url" }
-  ]
+  // The marker first: response.cookies rewrites Set-Cookie, which would drop
+  // the renewed token appended below
+  if (user) {
+    response.cookies.set(SIGNED_IN_COOKIE, "1", { path: "/", sameSite: "lax" });
+  } else if (request.cookies.has(SIGNED_IN_COOKIE)) {
+    response.cookies.delete(SIGNED_IN_COOKIE);
+  }
+  // A renewed token (or a cleared one, once the session has ended)
+  for (const cookie of setCookie) response.headers.append("set-cookie", cookie);
+
+  // The same URL serves different pages with and without a session, so no
+  // CDN or cache may keep one visitor's version for another, or for a crawler
+  response.headers.set("Cache-Control", "private, no-store");
+  return response;
 }
 ```
 
-`projects/_config.json` (shared by work and play):
+`proxy.ts` stays as it is. Its matcher already covers every page and `/api/*` route except
+`/api/spotcraft`.
 
-```json
-{
-  "fields": [
-    { "key": "tldr", "label": "TL;DR", "type": "text", "multiline": true, "required": true },
-    { "key": "summary", "label": "Summary", "type": "text", "multiline": true, "required": true },
-    { "key": "order", "label": "Order", "type": "number" },
-    {
-      "key": "kind",
-      "label": "Kind",
-      "type": "select",
-      "options": ["Frontend", "Fullstack", "Product"],
-      "required": true
-    },
-    { "key": "stack", "label": "Stack", "type": "list", "of": { "type": "text" }, "required": true },
-    { "key": "image", "label": "Cover", "type": "image", "required": true },
-    { "key": "repo_url", "label": "Repository", "type": "url" }
-  ]
-}
-```
+## 4. Signed-in-only routes
 
-`projects/work/_config.json`:
-
-```json
-{
-  "fields": [
-    { "key": "company", "label": "Company", "type": "text", "required": true },
-    { "key": "role", "label": "Role", "type": "text", "required": true },
-    {
-      "key": "years",
-      "label": "Years",
-      "type": "object",
-      "required": true,
-      "fields": [
-        { "key": "start", "label": "Start", "type": "number", "required": true },
-        { "key": "end", "label": "End", "type": "number" }
-      ]
-    },
-    { "key": "impact", "label": "Impact", "type": "text", "multiline": true, "required": true },
-    { "key": "product_url", "label": "Product", "type": "url" },
-    { "key": "demo_url", "label": "Demo", "type": "url" }
-  ]
-}
-```
-
-`projects/play/_config.json`:
-
-```json
-{
-  "fields": [
-    { "key": "year", "label": "Year", "type": "number", "required": true },
-    {
-      "key": "stage",
-      "label": "Status",
-      "type": "select",
-      "options": ["Live", "In progress", "Archived"],
-      "required": true
-    },
-    { "key": "demo_url", "label": "Demo", "type": "url", "required": true }
-  ]
-}
-```
-
-**Field keys:**
-- **Format:** they must be lowercase letters, digits and `_`, so `repoUrl` becomes `repo_url`.
-- **Mapping:** the website maps them back to camelCase in one place (step 4), so components don't
-  change.
-- **`project.order`:** `posts/` doesn't define `order`, since posts sort by date.
-- **Before importing:** compare these configs with `lib/content/schemas.ts` once more. The table
-  above was read from it, but if a field moved since, the schema wins.
-
-## 3. Convert the MDX files and import them
-
-An import reads a **Spotcraft export directory**:
-
-```
-spotcraft-content/
-  spotcraft.yaml                 format: 2
-  site.yaml                      name: Ivan Vinski / site_url: https://www.vin.ski
-  posts/_config.json
-  posts/new-date-broke-my-build/index.md
-  projects/_config.json
-  projects/work/_config.json
-  projects/work/huddleos/index.md
-  projects/work/huddleos/huddleos.svg
-  projects/play/_config.json
-  projects/play/vinui/index.md
-  projects/play/vinui/vinui.svg
-  projects/play/vinui/vinui-diagram.svg
-```
-
-Each `index.md` is front matter plus a Markdown body:
-
-```md
----
-title: HuddleOS
-status: published
-published_at: "2024-06-01T00:00:00.000Z"
-tags:
-  - nextjs
-tldr: …
-summary: …
-order: 1
-kind: Frontend
-stack:
-  - Next.js
-  - TypeScript
-image:
-  src: huddleos.svg
-  alt: HuddleOS dashboard
-company: …
-role: …
-years:
-  start: 2020
-  end: 2024
-impact: …
----
-## Context
-
-…
-```
-
-**`id` is optional.** The import gives each new document one, and a later export writes it out.
-
-Write a one-off script, `scripts/to-spotcraft.mts`. It's about 80 lines, using `yaml` (already a
-dependency through `lib/content/sections.ts`) and `node:fs`. For each `content/<type>/<slug>.mdx`:
-
-1. **Split the front matter from the body,** and parse the front matter with the existing zod
-   schemas, so bad data fails here and not in Spotcraft.
-2. **Pick the folder:**
-   - `posts/<slug>`;
-   - `projects/work/<slug>` or `projects/play/<slug>`, from `category`.
-3. **Map the keys** with the table in step 2:
-   - `date` → `status` / `published_at`;
-   - camelCase → snake_case;
-   - play `status` → `stage`;
-   - drop `category`.
-4. **Images:** copy `public<image.src>` (for example `public/images/work/huddleos.svg`) next to
-   the new `index.md`, and set `image.src` to the bare file name.
-   - Do the same for each `![alt](/images/samples/<name>.svg)` in the body, and rewrite it to
-     `![alt](<name>.svg)`.
-   - Names must be lowercase letters, digits and hyphens plus the extension; the current names
-     already are.
-5. **The body is copied as is.** Spotcraft refuses raw HTML in bodies, and vin.ski's bodies have
-   none: the JSX in `new-date-broke-my-build` and `wireframing-in-code` is inside fenced code blocks,
-   which is plain text.
-6. **Write `spotcraft.yaml`, `site.yaml` and the four `_config.json` files** from step 2.
-
-Then a dry run, which lists every change and every problem and writes nothing:
-
-```bash
-node apps/website/scripts/to-spotcraft.mts            # writes ./spotcraft-content
-pnpm --filter dashboard content:import ../../spotcraft-content --site vinski --create-site
-```
-
-**Reading the dry run:**
-- **Extras:** any key no field matches is listed as "kept in extras" (stored as text, not as a
-  field). Each one is a mapping you missed, so fix the script.
-- **Problems:** missing required fields or bad URLs are listed per file, and fail the import as a
-  whole.
-
-When it's clean:
-
-```bash
-pnpm --filter dashboard content:import ../../spotcraft-content --site vinski --create-site --apply
-pnpm --filter dashboard search:sync
-```
-
-**Check the result:**
-- `vinski` is the first site, so it's the **default**: `http://localhost:3000/api/…` serves it.
-- Open the dashboard: Files shows `posts/` and `projects/`, the documents open, and the
-  covers appear in each document's Images.
-- `curl "http://localhost:3000/api/content?folder=projects&deep=true"` lists the published projects,
-  with absolute image URLs and sizes.
-
-**Afterwards:**
-- **Keep the converted files as a backup:** run `pnpm --filter dashboard content:export
-  ../../spotcraft-content` once to get the canonical form (with ids), and commit it if you want
-  content in git.
-- **Spotcraft is now the source.** The next import updates documents by `id` and never deletes,
-  so don't edit `content/*.mdx` any more.
-
-## 4. Point the website at Spotcraft
-
-### Connect
-
-`apps/website/package.json`, until the client is on npm:
-
-```json
-"@spotcraft/client": "link:../../../spotcraft/packages/client"
-```
-
-Build it once in the Spotcraft repo with `pnpm client:build`; its `pnpm dev` keeps it rebuilt.
-
-`apps/website/.env.local` (and `.env.example` without the values):
-
-```bash
-SPOTCRAFT_URL=http://localhost:3000          # the default site (vinski); also http://localhost:3000/vinski
-SPOTCRAFT_API_TOKEN=…                        # SPOTCRAFT_API_TOKEN from apps/dashboard/.env (server only)
-SPOTCRAFT_WEBHOOK_SECRET=…                   # WEBHOOK_SECRET from apps/dashboard/.env
-```
-
-`apps/dashboard/.env`:
-
-```bash
-WEBHOOK_URL=http://localhost:3001/api/spotcraft
-WEBHOOK_SECRET=…                             # a random string, the same as above
-```
-
-`lib/cms.ts`:
+Add `features/auth/utils/current-user.ts`:
 
 ```ts
 import "server-only";
-import { createClient } from "@spotcraft/client";
+import { headers } from "next/headers";
+import { USER_HEADER } from "./session";
 
-export const cms = createClient({
-  url: process.env.SPOTCRAFT_URL!,
-  token: process.env.SPOTCRAFT_API_TOKEN, // drafts and no search limit; never in the browser
-});
-```
+export type CurrentUser = { id: string; email: string };
 
-### Keep `lib/content/api.ts`'s signatures
-
-The pages call `lib/content/api.ts`, so only its insides change. Replace `load.ts`'s file reads
-with the API, and map each `SpotcraftDocument` back into today's item shape. The existing zod
-schemas then guard the data exactly as before:
-
-```ts
-async function fetchAll(type: "posts" | "projects") {
-  "use cache";
-  cacheTag("spotcraft");
-  cacheLife("hours"); // the webhook clears it on publish; hours keeps future-dated posts appearing on time
-  const docs = await cms.list({
-    folder: type,
-    deep: type === "projects",
-    limit: 100,
-    drafts: process.env.NODE_ENV === "development", // `next dev` shows drafts, as today
-  });
-  return docs.map((d) => toItem(type, d)); // camelCase, category from the path, date from publishedAt
+// The signed-in user, as the proxy checked it for this request. Null for a
+// guest. Only for routes the proxy's matcher covers
+export async function currentUser(): Promise<CurrentUser | null> {
+  const value = (await headers()).get(USER_HEADER);
+  return value ? (JSON.parse(value) as CurrentUser) : null;
 }
 ```
 
-- **`toItem`:**
-  - `date` = `publishedAt?.slice(0, 10)` (absent for a draft);
-  - `category` = `d.path.split("/")[1]` for projects;
-  - `image` = `{ src: attributes.image.src, alt: attributes.image.alt }`. `src` is now an absolute
-    URL like `http://localhost:3000/media/projects/work/huddleos/huddleos.svg?v=…`, and
-    `width`/`height` are included.
-- **The publish rule stays** (`lib/content/publish.ts`): future dates are hidden in production,
-  and `next dev` shows drafts and scheduled posts.
-- **Sorting and next-item lookup** stay as they are; `order` still sorts projects.
-
-### Revalidate on publish
-
-`app/api/spotcraft/route.ts`:
+In `app/api/search/route.ts` and `app/api/admin/content-status/route.ts`, replace
+`createClient()` and `getClaims()` with:
 
 ```ts
-import { readWebhook } from "@spotcraft/client";
-import { revalidateTag } from "next/cache";
+import { currentUser } from "@/features/auth/utils/current-user";
 
-export async function POST(request: Request) {
-  const hook = await readWebhook(request, process.env.SPOTCRAFT_WEBHOOK_SECRET!);
-  if (!hook) return new Response("Bad signature", { status: 401 });
-  revalidateTag("spotcraft", { expire: 0 });
-  return new Response(null, { status: 204 });
+if (!(await currentUser())) {
+  return NextResponse.json({ error: "Sign in to search" }, { status: 401 });
 }
 ```
 
-**`proxy.ts`:** let `/api/spotcraft` through the auth gate. Spotcraft calls it without a session;
-the signature is the check.
+Keep each route's own error message.
 
-### Render bodies from the API
+## 5. Log in and log out
 
-Bodies come back as a Markdown syntax tree (`body`), not MDX. Replace the dynamic
-`import(\`@/content/${type}/${slug}.mdx\`)` with a `<Body>` component:
+**Login:** `/auth/login` becomes a redirect to Spotcraft's sign-in, coming back to the homepage.
+The teaser's link to it stays.
+
+1. Delete `app/auth/login/page.tsx`, `app/auth/layout.tsx`,
+   `features/auth/components/login-form.tsx` and `features/auth/api/login.ts`.
+2. Add `app/auth/login/route.ts`:
+
+```ts
+import { loginUrl } from "@spotcraft/client";
+import { NextResponse, type NextRequest } from "next/server";
+
+// Signing in happens on Spotcraft (with Turnstile), which sends you back here
+export function GET(request: NextRequest) {
+  const home = new URL("/", request.url).href;
+  return NextResponse.redirect(loginUrl(home, { url: process.env.SPOTCRAFT_URL! }));
+}
+```
+
+`request.url`'s origin must be the site's address: `https://www.vin.ski` in production, and
+`http://localhost:3001` locally. Otherwise Spotcraft ignores it and you land on the dashboard.
+
+**Logout:**
+
+1. Delete `features/auth/api/logout.ts`.
+2. In `features/auth/components/logout-button.tsx`, make the button a full page load of
+   Spotcraft's logout. It ends the dashboard session too, then comes back to `/`:
 
 ```tsx
-import { headingAnchors } from "@spotcraft/client";
-import { toJsxRuntime } from "hast-util-to-jsx-runtime";
-import { toHast } from "mdast-util-to-hast";
-import { Fragment, jsx, jsxs } from "react/jsx-runtime";
-import { DetailImage } from "@/components/detail/detail-image";
+"use client";
 
-export function Body({ body }: { body: Root }) {
-  const tree = structuredClone(body);
-  for (const [heading, id] of headingAnchors(tree)) {
-    heading.data = { ...heading.data, hProperties: { id } }; // the ids rehype-slug gave them
-  }
-  return toJsxRuntime(toHast(tree), {
-    Fragment, jsx, jsxs,
-    components: { img: (props) => <DetailImage {...props} /> },
-  });
+import { logoutUrl } from "@spotcraft/client";
+import { LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+// Spotcraft signs out everywhere (the dashboard too) and sends a full load of
+// /, where a guest gets the teaser. SPOTCRAFT_URL is inlined by next.config.ts
+export default function LogoutButton(
+  props: Omit<React.ComponentProps<typeof Button>, "onClick">,
+) {
+  return (
+    <Button
+      {...props}
+      onClick={() =>
+        window.location.assign(
+          logoutUrl(new URL("/", window.location.href).href, {
+            url: process.env.SPOTCRAFT_URL!,
+          }),
+        )
+      }
+    >
+      <LogOut data-icon="inline-start" />
+      Log out
+    </Button>
+  );
 }
 ```
 
-- **Dependencies:** add `mdast-util-to-hast` and `hast-util-to-jsx-runtime`.
-- **Image sizes:** body images arrive with `width`/`height` in `data.hProperties`, so `DetailImage`
-  gets real sizes.
-- **`rehype-unwrap-images`:** it unwrapped image-only paragraphs. Do the same in a small transform
-  (a paragraph whose only child is an image becomes the image), or let `DetailImage` render a
-  `<span>` frame.
-- **Table of contents:** `lib/content/sections.ts` built `## sections` from the MDX source. Use the
-  API's `headings` (depth 2: `{ text, anchor }`) for the TOC. Search no longer needs sections (step 5).
-- **`next.config.ts`:**
-  - allow Spotcraft's images with `images: { remotePatterns: [new URL(\`${process.env.SPOTCRAFT_URL}/media/**\`)] }`;
-  - `dangerouslyAllowLocalIP: true` in development only.
+`loginUrl` and `logoutUrl` don't use `jose`. The client has `sideEffects: false`, so a Client
+Component that imports them doesn't ship the token code.
 
-### `CONTENT_PATHS`
+## 6. The admin toolbar
 
-`next.config.ts` builds a slug → date map from the MDX front matter at build time, for `proxy.ts`
-(real 404s) and the admin bar. Two options:
-- **Simplest:** drop it. `dynamicParams = false` plus `notFound()` in the `[slug]` pages already
-  404 unknown or unpublished slugs. Read publish state in the admin bar from `lib/content/api.ts`.
-- **Keep the proxy check:** make `next.config.ts` an async function that fetches
-  `cms.list({ deep: true, limit: 100 })` and builds the same map. The catch: the map only refreshes
-  on deploy, while content now changes without one.
-
-### Also switch
-
-- **`generateStaticParams`:** it keeps calling `getStaticSlugs(type)`, which now reads the API (the
-  `__none__` placeholder stays).
-- **`app/sitemap.ts`:** build it from the API too when the site launches.
-
-**Check:**
-- `pnpm dev`: the home, every `/projects/:slug` and `/blog/:slug` look as before.
-- Publishing an edit in the dashboard shows on reload (the webhook clears the cache).
-- `pnpm build` passes with Spotcraft running.
-
-## 5. Search
-
-Spotcraft has search built in: `GET /api/search`, through `cms.search`.
-- **Without an OpenAI key:** keyword search (Postgres full text, English stemming).
-- **With `OPENAI_API_KEY` in `apps/dashboard/.env`:** hybrid, by words and meaning (pgvector,
-  `text-embedding-3-small`).
-- **Indexing:** saving a document re-indexes it; `pnpm --filter dashboard search:sync` rebuilds
-  the whole index.
-
-Swap the inside of `features/search/api/search.ts`, keeping the route and the response shape the
-dialog expects:
+**The email:** the browser can't read the token, so it asks a small route. Add `app/api/me/route.ts`:
 
 ```ts
-const { results } = await cms.search({ q, limit, folder: type, tag });
-return results.map((r) => ({
-  url: `${r.folder === "posts" ? "/blog" : "/projects"}/${r.path.split("/").at(-1)}${r.anchor ? `#${r.anchor}` : ""}`,
-  title: r.title,
-  heading: r.heading,
-  type: LABELS[r.folder],
-  snippet: r.snippet,
-  similarity: r.score,
-}));
-```
+import { NextResponse } from "next/server";
+import { currentUser } from "@/features/auth/utils/current-user";
 
-- **Filters:** `folder` is one folder (`posts` or `projects`), and `tag` is one tag. For several
-  types or tags, make one call per value and merge, or drop the multi-value filters if nothing
-  sends more than one.
-- **Threshold:** drop the 0.82 similarity cut-off. `score` is 0–1 but comparable only within one
-  search, and Spotcraft already filters out weak semantic matches.
-- **Results per URL:** keep the "one result per URL" step. Spotcraft returns a document and its
-  matching sections separately.
-- **Section ids:** `anchor` is the heading's id, the same one `<Body>` gives it, so links land on
-  the section.
-
-Then delete:
-- `supabase/migrations/20261030121450_create_documents_table.sql` and the grant migration. Use a
-  new migration that drops `documents` and `match_documents`, rather than editing applied ones.
-- `supabase/functions/embed/`;
-- `apps/website/scripts/embed.mts` and the root `embed` script.
-
-Supabase then holds only the admin login (Auth with Turnstile); see "Later" for dropping it too.
-
-## 6. Clean up
-
-Once the site runs from Spotcraft:
-- **MDX:** remove `apps/website/content/`, `mdx-components.tsx`, `@next/mdx`, `remark-frontmatter`,
-  `remark-mdx-frontmatter` and `rehype-unwrap-images` (keep `rehype-slug` only if something else
-  uses it). Also remove the MDX entries in `next.config.ts` (`pageExtensions`, `withMDX`).
-- **Old loaders:** remove `lib/content/load.ts` and the parts of `sections.ts` the TOC and search
-  no longer use.
-- **Images:** remove `public/images/work/` and `public/images/samples/`, which are in Spotcraft
-  now. Keep the portraits; they're site chrome.
-- **Env:** add the three `SPOTCRAFT_*` variables to `.env.example`.
-
-## 7. Profile copy (optional, later)
-
-`features/profile/data.ts` can stay in code; it changes rarely. To edit it in the dashboard too,
-add a single-document folder `profile/` (a folder with its own `index.md`) whose config describes
-the blocks:
-
-```json
-{
-  "fields": [
-    { "key": "availability", "label": "Availability", "type": "text" },
-    { "key": "headline", "label": "Headline", "type": "text", "multiline": true },
-    { "key": "about", "label": "About", "type": "markdown" },
-    {
-      "key": "experience",
-      "label": "Experience",
-      "type": "list",
-      "of": {
-        "type": "object",
-        "fields": [
-          { "key": "title", "label": "Title", "type": "text", "required": true },
-          { "key": "company", "label": "Company", "type": "text", "required": true },
-          { "key": "start", "label": "Start", "type": "number", "required": true },
-          { "key": "end", "label": "End", "type": "number" }
-        ]
-      }
-    },
-    { "key": "email", "label": "Email", "type": "text" },
-    { "key": "call_url", "label": "Book a call", "type": "url" }
-  ]
+// The admin toolbar's account email. Guests never get here (the proxy 404s it)
+export async function GET() {
+  const user = await currentUser();
+  return NextResponse.json(
+    { email: user?.email ?? null },
+    { headers: { "Cache-Control": "private, no-store" } },
+  );
 }
 ```
 
-- **Reading it:** `features/profile/api/profile.ts` keeps its getters and reads
-  `cms.get("profile")` instead of `data.ts`.
-- **Services and process steps:** they work the same way (a list of objects). `proof`'s
-  `{ type, slug }` stays a plain list; the getter already drops slugs that don't resolve.
+In `features/auth/api/get-user.ts`, keep `useUser` and replace `getUser`:
 
-## 8. Deploy
+```ts
+// The signed-in user's email, as the proxy checked it. Null without a session
+export async function getUser() {
+  const response = await fetch("/api/me");
+  if (!response.ok) return null;
+  const { email } = (await response.json()) as { email: string | null };
+  return email ? { email } : null;
+}
+```
 
-Two apps, deployed separately:
+**Dashboard links:** in `app/_components/admin-bar.tsx`, drop the "Supabase" entry from
+`dashboards`, and `supabaseDashboardUrl` from its import. Delete `supabaseDashboardUrl` from
+`config/site.ts`.
 
-| | Website (`apps/website`) | Spotcraft (`apps/dashboard`) |
-|---|---|---|
-| Host | Vercel, as today | Vercel (root directory `apps/dashboard`), or Docker (`docker-compose.prod.yml`) |
-| Domain | `www.vin.ski` | e.g. `cms.vin.ski` |
-| Database | none | Postgres 15+ with pgvector, pooled (transaction mode) URL on Vercel |
-| Storage | — | an S3-compatible bucket for images (any provider; path-style URLs) |
-| Env | `SPOTCRAFT_URL=https://cms.vin.ski`, `SPOTCRAFT_API_TOKEN`, `SPOTCRAFT_WEBHOOK_SECRET` | `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL=https://cms.vin.ski`, `SMTP_URL`, `MAIL_FROM`, `S3_*`, `SPOTCRAFT_API_TOKEN`, `WEBHOOK_URL=https://www.vin.ski/api/spotcraft`, `WEBHOOK_SECRET`, optionally `OPENAI_API_KEY` |
+## 7. Before the first paint, and analytics
 
-Spotcraft's docs cover the details: Self-hosting (database, SMTP, images, Vercel) and Environment
-(every variable).
+The readable marker replaces `sb-*-auth-token`.
 
-**Order:**
-1. Publish `@spotcraft/client` (and tag Spotcraft `v0.1.0`), then switch the website's dependency
-   from `link:` to the version.
-2. Create the production database, migrate it, deploy Spotcraft, and finish `/onboard` right away.
-   Until onboarding is done, anyone who reaches the URL can claim it.
-3. Import into production:
-   - run the same `content:import … --site vinski --create-site --apply` with `DATABASE_URL`
-     pointing at production (it asks for `--yes` when the database isn't local) and the production
-     `S3_*` set;
-   - then `search:sync`.
-4. Deploy the website with the `SPOTCRAFT_*` variables. `next build` reads Spotcraft, so Spotcraft
-   must be up first.
-5. Publish a small edit and check that the webhook updates the live site.
+1. Move `lib/supabase/session-cookie.ts` to `lib/signed-in-cookie.ts`, with the same exports:
 
-**Reusing the existing Supabase project:** its Postgres has pgvector, so it can host Spotcraft's
-tables (use the pooled URL on Vercel). Spotcraft doesn't use Supabase's APIs or Auth, only the
-database.
+```ts
+// The proxy's "signed in" marker (features/auth/utils/session.ts): readable in
+// the browser, unlike Spotcraft's token. Sign-in is for the team only, so it
+// means it's me
+export const sessionCookie = /(?:^|;\s*)signed-in=1(?:;|$)/;
 
-## Later
+export const hasSessionCookie = () => sessionCookie.test(document.cookie);
+```
 
-- **Drop Supabase Auth:** Spotcraft already has accounts. The admin bar could check a Spotcraft
-  session instead, but that needs a small "who am I" endpoint Spotcraft doesn't expose yet, so
-  leave the current login in place for now.
-- **Scheduling:** if vin.ski needs real scheduled publishing (public at a future time without a
-  rebuild), it belongs in Spotcraft's API (filter `published_at <= now`). Today the website's
-  `cacheLife("hours")` does the job.
-- **Analytics** (`trackViewAttributes`, Vercel Analytics) is unaffected.
+2. Update the imports in `app/layout.tsx`, `app/_components/admin-bar-loader.tsx` and
+   `app/_components/vercel-insights.tsx`. Nothing else in them changes.
 
-## Checklist
+The marker is set by the response that renders the page. So right after signing in, the very first
+paint at `/` has no toolbar room yet; the loader adds it after hydration, as it already does after
+navigations. Every later page load has it from the start.
 
-- [ ] Spotcraft runs in `apps/dashboard`; website moved to port 3001
-- [ ] Configs written; dry run clean (no extras, no problems); imported; `search:sync`
-- [ ] `lib/content/api.ts` reads `cms`; zod still validates; drafts in dev; future dates hidden
-- [ ] `<Body>` renders posts and projects; images sized; TOC from `headings`
-- [ ] Webhook route through the auth gate; publishing updates the site
-- [ ] Search on `cms.search`; Supabase `documents`, Edge Function and embed script removed
-- [ ] MDX, `content/`, moved images and `CONTENT_PATHS` removed
-- [ ] Client published; both apps deployed; production import done; onboarding finished
+## 8. Remove Supabase
+
+- **Files:** delete `apps/website/lib/supabase/` (client, server, types, and the old cookie
+  file) and the repository's `supabase/` folder.
+- **Dependencies:** run `pnpm --filter website remove @supabase/ssr @supabase/supabase-js @marsidev/react-turnstile`.
+- **Root `package.json`:** remove the `db:types` script.
+- **`apps/website/.env.example` and `.env.local`:** remove `NEXT_PUBLIC_SUPABASE_URL`,
+  `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_AUTH_CAPTCHA_SECRET` and
+  `NEXT_PUBLIC_TURNSTILE_SITE_KEY`.
+- **Docs:** `README.md` mentions Supabase. Update it.
+- **Check:** `rg -i "supabase|turnstile" apps/website --glob '!node_modules'` should only find
+  unrelated text.
+- **Stop the local stack:** `supabase stop` (Spotcraft's own Docker services are separate).
+
+## 9. Production
+
+**Spotcraft, on `cms.vin.ski`:**
+
+```bash
+BETTER_AUTH_URL=https://cms.vin.ski
+AUTH_COOKIE_DOMAIN=vin.ski
+TURNSTILE_SITE_KEY=0x…        # vin.ski's widget (below)
+TURNSTILE_SECRET_KEY=0x…      # the secret Supabase had as its captcha secret
+```
+
+- **Migrations:** run them before the new code (`DATABASE_URL=… pnpm --filter dashboard db:migrate`).
+  With Docker, the production compose file runs them first.
+- **The site's address:** it must be `https://www.vin.ski`, as in `site.yaml`.
+- **Turnstile:** in Cloudflare, add `cms.vin.ski` to the widget's hostnames. The widget now runs on
+  Spotcraft's login page, not on vin.ski.
+
+**The website on Vercel:**
+- `SPOTCRAFT_URL=https://cms.vin.ski/vinski`, unchanged.
+- Remove the Supabase and Turnstile variables from the project.
+- `@spotcraft/client` must come from npm by now: a `file:` dependency on `../spotcraft` doesn't
+  resolve on Vercel. Publish it, then depend on the version that has `getSession`.
+
+**After the deploy:**
+1. **Everyone is signed out once** (only you): the cookie changed. Sign in again through
+   `www.vin.ski/auth/login`.
+2. **Delete the hosted Supabase project.**
+3. **Remove the `api.vin.ski` DNS record** that pointed at it.
+
+## 10. Check
+
+Locally, with the dashboard on 3000, vin.ski on 3001 and no cookie domain:
+
+- [ ] Signed out, `/` is the teaser and `/projects/…` is a 404.
+- [ ] **Sign-in round trip:** the teaser's link to `/auth/login` goes to
+      `localhost:3000/login?redirect=http://localhost:3001/`. After signing in you're back on vin.ski
+      with the toolbar, showing your email.
+- [ ] **No request per page:** while the token is current, page loads don't call Spotcraft (watch
+      the dashboard's terminal). Delete `spotcraft_token` in devtools and reload: one call to
+      `/api/session`, and you stay signed in.
+- [ ] **Another site's user:** an account that's only a member of another site in the same
+      Spotcraft (create a second site, and invite one there) sees the teaser on vin.ski.
+- [ ] **Logout everywhere:** "Log out" in the toolbar lands on the teaser, and
+      `localhost:3000` asks you to sign in again.
+- [ ] **Password reset:** after a reset, another browser's vin.ski session ends within 10 minutes.
+- [ ] **Limits:** the 6th wrong password for one email says "Too many attempts". With the test keys,
+      the Turnstile widget shows.
+- [ ] **Search and the toolbar:** `/api/search` and `/api/admin/content-status` are a 404 for a
+      guest (the proxy hides them; the routes' own 401 is the fallback), and work signed in.
+- [ ] **Analytics:** with the marker cookie present, your visits are skipped.
+
+In production, the same checks on `www.vin.ski` and `cms.vin.ski`.
