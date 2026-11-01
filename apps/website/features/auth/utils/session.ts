@@ -1,5 +1,6 @@
 import { getSession } from "@spotcraft/client";
 import { NextResponse, type NextRequest } from "next/server";
+import { SIGNED_IN_COOKIE } from "@/lib/signed-in-cookie";
 
 // For proxy.ts. Who's signed in, from Spotcraft's token (checked here, with no
 // request to Spotcraft unless it has run out), and the teaser for anyone else.
@@ -7,9 +8,6 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // The signed-in user, for route handlers (current-user.ts). Set by the proxy only
 export const USER_HEADER = "x-vinski-user";
-// Readable by scripts: "probably signed in", for the toolbar's room and
-// analytics. Spotcraft's own cookies are httpOnly
-export const SIGNED_IN_COOKIE = "signed-in";
 
 const spotcraft = { url: process.env.SPOTCRAFT_URL! };
 

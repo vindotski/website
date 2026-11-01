@@ -1,8 +1,8 @@
 # Content TODOs
 
-Placeholders left in the project front matter. They were `# TODO` comments in
-`apps/website/content/projects/*.mdx`, which Spotcraft drops on import, so they
-live here until each is filled in the dashboard. Field names are Spotcraft's.
+Placeholders left in the projects. They were `# TODO` comments in the old MDX
+files' front matter, which Spotcraft dropped on import, so they live here until
+each is filled in the dashboard. Field names are Spotcraft's.
 Tick one off when it's done, and delete this file when the list is empty.
 
 ## Every project

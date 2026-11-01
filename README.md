@@ -136,7 +136,7 @@ Spotcraft searches the content: by words (Postgres full text), and by meaning to
   | `search` | `results` (count) | A completed search, once per distinct query. Never the query text |
   | `search_select` | `type` (`projects`, `blog`), `position` (1-based) | Opening a search result |
 
-  Views are marked with `trackViewAttributes()` and sent by the same listener; search events are sent from [`Search.tsx`](apps/website/app/(site)/_components/Search.tsx) with `track()`.
+  Views are marked with `trackViewAttributes()` and sent by the same listener; search events are sent from [`search-dialog.tsx`](apps/website/features/search/components/search-dialog.tsx) with `track()`.
 - **Speed Insights** reports Core Web Vitals from real visits. The data shows under **Speed Insights** in the project, after it's enabled there.
 - **Checking it:** in production, the Network tab shows a request to `/_vercel/insights/view` on every page and `/_vercel/insights/event` on a contact click; the data shows under **Analytics** in the project.
 
@@ -195,7 +195,7 @@ Act on a pattern only once it holds for more than a month: traffic is small, so 
 
 ## Sign-in
 
-Sign-in is a Spotcraft account. Supabase Auth did this until 2026-11-01. Its folder is gone; the hosted project goes once production runs on Spotcraft (see the launch checklist).
+Sign-in is a Spotcraft account (it was Supabase Auth until 2026-11-01).
 
 - **Who:** a Spotcraft superadmin, or a member of the `vinski` site. Members of other sites in the same Spotcraft are treated as signed out.
 - **Signing in:** `/auth/login` ([`route.ts`](apps/website/app/auth/login/route.ts)) redirects to Spotcraft's sign-in, which has Turnstile and a limit on attempts, and comes back to `/`.
@@ -208,7 +208,7 @@ Sign-in is a Spotcraft account. Supabase Auth did this until 2026-11-01. Its fol
 - **Only production is indexable.** `isProduction` in [`config/site.ts`](apps/website/config/site.ts) drives the robots meta tag in the root layout and the rules in [`app/robots.ts`](apps/website/app/robots.ts). Vercel previews and local builds return `noindex` and `Disallow: /`.
 - **The teaser is indexable.** Nothing needs removing at launch, and Google doesn't have to rediscover the page.
 - **No site-wide canonical or `og:url`.** Every page would inherit it and point Google at `/`.
-- **Login is `noindex`,** but it isn't blocked in robots.txt, so crawlers can still read that tag.
+- **`/auth/login` is only a redirect** to Spotcraft's sign-in, so there's no page for search engines to index.
 
 ## Architecture
 
@@ -230,9 +230,9 @@ Adding a feature means adding its name to `features` in [`eslint.config.mjs`](ap
 
 Content (projects, posts, profile) is read by server components and prerendered; it never goes through the browser. TanStack Query is only for what the browser asks for after the page loads, set up as in bulletproof-react:
 
-- **Setup.** [`app/provider.tsx`](apps/website/app/provider.tsx) holds the `QueryClient`, with the devtools in development only. [`lib/react-query.ts`](apps/website/lib/react-query.ts) sets the defaults (no refetch on focus, no retries, fresh for a minute) and the `QueryConfig` / `MutationConfig` helper types.
+- **Setup.** [`app/provider.tsx`](apps/website/app/provider.tsx) holds the `QueryClient`, with the devtools in development only. [`lib/react-query.ts`](apps/website/lib/react-query.ts) sets the defaults (no refetch on focus, no retries, fresh for a minute) and the `QueryConfig` helper type.
 - **Requests.** [`lib/api-client.ts`](apps/website/lib/api-client.ts) calls the site's own routes and throws `ApiError` with the status, so a 401 can be told apart from a failure.
-- **One file per request** in `features/<name>/api/`: the plain function, its query options (key and function), and a hook that takes `queryConfig` or `mutationConfig`. For example [`get-search-results.ts`](apps/website/features/search/api/get-search-results.ts) (`useSearchResults`) and [`login.ts`](apps/website/features/auth/api/login.ts) (`useLogin`). Server-only code can sit in the same folder, like [`search.ts`](apps/website/features/search/api/search.ts), marked with `server-only`.
+- **One file per request** in `features/<name>/api/`: the plain function, its query options (key and function), and a hook that takes `queryConfig`. For example [`get-search-results.ts`](apps/website/features/search/api/get-search-results.ts) (`useSearchResults`) and [`get-user.ts`](apps/website/features/auth/api/get-user.ts) (`useUser`). Server-only code can sit in the same folder, like [`search.ts`](apps/website/features/search/api/search.ts), marked with `server-only`.
 
 ## Project structure
 
