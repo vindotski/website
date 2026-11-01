@@ -2,7 +2,7 @@
 
 Portfolio site of Ivan Vinski, product engineer: frontend by trade, full-stack by habit, product by focus. Live at [www.vin.ski](https://www.vin.ski).
 
-Built with [Next.js](https://nextjs.org) 16 (App Router, Cache Components), React 19 and TypeScript. It's styled with Tailwind CSS v4 and shadcn/ui (Base UI primitives). Content and its search live in [Spotcraft](https://github.com/vindotski/spotcraft), a self-hosted CMS running next to it as `apps/dashboard`. Login runs on Supabase Auth.
+Built with [Next.js](https://nextjs.org) 16 (App Router, Cache Components), React 19 and TypeScript. It's styled with Tailwind CSS v4 and shadcn/ui (Base UI primitives). Content and its search live in [Spotcraft](https://github.com/vindotski/spotcraft), a self-hosted CMS running next to it as `apps/dashboard`. Sign-in is a Spotcraft account too.
 
 Until launch, visitors see a teaser at `/` and every other page answers 404. After logging in, you see the full site.
 
@@ -12,15 +12,15 @@ Until launch, visitors see a teaser at `/` and every other page answers 404. Aft
 | ------------- | ----------------------------------------------------------------------------------------- |
 | `www.vin.ski` | The app, on Vercel. The canonical address (`siteUrl` in [`config/site.ts`](apps/website/config/site.ts))    |
 | `vin.ski`     | Redirects (301) to `www.vin.ski`                                                          |
-| `api.vin.ski` | Custom domain of the hosted Supabase project, and the app's production `NEXT_PUBLIC_SUPABASE_URL` |
+| `cms.vin.ski` | Spotcraft (planned): the dashboard, the content API and sign-in. `SPOTCRAFT_URL` is `https://cms.vin.ski/vinski` |
 
-`@supabase/ssr` names the auth cookie after the Supabase host: `sb-api-auth-token` in production, `sb-127-auth-token` locally. Changing the Supabase URL therefore logs everyone out once.
+Spotcraft's sign-in cookies are set on `vin.ski` (`AUTH_COOKIE_DOMAIN`), so `www.vin.ski` receives them. Locally they need no domain: cookies ignore the port, so `localhost:3000` and `localhost:3001` share them.
 
 ## Requirements
 
 - Node.js 26 (Spotcraft needs it)
 - pnpm 12 (the exact version is pinned in `package.json` under `packageManager`)
-- Docker, for Spotcraft's services and local Supabase, and the [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started), for the local auth backend
+- Docker, for Spotcraft's services (Postgres, Mailpit and S3)
 - A Spotcraft checkout at `../spotcraft`, until `@spotcraft/client` is on npm (see [Content](#content))
 
 ## Getting started
@@ -28,7 +28,6 @@ Until launch, visitors see a teaser at `/` and every other page answers 404. Aft
 ```bash
 pnpm install
 cp apps/website/.env.example apps/website/.env.local   # then fill in the two Spotcraft secrets, below
-supabase start                          # local Supabase in Docker: database, Auth, gateway and Studio
 pnpm --filter dashboard db:start        # Spotcraft's Postgres, Mailpit and S3 in Docker
 pnpm --filter dashboard db:migrate
 pnpm dashboard                          # Spotcraft, http://localhost:3000
@@ -39,10 +38,9 @@ pnpm dev                                # the site, http://localhost:3001
 
 Then open [http://localhost:3001](http://localhost:3001). You'll see the teaser. To see the full site:
 
-1. Create a user in Supabase Studio at [http://127.0.0.1:54323](http://127.0.0.1:54323) (Authentication → Add user, tick "Auto confirm"). Sign-ups are off, so this is the only way to get an account.
-2. Log in at [http://localhost:3001/auth/login](http://localhost:3001/auth/login).
-
-`supabase stop` shuts the local stack down. Its data stays in Docker volumes named `supabase_*_portfolio`.
+1. Have a Spotcraft account that's a superadmin or a member of the `vinski` site. The account made at `/onboard` is a superadmin; others are invited from the dashboard's Users page. Sign-ups are off.
+2. In the dashboard, set the `vinski` site's URL to `http://localhost:3001` (Settings → Site). Sign-in only sends you back to a site's own address.
+3. Log in at [http://localhost:3001/auth/login](http://localhost:3001/auth/login), which goes to Spotcraft's sign-in and back.
 
 **Spotcraft's Docker stack is shared** with the `../spotcraft` checkout: its compose file is named `spotcraft`, so both use the same containers and database. vin.ski is the `vinski` site in it, at `http://localhost:3000/vinski`; the checkout's `example` and `docs` sites sit beside it. Both dashboards serve on port 3000, so run one at a time.
 
@@ -59,13 +57,12 @@ Run from the repository root.
 | `pnpm dashboard` | Start Spotcraft, on port 3000     |
 | `pnpm cms:export <dir> --site vinski` | Write the content out as files (Markdown and images): a backup |
 | `pnpm cms:import <dir> --site vinski` | Read an export back in; a dry run until `--apply` |
-| `pnpm db:types` | Regenerate `apps/website/lib/supabase/database.types.ts` from the local Supabase database |
 
 Spotcraft's own scripts run with `pnpm --filter dashboard <script>`, e.g. `search:sync`. Paths given to `cms:*` are relative to `apps/dashboard`.
 
 ## How the teaser works
 
-[`proxy.ts`](apps/website/proxy.ts) runs the auth gate in [`features/auth/utils/session.ts`](apps/website/features/auth/utils/session.ts) on every request. It refreshes the Supabase session, then:
+[`proxy.ts`](apps/website/proxy.ts) runs the auth gate in [`features/auth/utils/session.ts`](apps/website/features/auth/utils/session.ts) on every request. It checks Spotcraft's token, then:
 
 - **Signed in:** the request goes through to the real page. A content URL with nothing published behind it shows the not-found page (see [Content](#content)).
 - **Signed out:** `/` is rewritten to the teaser (200). Every other path, `/teaser` included, returns 404. `/auth/*` stays open so you can log in.
@@ -77,14 +74,14 @@ Robots, the sitemap, generated icons and Spotcraft's webhook (`/api/spotcraft`, 
 
 Signed in, every page gets a WordPress-style toolbar fixed above the header ([`admin-bar.tsx`](apps/website/app/_components/admin-bar.tsx)):
 
-- **Admin menu:** Spotcraft, New post (Spotcraft's `posts` folder), Vercel Analytics, the Supabase dashboard (Studio locally) and the GitHub repo.
+- **Admin menu:** Spotcraft, New post (Spotcraft's `posts` folder), Vercel Analytics and the GitHub repo.
 - **Where you are:** Production, Preview or Local, from `VERCEL_ENV`.
 - **On a project or post page:** its status (Draft, Scheduled or Published, with the date) and Edit, which opens the document in Spotcraft. Both come from [`/api/admin/content-status`](apps/website/app/api/admin/content-status/route.ts), signed-in only, through `useContentStatus` in `features/admin`.
 - **Account:** your email and Log out. Log out loads `/` in full, so no page rendered for the session stays in the router cache.
 
 Pages stay prerendered; the toolbar is added in the browser:
 
-- **Room before the first paint.** A script in the root layout's `<head>` sets `data-signed-in` on `<html>` when the Supabase session cookie exists. CSS then sets `--admin-bar-height` (32px, 0 for guests), pads the body, and paints a placeholder strip, so nothing moves when the toolbar loads.
+- **Room before the first paint.** A script in the root layout's `<head>` sets `data-signed-in` on `<html>` when the proxy's `signed-in=1` marker cookie exists ([`lib/signed-in-cookie.ts`](apps/website/lib/signed-in-cookie.ts)). CSS then sets `--admin-bar-height` (32px, 0 for guests), pads the body, and paints a placeholder strip, so nothing moves when the toolbar loads.
 - **Offsets.** `--top-chrome` is the toolbar and header together. The sticky header sits below the toolbar, and the hero, jumped-to headings (`scroll-mt-chrome`) and sticky elements use `--top-chrome`, so use it for anything new that has to clear the top of the screen.
 - **Guests download nothing.** [`admin-bar-loader.tsx`](apps/website/app/_components/admin-bar-loader.tsx) loads the toolbar with `next/dynamic` only when the cookie is there, and checks again after client navigations, such as the one after logging in.
 
@@ -127,7 +124,7 @@ Spotcraft searches the content: by words (Postgres full text), and by meaning to
 
 [Vercel Web Analytics](https://vercel.com/docs/analytics) and Speed Insights, rendered by [`vercel-insights.tsx`](apps/website/app/_components/vercel-insights.tsx) in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
 
-- **Your own visits don't count.** [`vercel-insights.tsx`](apps/website/app/_components/vercel-insights.tsx) drops every page view, event and Speed Insights report while a Supabase session cookie exists (sign-ups are off, so that's you) and on `/auth/*`. Before launch this keeps `/` meaning the teaser.
+- **Your own visits don't count.** [`vercel-insights.tsx`](apps/website/app/_components/vercel-insights.tsx) drops every page view, event and Speed Insights report while the `signed-in=1` marker exists (only people who work on vin.ski can sign in, so that's you) and on `/auth/*`. Before launch this keeps `/` meaning the teaser.
 - **Events.** Mark an element with `trackAttributes({ event, …properties })` from [`lib/analytics/track.ts`](apps/website/lib/analytics/track.ts) (`ButtonLink` takes it as `track`); one listener in [`analytics-events.tsx`](apps/website/app/_components/analytics-events.tsx) sends it on click and adds `page` (`teaser`, `home`, `projects`, `blog`) and `path`. Plus allows 8 properties per event. No personal data goes into events.
 
   | Event | Properties | Fires on |
@@ -196,20 +193,15 @@ The teaser keeps the tags: the proxy rewrites on the server, so the address in t
 
 Act on a pattern only once it holds for more than a month: traffic is small, so single weeks are noise.
 
-## Supabase
+## Sign-in
 
-- **Auth only.** [`supabase/config.toml`](supabase/config.toml) turns off what the app doesn't use: the Data API, Edge Functions, Realtime, Storage, Analytics and the test inbox. Each has a comment on how to turn it back on. Content and search moved to Spotcraft; the [last migration](supabase/migrations/20261101211725_drop_documents.sql) drops the old search index.
-- **Bot protection on login.** Cloudflare Turnstile on the login form; Supabase Auth checks the token before the password (`[auth.captcha]` in `config.toml`, secret from `SUPABASE_AUTH_CAPTCHA_SECRET`). Locally, Cloudflare's always-pass test keys: `NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA` in `apps/website/.env.local` and `SUPABASE_AUTH_CAPTCHA_SECRET=1x0000000000000000000000000000000AA` in `supabase/.env` (gitignored), then restart the stack. Scripts that sign in through the Auth API need a `gotrue_meta_security.captcha_token`; any value passes with the test secret.
-- **Sign-ups are off** (`enable_signup = false` under `[auth]`). Otherwise anyone with the public publishable key could create an account and get past the teaser. Leave `enable_signup` under `[auth.email]` set to `true`: setting it to `false` turns off email login entirely.
-- **Hosted project.** Linked with `supabase login` and `supabase link --project-ref jfnmaofecvlajflzwwsv`. The CLI keeps the ref in `supabase/.temp/`, which is gitignored.
-- **Production config.** `[remotes.production]` at the end of `config.toml` overrides only `site_url` (`https://www.vin.ski`) and `additional_redirect_urls` (both domains). Everything else is pushed from the local values. When an auth callback route or OAuth provider is added, put its production URL there too.
-- **Pushing config.** Run `supabase config push` and read the diff before confirming. It changes the live project.
-- **Migrations.** Locally, apply new ones with `supabase migration up --local`. Avoid `supabase db reset`: there is no seed, so it deletes your local user. In production, `supabase db push`. Then run `pnpm db:types`.
-- **Production env vars**, set in Vercel:
-  - `NEXT_PUBLIC_SUPABASE_URL=https://api.vin.ski`
-  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, the hosted project's publishable key
+Sign-in is a Spotcraft account. Supabase Auth did this until 2026-11-01. Its folder is gone; the hosted project goes once production runs on Spotcraft (see the launch checklist).
 
-  Never use the secret key here: every `NEXT_PUBLIC_` variable is sent to the browser. The site doesn't need the secret key at all.
+- **Who:** a Spotcraft superadmin, or a member of the `vinski` site. Members of other sites in the same Spotcraft are treated as signed out.
+- **Signing in:** `/auth/login` ([`route.ts`](apps/website/app/auth/login/route.ts)) redirects to Spotcraft's sign-in, which has Turnstile and a limit on attempts, and comes back to `/`.
+- **Logging out:** the toolbar's Log out loads Spotcraft's logout, which ends the dashboard session too, then comes back to `/`.
+- **Checking it:** Spotcraft sets `spotcraft_token`, an httpOnly ES256 token that lasts 10 minutes. The proxy ([`session.ts`](apps/website/features/auth/utils/session.ts)) checks it with `getSession` from `@spotcraft/client`, against Spotcraft's public keys (cached). That's no request to Spotcraft per page, except one renewal when the token has run out. Logging out or resetting your password ends the session within those 10 minutes.
+- **Passing it on:** the proxy sets an `x-vinski-user` header for route handlers (`currentUser()` in [`current-user.ts`](apps/website/features/auth/utils/current-user.ts)). It replaces the header every time, so a browser can't fake it. It also sets the readable `signed-in=1` marker for the scripts that can't read the token. The toolbar gets your email from `/api/me`.
 
 ## Search engines
 
@@ -244,11 +236,11 @@ Content (projects, posts, profile) is read by server components and prerendered;
 
 ## Project structure
 
-A pnpm workspace. Each app lives in `apps/`: the site, and Spotcraft as `apps/dashboard`, copied from `../spotcraft` (its version is in `apps/dashboard/SPOTCRAFT_VERSION`). `supabase/` sits at the root. Code both apps share would move to `packages/`.
+A pnpm workspace. Each app lives in `apps/`: the site, and Spotcraft as `apps/dashboard`, copied from `../spotcraft` (its version is in `apps/dashboard/SPOTCRAFT_VERSION`). Code both apps share would move to `packages/`.
 
 ```
 apps/dashboard/       Spotcraft: the CMS, its API and search (TanStack Start); see its own docs
-apps/website/         The portfolio site (Next.js); everything below up to supabase/ is inside it
+apps/website/         The portfolio site (Next.js); everything below is inside it
 app/                  Routes and site chrome (the app layer)
   layout.tsx          Root layout: html, body, fonts, metadata, analytics
   provider.tsx        TanStack Query client, devtools in development
@@ -261,7 +253,8 @@ app/                  Routes and site chrome (the app layer)
   api/spotcraft/      Spotcraft's webhook: drops the content cache
   api/admin/          The admin toolbar's content status
   teaser/             Pre-launch page, shown at / to signed-out visitors
-  auth/login/         Login page, rendered bare and centred
+  auth/login/         Redirects to Spotcraft's sign-in
+  api/me/             The signed-in user's email, for the toolbar
   robots.ts sitemap.ts
 features/
   profile/            Hero, services, experience, process, contact actions; their copy and getters
@@ -269,7 +262,7 @@ features/
   blog/               Blog section and a post's table of contents
   search/             Search dialog and the search itself, through Spotcraft
   admin/              The admin toolbar's content status query
-  auth/               Login form, log out, their mutations, useUser, and the session gate used by proxy.ts
+  auth/               The session gate used by proxy.ts, currentUser, useUser and log out
 components/
   ui/                 shadcn/ui components (add more with `pnpm dlx shadcn@latest add`, run in apps/website)
   layouts/            section, detail-page, prose
@@ -282,14 +275,11 @@ lib/
   content/            Reading from Spotcraft, schemas, publish rule, getters
   cms.ts              The Spotcraft client (server-only)
   analytics/          Tracking attributes for Vercel Analytics
-  supabase/           Browser and server clients, the session cookie check, generated database types
+  signed-in-cookie.ts The before-paint check for the signed-in marker
   react-query.ts      Query defaults and helper types
   api-client.ts       Fetch for the site's own API routes
 types/                Shared types
 proxy.ts              Auth gate, from features/auth
-supabase/             (repository root) Auth
-  config.toml         Local stack, plus production overrides
-  migrations/         Database schema
 ```
 
 ## Launch checklist
@@ -297,16 +287,12 @@ supabase/             (repository root) Auth
 Infrastructure:
 
 - [ ] Serve `www.vin.ski`, with `vin.ski` redirecting (301) to it
-- [ ] Activate the `api.vin.ski` custom domain in Supabase
-- [ ] Set the production env vars in Vercel
-- [ ] Run `supabase config push` (check the diff)
-- [ ] Create your user in the hosted Supabase dashboard
-- [ ] Run `supabase db push` (drops the old search index), then `supabase functions delete embed`
-- [ ] Remove `SUPABASE_SECRET_KEY` from Vercel, if it was set
-- [ ] Spotcraft (guide step 8): publish `@spotcraft/client` and switch the site's dependency from `file:` to the version; production Postgres (with pgvector) and an S3 bucket; deploy `apps/dashboard` (e.g. `cms.vin.ski`) and finish `/onboard` right away; import the content into production and run `search:sync`
-- [ ] Set `SPOTCRAFT_URL`, `SPOTCRAFT_API_TOKEN` and `SPOTCRAFT_WEBHOOK_SECRET` in Vercel, and Spotcraft's `WEBHOOK_URL=https://www.vin.ski/api/spotcraft`. Deploy the site after Spotcraft: the build reads from it
+- [ ] Publish `@spotcraft/client` (with `getSession`), and switch the site's dependency from `file:` to that version. Vercel can't resolve the `file:` one, so don't merge `dev` into `main` before this
+- [ ] Spotcraft on `cms.vin.ski`: production Postgres (with pgvector) and an S3 bucket; migrate, deploy `apps/dashboard`, and finish `/onboard` right away; set `BETTER_AUTH_URL=https://cms.vin.ski`, `AUTH_COOKIE_DOMAIN=vin.ski`, `WEBHOOK_URL=https://www.vin.ski/api/spotcraft` and `WEBHOOK_SECRET`; import the content and run `search:sync`; set the `vinski` site URL to `https://www.vin.ski`
+- [ ] Turnstile on Spotcraft's login: in Cloudflare, add `cms.vin.ski` to the widget's hostnames, then set `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` on Spotcraft
+- [ ] In Vercel, set `SPOTCRAFT_URL=https://cms.vin.ski/vinski`, `SPOTCRAFT_API_TOKEN` and `SPOTCRAFT_WEBHOOK_SECRET`, and remove the Supabase and Turnstile variables. Deploy the site after Spotcraft: the build reads from it
+- [ ] Sign in again through `www.vin.ski/auth/login` (the old Supabase session is gone), then delete the hosted Supabase project and the `api.vin.ski` DNS record
 - [ ] Enable Web Analytics and Speed Insights for the project in the Vercel dashboard
-- [ ] Turnstile, in this order: add the site in Cloudflare (www.vin.ski, vin.ski; Managed); set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in Vercel and deploy; **then** turn on CAPTCHA in Supabase (Authentication → Bot and Abuse Protection, Turnstile, the secret key). The other way round locks everyone out
 
 Going public:
 
