@@ -12,7 +12,7 @@ import type { Entry, Item, Post, Project } from "./types";
 
 // Spotcraft's webhook clears every entry tagged "spotcraft" when content
 // changes (app/api/spotcraft), so cache for as long as possible
-const tag = "spotcraft";
+export const contentTag = "spotcraft";
 
 // Spotcraft's field keys are snake_case; the schemas' are camelCase
 const camelCase = (key: string) =>
@@ -51,7 +51,7 @@ function toItem<T extends ContentType>(type: T, doc: SpotcraftDocument): Item<T>
 // only (they need the API token)
 async function loadDocuments(type: ContentType): Promise<SpotcraftDocument[]> {
   "use cache";
-  cacheTag(tag);
+  cacheTag(contentTag);
   cacheLife("max");
   return cms.list({ folder: type, deep: true, limit: 100, drafts: showDrafts });
 }
@@ -66,7 +66,7 @@ async function loadPublished<T extends ContentType>(
   type: T,
 ): Promise<Entry<T>[]> {
   "use cache";
-  cacheTag(tag);
+  cacheTag(contentTag);
   cacheLife("hours");
   const today = todayUtc();
   const items = (await loadAll(type)).map((item) => ({
