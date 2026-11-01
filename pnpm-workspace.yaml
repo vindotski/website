@@ -4,4 +4,6 @@ packages:
 
 allowBuilds:
   esbuild: true
+  lightningcss: true
+  koffi: false
   unrs-resolver: true

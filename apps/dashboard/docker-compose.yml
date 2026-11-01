@@ -1,0 +1,41 @@
+# Local development: the services Spotcraft needs. Postgres, Mailpit (every email Spotcraft sends
+# lands there, http://localhost:8025) and an S3-compatible store for images (SeaweedFS, port 8333).
+# The apps run on your machine. Data persists in the `postgres` and `s3` volumes; `pnpm db:reset`
+# empties the database.
+name: spotcraft
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17  # Postgres 17 with pgvector (semantic search)
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: spotcraft
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d spotcraft"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # web UI and API
+
+  # Images: S3 API on port 8333, no credentials needed locally. Spotcraft creates the bucket.
+  s3:
+    image: chrislusf/seaweedfs:4.50
+    command: ["server", "-s3", "-dir=/data", "-ip.bind=0.0.0.0"]
+    ports:
+      - "8333:8333"
+    volumes:
+      - s3:/data
+
+volumes:
+  postgres:
+  s3:

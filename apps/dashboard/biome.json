@@ -1,0 +1,108 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.5/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"includes": [
+			"**",
+			"!**/src/routeTree.gen.ts",
+			"!**/src/components/ui",
+			"!**/src/hooks/use-mobile.ts",
+			"!**/src/styles.css",
+			"!**/pnpm-lock.yaml",
+			"!**/skills-lock.json",
+			"!**/.agents",
+			"!**/.claude",
+			"!**/drizzle/meta"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 100
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double"
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["src/components/**", "src/lib/**", "src/hooks/**", "src/integrations/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["#/routes/**"],
+										"message": "Routes compose components and lib; nothing imports a route."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/lib/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["#/components/**"],
+										"message": "lib/ is logic and data, not UI: it can't import components."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/server/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["#/routes/**", "#/components/**", "#/integrations/**"],
+										"message": "Server code only uses lib/ and env."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	]
+}

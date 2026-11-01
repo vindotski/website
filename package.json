@@ -3,11 +3,14 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter website dev",
+    "dashboard": "pnpm --filter dashboard dev",
     "build": "pnpm --filter website build",
     "start": "pnpm --filter website start",
     "lint": "pnpm --filter website lint",
     "embed": "pnpm --filter website embed",
-    "db:types": "supabase gen types typescript --local > apps/website/lib/supabase/database.types.ts"
+    "db:types": "supabase gen types typescript --local > apps/website/lib/supabase/database.types.ts",
+    "cms:import": "pnpm --filter dashboard content:import",
+    "cms:export": "pnpm --filter dashboard content:export"
   },
   "packageManager": "pnpm@12.4.1"
 }
