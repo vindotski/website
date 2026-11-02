@@ -1,0 +1,26 @@
+Copyright (c) 2026-present Ivan Vinski. All rights reserved.
+
+This covers:
+
+- the source code in this folder (apps/website), and
+- the content of vin.ski, wherever it is stored or shown: the text, blog
+  posts, project write-ups, images, illustrations and portraits on
+  www.vin.ski, including the content served from the "vinski" site in
+  Spotcraft.
+
+The source code is public so that it can be read. That grants no license.
+You may not copy, modify, distribute, publish or otherwise reuse the code or
+the content, in whole or in part, without written permission from Ivan
+Vinski, except where the law allows it (for example, quoting with
+attribution, or linking to the site).
+
+Exceptions, under their own licenses:
+
+- components/ui/: shadcn/ui components, MIT License, Copyright (c) 2023
+  shadcn. See components/ui/LICENSE.
+- Third-party packages installed as dependencies, under the licenses in
+  their own packages.
+
+The vin.ski name and logo are trademarks of Ivan Vinski.
+
+For permission, write to ivan@vin.ski.

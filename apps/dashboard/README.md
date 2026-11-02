@@ -8,13 +8,13 @@ This folder is a copy of Spotcraft's `main` branch, at the commit in [`SPOTCRAFT
 
 Fix or add things in Spotcraft, merge them to its `main`, then copy them over (see [Updating Spotcraft](../../README.md#updating-spotcraft)). A change made only here is overwritten by the next copy.
 
-Our copy differs from `main` in four places:
+Our copy differs from `main` in these ways:
 
 - **No Docker deploy:** `Dockerfile`, `Dockerfile.dockerignore`, `docker-compose.prod.yml` and the `docker:prod` script are gone; it runs on Vercel. `docker-compose.yml` stays, for local development.
 - **`package.json`:** named `dashboard` (`pnpm --filter dashboard …`), without `docker:prod` or the `repository` field.
-- **This README and `SPOTCRAFT_VERSION`,** which `main` doesn't have.
+- **This README, `SPOTCRAFT_VERSION` and `LICENSE`,** which `main` doesn't have here: its `LICENSE` is at the repository root.
 
-[`LICENSE`](LICENSE) is Spotcraft's: AGPL-3.0. Because it serves users over a network, its source has to stay available to them; `VITE_SPOTCRAFT_SOURCE_URL` points the dashboard's "Source code" link at this repository.
+[`LICENSE`](LICENSE) is Spotcraft's: AGPL-3.0. Because it serves users over a network, its source has to stay available to them; `VITE_SPOTCRAFT_SOURCE_URL` points the dashboard's "Source code" link at this repository. How it sits next to the site's all-rights-reserved license is in [License & Trademarks](../../README.md#license--trademarks).
 
 ## Locally
 
