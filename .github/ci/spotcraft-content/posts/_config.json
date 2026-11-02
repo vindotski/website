@@ -1,0 +1,21 @@
+{
+  "fields": [
+    {
+      "key": "tldr",
+      "label": "TL;DR",
+      "type": "text",
+      "required": true,
+      "multiline": true
+    },
+    {
+      "key": "repo_url",
+      "label": "Repository",
+      "type": "url"
+    },
+    {
+      "key": "demo_url",
+      "label": "Demo",
+      "type": "url"
+    }
+  ]
+}

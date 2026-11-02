@@ -1,0 +1,52 @@
+{
+  "fields": [
+    {
+      "key": "company",
+      "label": "Company",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "role",
+      "label": "Role",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "years",
+      "label": "Years",
+      "type": "object",
+      "required": true,
+      "fields": [
+        {
+          "key": "start",
+          "label": "Start",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "end",
+          "label": "End",
+          "type": "number"
+        }
+      ]
+    },
+    {
+      "key": "impact",
+      "label": "Impact",
+      "type": "text",
+      "required": true,
+      "multiline": true
+    },
+    {
+      "key": "product_url",
+      "label": "Product",
+      "type": "url"
+    },
+    {
+      "key": "demo_url",
+      "label": "Demo",
+      "type": "url"
+    }
+  ]
+}

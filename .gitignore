@@ -24,4 +24,4 @@ npm-debug.log*
 .vercel
 
 # Spotcraft export (pnpm cms:export), a local backup of the content
-spotcraft-content/
+/spotcraft-content/
