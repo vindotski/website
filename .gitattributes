@@ -1,0 +1,14 @@
+# Line endings: LF everywhere, whatever the contributor's OS. Git detects
+# binaries (images, fonts) on its own
+* text=auto eol=lf
+
+# Copies of Spotcraft's main branch (see README: Updating Spotcraft). Vendored,
+# so GitHub's language stats show the site, not the CMS
+apps/dashboard/** linguist-vendored
+packages/spotcraft-client/** linguist-vendored
+
+# Third-party agent skills
+.claude/skills/** linguist-vendored
+
+# Generated: collapsed in pull request diffs
+pnpm-lock.yaml linguist-generated
