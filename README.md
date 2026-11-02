@@ -21,7 +21,7 @@ Spotcraft's sign-in cookies are set on `vin.ski` (`AUTH_COOKIE_DOMAIN`), so `www
 - Node.js 26 (Spotcraft needs it)
 - pnpm 12 (the exact version is pinned in `package.json` under `packageManager`)
 - Docker, for Spotcraft's services (Postgres, Mailpit and S3)
-- A Spotcraft checkout at `../spotcraft`, until `@spotcraft/client` is on npm (see [Content](#content))
+- Optional: a Spotcraft checkout at `../spotcraft`, only to update the vendored copies (see [Updating Spotcraft](#updating-spotcraft))
 
 ## Getting started
 
@@ -109,7 +109,7 @@ Projects and blog posts are documents in Spotcraft, edited in its dashboard. The
 - **Body.** Spotcraft returns it as a Markdown syntax tree, and [`body.tsx`](apps/website/components/detail/body.tsx) renders it: headings get Spotcraft's ids (`headingAnchors`, the same ones search links to), and an image alone in a paragraph renders in the 16:10 frame. The `##` headings are the table of contents.
 - **Images** are uploaded next to their document in Spotcraft and served from `<SPOTCRAFT_URL>/media/…`, which `next.config.ts` allows. SVGs skip the image optimizer.
 - **When nothing is published** for a type, `generateStaticParams` returns a `__none__` placeholder that 404s, because Cache Components fails the build on an empty list.
-- **The client is a `file:` dependency** on `../spotcraft/packages/client` until it's on npm (not `link:`: Turbopack won't follow a link out of the project). After rebuilding it there (`pnpm client:build`), run `pnpm install` here.
+- **The client is vendored** in [`packages/spotcraft-client`](packages/spotcraft-client) (`workspace:*`), so the repo builds on its own, on Vercel too. `pnpm install` builds its `dist/` (its `prepare` script); `dist/` isn't committed.
 - **Backups.** `pnpm cms:export ../../spotcraft-content --site vinski` writes every document and image out as files; `spotcraft-content/` is gitignored.
 
 ## Search
@@ -236,10 +236,11 @@ Content (projects, posts, profile) is read by server components and prerendered;
 
 ## Project structure
 
-A pnpm workspace. Each app lives in `apps/`: the site, and Spotcraft as `apps/dashboard`, copied from `../spotcraft` (its version is in `apps/dashboard/SPOTCRAFT_VERSION`). Code both apps share would move to `packages/`.
+A pnpm workspace. Each app lives in `apps/`: the site, and Spotcraft as `apps/dashboard`. Spotcraft's client is in `packages/spotcraft-client`. Both are copies of Spotcraft's `main` branch; see [Updating Spotcraft](#updating-spotcraft).
 
 ```
 apps/dashboard/       Spotcraft: the CMS, its API and search (TanStack Start); see its own docs
+packages/spotcraft-client/  @spotcraft/client, which the site reads content and sessions with
 apps/website/         The portfolio site (Next.js); everything below is inside it
 app/                  Routes and site chrome (the app layer)
   layout.tsx          Root layout: html, body, fonts, metadata, analytics
@@ -282,12 +283,29 @@ types/                Shared types
 proxy.ts              Auth gate, from features/auth
 ```
 
+## Updating Spotcraft
+
+`apps/dashboard` and `packages/spotcraft-client` are copies of [Spotcraft](https://github.com/vindotski/spotcraft)'s `main` branch, at the commit in their `SPOTCRAFT_VERSION` files. Copy from `main` only, never from a checkout's working tree: work in progress lives on its `dev` branch.
+
+```bash
+rm -rf /tmp/spotcraft && mkdir /tmp/spotcraft
+git -C ../spotcraft archive main apps/dashboard/src apps/dashboard/drizzle apps/dashboard/.env.example packages/client | tar -x -C /tmp/spotcraft
+rsync -a /tmp/spotcraft/apps/dashboard/ apps/dashboard/
+rsync -a --exclude '*.test.ts' /tmp/spotcraft/packages/client/src/ packages/spotcraft-client/src/
+git -C ../spotcraft rev-parse --short main   # write it into both SPOTCRAFT_VERSION files
+pnpm install                                 # rebuilds the client
+pnpm --filter dashboard db:migrate
+```
+
+- **Other files:** check `git diff` for files that were deleted upstream (rsync doesn't remove them) and for new dependencies in Spotcraft's `apps/dashboard/package.json` or `packages/client/package.json`. Copy those by hand: our copies differ in name and scripts.
+- **Production:** run the migration there before deploying (see [`DEPLOY.md`](DEPLOY.md)).
+- **The local database is shared** with the checkout (see [Getting started](#getting-started)), so a migration or `db:reset` on its `dev` branch reaches vin.ski's local data too. Restore with `cms:import` from a `cms:export` backup.
+
 ## Launch checklist
 
 Infrastructure:
 
 - [ ] Serve `www.vin.ski`, with `vin.ski` redirecting (301) to it
-- [ ] Publish `@spotcraft/client` (with `getSession`), and switch the site's dependency from `file:` to that version. Vercel can't resolve the `file:` one, so don't merge `dev` into `main` before this
 - [ ] Spotcraft on `cms.vin.ski`: production Postgres (with pgvector) and an S3 bucket; migrate, deploy `apps/dashboard`, and finish `/onboard` right away; set `BETTER_AUTH_URL=https://cms.vin.ski`, `AUTH_COOKIE_DOMAIN=vin.ski`, `WEBHOOK_URL=https://www.vin.ski/api/spotcraft` and `WEBHOOK_SECRET`; import the content and run `search:sync`; set the `vinski` site URL to `https://www.vin.ski`
 - [ ] Turnstile on Spotcraft's login: in Cloudflare, add `cms.vin.ski` to the widget's hostnames, then set `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` on Spotcraft
 - [ ] In Vercel, set `SPOTCRAFT_URL=https://cms.vin.ski/vinski`, `SPOTCRAFT_API_TOKEN` and `SPOTCRAFT_WEBHOOK_SECRET`, and remove the Supabase and Turnstile variables. Deploy the site after Spotcraft: the build reads from it
