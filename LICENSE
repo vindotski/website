@@ -20,15 +20,10 @@ Parts under their own licenses:
   later version. See apps/dashboard/LICENSE.
 - packages/spotcraft-client/: @spotcraft/client, MIT License. See
   packages/spotcraft-client/LICENSE.
-- apps/website/components/ui/: shadcn/ui components, MIT License,
-  Copyright (c) 2023 shadcn. See apps/website/components/ui/LICENSE.
-- apps/website/components/social-icon.tsx: icon shapes from Lucide, ISC
-  License, Copyright (c) Lucide Icons and Contributors. See
-  apps/website/components/LICENSE-lucide.
-- .claude/skills/: agent skills, under their authors' licenses (sources in
-  skills-lock.json).
-- Third-party packages installed as dependencies, under the licenses in
-  their own packages.
+
+Third-party code copied into this repository is listed, with its licenses,
+in THIRD_PARTY_NOTICES.md. Third-party packages installed as dependencies are
+under the licenses in their own packages.
 
 Contributions are accepted on the terms in CONTRIBUTING.md.
 

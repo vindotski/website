@@ -17,14 +17,9 @@ attribution, or linking to the site).
 As GitHub's Terms of Service provide, GitHub users may view and fork this
 repository on GitHub; that grants no other rights.
 
-Exceptions, under their own licenses:
-
-- components/ui/: shadcn/ui components, MIT License, Copyright (c) 2023
-  shadcn. See components/ui/LICENSE.
-- components/social-icon.tsx: icon shapes from Lucide, ISC License,
-  Copyright (c) Lucide Icons and Contributors. See components/LICENSE-lucide.
-- Third-party packages installed as dependencies, under the licenses in
-  their own packages.
+Third-party code copied into this folder is listed, with its licenses, in
+../../THIRD_PARTY_NOTICES.md. Third-party packages installed as dependencies
+are under the licenses in their own packages.
 
 The vin.ski name and logo are trademarks of Ivan Vinski.
 
