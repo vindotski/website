@@ -305,12 +305,7 @@ pnpm --filter dashboard db:migrate
 
 Infrastructure:
 
-- [ ] Serve `www.vin.ski`, with `vin.ski` redirecting (301) to it
-- [ ] Spotcraft on `cms.vin.ski`: production Postgres (with pgvector) and an S3 bucket; migrate, deploy `apps/dashboard`, and finish `/onboard` right away; set `BETTER_AUTH_URL=https://cms.vin.ski`, `AUTH_COOKIE_DOMAIN=vin.ski`, `WEBHOOK_URL=https://www.vin.ski/api/spotcraft` and `WEBHOOK_SECRET`; import the content and run `search:sync`; set the `vinski` site URL to `https://www.vin.ski`
-- [ ] Turnstile on Spotcraft's login: in Cloudflare, add `cms.vin.ski` to the widget's hostnames, then set `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` on Spotcraft
-- [ ] In Vercel, set `SPOTCRAFT_URL=https://cms.vin.ski/vinski`, `SPOTCRAFT_API_TOKEN` and `SPOTCRAFT_WEBHOOK_SECRET`, and remove the Supabase and Turnstile variables. Deploy the site after Spotcraft: the build reads from it
-- [ ] Sign in again through `www.vin.ski/auth/login` (the old Supabase session is gone), then delete the hosted Supabase project and the `api.vin.ski` DNS record
-- [ ] Enable Web Analytics and Speed Insights for the project in the Vercel dashboard
+- [ ] Deploy Spotcraft to `cms.vin.ski` and the site to `www.vin.ski`, with Neon, Cloudflare R2 and Resend: follow [`DEPLOY.md`](DEPLOY.md), including its after-deploy checks
 
 Going public:
 
