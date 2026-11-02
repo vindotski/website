@@ -100,6 +100,10 @@ pnpm db:migrate
 
 - [ ] Finish [`DEPLOY.md`](DEPLOY.md)'s after-deploy checks: test the webhook, delete the Supabase project and the `api.vin.ski` record, and turn on Web Analytics and Speed Insights
 
+## Contributing
+
+Fixes are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) for what to send where, and the terms that keep vin.ski Ivan Vinski's work. Please follow the [Code of Conduct](CODE_OF_CONDUCT.md), and report security problems privately ([SECURITY.md](SECURITY.md)).
+
 ## License & Trademarks
 
 The site (`apps/website`) and **all of vin.ski's content** (its text, posts, project write-ups, images and portraits, including what's stored in Spotcraft) are Copyright (c) 2026-present Ivan Vinski. **All rights reserved** ([`apps/website/LICENSE`](apps/website/LICENSE)). The source is public so it can be read, not reused.

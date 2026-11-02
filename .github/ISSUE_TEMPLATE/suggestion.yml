@@ -1,0 +1,24 @@
+name: Suggest an improvement
+description: Accessibility, performance, a typo, or something that could work better.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        vin.ski is Ivan Vinski's personal site, so design, copy and content are his call.
+        Suggestions are welcome all the same. See [CONTRIBUTING.md](https://github.com/vindotski/portfolio/blob/main/CONTRIBUTING.md).
+  - type: input
+    id: url
+    attributes:
+      label: Page
+      placeholder: https://www.vin.ski/…
+  - type: textarea
+    id: problem
+    attributes:
+      label: What could be better?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you suggest?

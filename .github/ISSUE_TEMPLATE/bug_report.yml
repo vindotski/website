@@ -1,0 +1,42 @@
+name: Bug report
+description: Something on vin.ski doesn't work or looks broken.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **Security issues:** please don't file them here. Use
+        [private vulnerability reporting](https://github.com/vindotski/portfolio/security/advisories/new).
+  - type: input
+    id: url
+    attributes:
+      label: Page
+      placeholder: https://www.vin.ski/…
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Include error messages, and a screenshot if it's visual.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Click …
+        3. …
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: e.g. Safari 20 on iPhone 17, Firefox 150 on Windows
