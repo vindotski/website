@@ -1,33 +1,19 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Shared by every app and package. Each app's own build output is in its
+# own .gitignore
 
 # dependencies
 node_modules/
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
 # testing
 coverage/
 
-# next.js
-.next/
-out/
-
-# production
-build/
-
 # misc
 .DS_Store
 *.pem
+*.tsbuildinfo
 
 # debug
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
@@ -36,10 +22,6 @@ yarn-error.log*
 
 # vercel
 .vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
 
 # Spotcraft export (pnpm cms:export), a local backup of the content
 spotcraft-content/
