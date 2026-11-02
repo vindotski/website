@@ -28,8 +28,8 @@ Spotcraft's sign-in cookies are set on `vin.ski` (`AUTH_COOKIE_DOMAIN`), so `www
 ```bash
 pnpm install
 cp apps/website/.env.example apps/website/.env.local   # then fill in the two Spotcraft secrets, below
-pnpm --filter dashboard db:start        # Spotcraft's Postgres, Mailpit and S3 in Docker
-pnpm --filter dashboard db:migrate
+pnpm db:start                           # Spotcraft's Postgres, Mailpit and S3 in Docker
+pnpm db:migrate
 pnpm dashboard                          # Spotcraft, http://localhost:3000
 pnpm dev                                # the site, http://localhost:3001
 ```
@@ -55,10 +55,13 @@ Run from the repository root.
 | `pnpm start` | Serve the production build, on port 3001 |
 | `pnpm lint`  | Run ESLint on the site               |
 | `pnpm dashboard` | Start Spotcraft, on port 3000     |
-| `pnpm cms:export <dir> --site vinski` | Write the content out as files (Markdown and images): a backup |
-| `pnpm cms:import <dir> --site vinski` | Read an export back in; a dry run until `--apply` |
+| `pnpm db:start` | Start Spotcraft's Postgres, Mailpit and S3 in Docker |
+| `pnpm db:migrate` | Apply Spotcraft's database migrations |
+| `pnpm cms:export` | Write the `vinski` site out as files (Markdown and images) to `spotcraft-content/`: a backup |
+| `pnpm cms:import` | Read `spotcraft-content/` back into the `vinski` site; a dry run until `--apply` |
+| `pnpm search:sync` | Rebuild the `vinski` site's search index |
 
-Spotcraft's own scripts run with `pnpm --filter dashboard <script>`, e.g. `search:sync`. Paths given to `cms:*` are relative to `apps/dashboard`.
+Arguments after a script are passed on, e.g. `pnpm cms:import --apply`. Spotcraft's other scripts run with `pnpm --filter dashboard <script>`.
 
 ## How the teaser works
 
@@ -110,11 +113,11 @@ Projects and blog posts are documents in Spotcraft, edited in its dashboard. The
 - **Images** are uploaded next to their document in Spotcraft and served from `<SPOTCRAFT_URL>/media/…`, which `next.config.ts` allows. SVGs skip the image optimizer.
 - **When nothing is published** for a type, `generateStaticParams` returns a `__none__` placeholder that 404s, because Cache Components fails the build on an empty list.
 - **The client is vendored** in [`packages/spotcraft-client`](packages/spotcraft-client) (`workspace:*`), so the repo builds on its own, on Vercel too. `pnpm install` builds its `dist/` (its `prepare` script); `dist/` isn't committed.
-- **Backups.** `pnpm cms:export ../../spotcraft-content --site vinski` writes every document and image out as files; `spotcraft-content/` is gitignored.
+- **Backups.** `pnpm cms:export` writes every document and image out as files; `spotcraft-content/` is gitignored.
 
 ## Search
 
-Spotcraft searches the content: by words (Postgres full text), and by meaning too once `OPENAI_API_KEY` is set in `apps/dashboard/.env`. Saving a document re-indexes it; `pnpm --filter dashboard search:sync --site vinski` rebuilds the whole index.
+Spotcraft searches the content: by words (Postgres full text), and by meaning too once `OPENAI_API_KEY` is set in `apps/dashboard/.env`. Saving a document re-indexes it; `pnpm search:sync` rebuilds the whole index.
 
 - **API.** `GET /api/search?q=…` with optional `type` and `limit` (1–10, default 5). [`search.ts`](apps/website/features/search/api/search.ts) calls `cms.search`, keeps only results the site currently shows (Spotcraft would also return future-dated items), keeps one result per URL, and returns `{ results: [{ url, title, heading, type, snippet, score }] }`. URLs come from the type's route, so `/blog/<slug>#<heading-id>`; a match on the document itself links to the page. `score` is 0–1 and comparable within one search only. Until launch it answers 401 to guests; the proxy already hides it behind a 404.
 - **Limit.** Spotcraft returns at most 10 results, and the future-dated ones are dropped after that, so while scheduled posts exist a search can come back short.
@@ -294,7 +297,7 @@ rsync -a /tmp/spotcraft/apps/dashboard/ apps/dashboard/
 rsync -a --exclude '*.test.ts' /tmp/spotcraft/packages/client/src/ packages/spotcraft-client/src/
 git -C ../spotcraft rev-parse --short main   # write it into both SPOTCRAFT_VERSION files
 pnpm install                                 # rebuilds the client
-pnpm --filter dashboard db:migrate
+pnpm db:migrate
 ```
 
 - **Other files:** check `git diff` for files that were deleted upstream (rsync doesn't remove them) and for new dependencies in Spotcraft's `apps/dashboard/package.json` or `packages/client/package.json`. Copy those by hand: our copies differ in name and scripts.
