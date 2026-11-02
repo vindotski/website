@@ -69,6 +69,7 @@ Arguments after a script are passed on, e.g. `pnpm cms:import --apply`. Spotcraf
 apps/website/               The site (Next.js); see its README
 apps/dashboard/             Spotcraft: the CMS, its API, search and sign-in (TanStack Start); see its README
 packages/spotcraft-client/  @spotcraft/client, which the site reads content and sessions with
+.github/                    CI (build checks), issue and pull request templates, CI sample content
 DEPLOY.md                   Deploying both apps to Vercel, with Neon, R2 and Resend
 CONTENT_TODO.md             Placeholders left in the content, to fill in Spotcraft
 spotcraft-content/          pnpm cms:export's backup (gitignored)

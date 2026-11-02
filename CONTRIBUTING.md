@@ -25,6 +25,8 @@ pnpm build     # needs the local Spotcraft running (pnpm dashboard)
 
 For visual changes, add before and after screenshots, on a phone and a wide screen.
 
+CI runs the same checks on every pull request (`website`: lint and build, against sample content; `dashboard`: Spotcraft's typecheck and tests), and they must pass.
+
 ## Guidelines
 
 - **Small, focused pull requests.** One fix or change each.

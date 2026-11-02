@@ -204,6 +204,22 @@ Deploy with **Deployments → Create Deployment** from `main`, or a push. Redepl
 - [ ] Delete the hosted Supabase project and the `api.vin.ski` DNS record.
 - [ ] Turn on Web Analytics and Speed Insights for the website project.
 
+## Hold releases until CI passes
+
+GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs two checks on every push to `dev` and `main`, and on pull requests:
+
+- **`dashboard`:** Spotcraft's typecheck and unit tests.
+- **`website`:** the site's lint and production build, against a throwaway Spotcraft with sample content ([`.github/ci`](.github/ci/README.md)).
+
+Vercel can wait for them. It still builds every push to `main`, but only puts it live once the checks pass; if one fails, the live site stays on the last good version. In each Vercel project: **Settings → Build and Deployment → Deployment Checks → Add Checks → GitHub**, then select:
+
+| Project | Checks |
+| --- | --- |
+| Spotcraft | `dashboard` and `website` (the site's build runs against Spotcraft) |
+| Website | `website` |
+
+Production's automatic domain assignment must stay on (**Settings → Environments → Production**). To release without waiting, use **Force Promote** on the deployment. Renaming a job in `ci.yml` means selecting it again here.
+
 ## Updating later
 
 - **Spotcraft:** after copying a new version from Spotcraft's `main` (see [Updating Spotcraft](README.md#updating-spotcraft)), run `pnpm db:migrate` with the production env loaded **before** the deploy goes out: new code expects the new schema.
@@ -225,3 +241,4 @@ Deploy with **Deployments → Create Deployment** from `main`, or a push. Redepl
 | Images 404, while `curl -I` on the same URL gives 200 | Spotcraft knows the image but can't find the file: Vercel's `S3_ENDPOINT` or `S3_BUCKET` doesn't match the bucket the import used (check `.eu.`). Fix, then redeploy |
 | Images fail with a 500 | The R2 token is wrong or lacks read access |
 | Invites and resets never arrive | `SMTP_URL`, or `vin.ski` not verified in Resend |
+| A production deployment is Ready but not live | A Deployment Check failed or is still running. See the run in GitHub's Actions tab; fix it, or Force Promote |
