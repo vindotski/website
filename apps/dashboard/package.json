@@ -21,7 +21,6 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:e2e": "pnpm build && vitest run --config vitest.e2e.config.ts",
-		"docker:prod": "docker compose -f docker-compose.prod.yml up -d --build",
 		"db:start": "docker compose up -d --wait postgres mailpit s3",
 		"db:stop": "docker compose down",
 		"db:generate": "drizzle-kit generate",
