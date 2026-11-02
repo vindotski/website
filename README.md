@@ -106,13 +106,14 @@ Fixes are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) for what to send where
 
 ## License & Trademarks
 
-The site (`apps/website`) and **all of vin.ski's content** (its text, posts, project write-ups, images and portraits, including what's stored in Spotcraft) are Copyright (c) 2026-present Ivan Vinski. **All rights reserved** ([`apps/website/LICENSE`](apps/website/LICENSE)). The source is public so it can be read, not reused.
+The repository is Copyright (c) 2026-present Ivan Vinski, all rights reserved, except the parts listed below ([`LICENSE`](LICENSE)). The site (`apps/website`) and **all of vin.ski's content** (its text, posts, project write-ups, images and portraits, including what's stored in Spotcraft) are Copyright (c) 2026-present Ivan Vinski. **All rights reserved** ([`apps/website/LICENSE`](apps/website/LICENSE)). The source is public so it can be read, not reused.
 
 The other parts keep their own licenses:
 
 - **Spotcraft** (`apps/dashboard`) is open source under the [GNU Affero General Public License Version 3 (AGPLv3)](apps/dashboard/LICENSE) or any later version. It's a separate program the site talks to over HTTP, so its license doesn't extend to the site. Its **Source code** link points at this repository, as the AGPL asks of a copy that people use over a network.
 - **`@spotcraft/client`** (`packages/spotcraft-client`) is [MIT licensed](packages/spotcraft-client/LICENSE), so the site can include it.
 - **shadcn/ui components** in `apps/website/components/ui` are [MIT licensed](apps/website/components/ui/LICENSE), Copyright (c) 2023 shadcn.
+- **Lucide's icon shapes** in `apps/website/components/social-icon.tsx` are [ISC licensed](apps/website/components/LICENSE-lucide), Copyright (c) Lucide Icons and Contributors.
 - **Agent skills** in `.claude/skills` belong to their authors, under their licenses (sources in `skills-lock.json`).
 
 The vin.ski and Spotcraft names and logos are trademarks of Ivan Vinski.

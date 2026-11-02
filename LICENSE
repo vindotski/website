@@ -1,0 +1,37 @@
+Copyright (c) 2026-present Ivan Vinski. All rights reserved.
+
+This repository holds vin.ski, Ivan Vinski's personal site, and the tools
+that run it. Unless a part below says otherwise, everything in it (the site,
+its content, the documentation and the configuration) is covered by this
+notice. The site and its content are also covered, in more detail, by
+apps/website/LICENSE.
+
+The source code is public so that it can be read. That grants no license.
+You may not copy, modify, distribute, publish or otherwise reuse it, in whole
+or in part, without written permission from Ivan Vinski, except where the law
+allows it.
+
+As GitHub's Terms of Service provide, GitHub users may view and fork this
+repository on GitHub; that grants no other rights.
+
+Parts under their own licenses:
+
+- apps/dashboard/: Spotcraft, GNU Affero General Public License v3.0 or any
+  later version. See apps/dashboard/LICENSE.
+- packages/spotcraft-client/: @spotcraft/client, MIT License. See
+  packages/spotcraft-client/LICENSE.
+- apps/website/components/ui/: shadcn/ui components, MIT License,
+  Copyright (c) 2023 shadcn. See apps/website/components/ui/LICENSE.
+- apps/website/components/social-icon.tsx: icon shapes from Lucide, ISC
+  License, Copyright (c) Lucide Icons and Contributors. See
+  apps/website/components/LICENSE-lucide.
+- .claude/skills/: agent skills, under their authors' licenses (sources in
+  skills-lock.json).
+- Third-party packages installed as dependencies, under the licenses in
+  their own packages.
+
+Contributions are accepted on the terms in CONTRIBUTING.md.
+
+The vin.ski and Spotcraft names and logos are trademarks of Ivan Vinski.
+
+For permission, write to ivan@vin.ski.

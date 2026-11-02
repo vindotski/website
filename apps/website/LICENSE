@@ -14,10 +14,15 @@ the content, in whole or in part, without written permission from Ivan
 Vinski, except where the law allows it (for example, quoting with
 attribution, or linking to the site).
 
+As GitHub's Terms of Service provide, GitHub users may view and fork this
+repository on GitHub; that grants no other rights.
+
 Exceptions, under their own licenses:
 
 - components/ui/: shadcn/ui components, MIT License, Copyright (c) 2023
   shadcn. See components/ui/LICENSE.
+- components/social-icon.tsx: icon shapes from Lucide, ISC License,
+  Copyright (c) Lucide Icons and Contributors. See components/LICENSE-lucide.
 - Third-party packages installed as dependencies, under the licenses in
   their own packages.
 

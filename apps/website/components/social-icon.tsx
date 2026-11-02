@@ -1,7 +1,7 @@
 import type { SocialName } from "@/types/common";
 
-// Outline marks from Lucide (ISC), drawn at the same 2px stroke as the
-// site's other icons, so the three read as one set
+// Outline marks from Lucide (ISC, see LICENSE-lucide), drawn at the same
+// 2px stroke as the site's other icons, so the three read as one set
 const shapes: Record<SocialName, React.ReactNode> = {
   GitHub: (
     <>
