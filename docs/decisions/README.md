@@ -25,7 +25,7 @@ Architecture Decision Records for vin.ski, numbered in order, in [Spotcraft's fo
 | [10](0010-licensing.md) | The repository and vin.ski's content are all rights reserved; third-party parts keep their licenses | Built |
 | [11](0011-contributions.md) | Contributions come in under a license grant to Ivan Vinski, with no CLA bot | Built |
 | [12](0012-content-from-spotcraft.md) | Content comes from the `vindotski` project on api.vin.ski, with git as its source | Designed (demo) |
-| [13](0013-teaser-by-environment.md) | Production shows only the teaser, decided by the environment, until Spotcraft has accounts | Designed (demo) |
+| [13](0013-teaser-by-environment.md) | Production shows only the teaser, decided by the environment, until Spotcraft has accounts | Built |
 | [14](0014-no-search-for-now.md) | No search until Spotcraft has search | Designed (demo) |
 | [15](0015-agent-skills.md) | Agent skills are chosen for the stack and the roadmap, installed with the skills CLI into `.claude/skills` | Built |
 

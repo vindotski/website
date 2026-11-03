@@ -1,33 +1,19 @@
 # Website
 
-The portfolio site at [www.vin.ski](https://www.vin.ski): Next.js 16 (App Router, Cache Components), React 19 and TypeScript, styled with Tailwind CSS v4 and shadcn/ui (Base UI primitives). Content, search and sign-in come from Spotcraft (`apps/dashboard`).
+The portfolio site at [www.vin.ski](https://www.vin.ski): Next.js 16 (App Router, Cache Components), React 19 and TypeScript, styled with Tailwind CSS v4 and shadcn/ui (Base UI primitives). Content and search come from Spotcraft (`apps/dashboard`).
 
 This is how the site works inside. Setup, scripts and deploying are in the [repository README](../../README.md) and [`DEPLOY.md`](../../DEPLOY.md); run the commands from the repository root.
 
 ## How the teaser works
 
-[`proxy.ts`](proxy.ts) runs the auth gate in [`features/auth/utils/session.ts`](features/auth/utils/session.ts) on every request. It checks Spotcraft's token, then:
+Until launch, [`proxy.ts`](proxy.ts) decides by environment, on every request:
 
-- **Signed in:** the request goes through to the real page. A content URL with nothing published behind it shows the not-found page (see [Content](#content)).
-- **Signed out:** `/` is rewritten to the teaser (200). Every other path, `/teaser` included, returns 404. `/auth/*` stays open so you can log in.
-- **Always:** every response gets `Cache-Control: private, no-store`. The same URL serves different pages to different visitors, so no cache may keep one visitor's version for another, or for a crawler.
+- **Production** (`VERCEL_ENV=production`): `/` is rewritten to the teaser (200), and every other path, `/teaser` included, returns 404. Rewrites, not redirects, so every URL keeps an honest status.
+- **Anywhere else** (local development, `pnpm start`, Vercel previews): the request goes through to the real page. A content URL with nothing published behind it shows the not-found page (see [Content](#content)). Previews sit behind Vercel's Deployment Protection, so only people with access see the full site (decision 13).
 
-Robots, the sitemap, generated icons and Spotcraft's webhook (`/api/spotcraft`, which checks its own signature) skip the guard, so crawlers always get the real files. That also means anything served at those paths is public before launch: keep `app/sitemap.ts` to `/`, and don't add per-page OG images, RSS or `llms.txt` until the site opens.
+Robots, the sitemap, generated icons and Spotcraft's webhook (`/api/spotcraft`, which checks its own signature) skip the proxy, so crawlers always get the real files. That also means anything served at those paths is public before launch: keep `app/sitemap.ts` to `/`, and don't add per-page OG images, RSS or `llms.txt` until the site opens.
 
-## Admin toolbar
-
-Signed in, every page gets a WordPress-style toolbar fixed above the header ([`admin-bar.tsx`](app/_components/admin-bar.tsx)):
-
-- **Admin menu:** Spotcraft, New post (Spotcraft's `posts` folder), Vercel Analytics and the GitHub repo.
-- **Where you are:** Production, Preview or Local, from `VERCEL_ENV`.
-- **On a project or post page:** its status (Draft, Scheduled or Published, with the date) and Edit, which opens the document in Spotcraft. Both come from [`/api/admin/content-status`](app/api/admin/content-status/route.ts), signed-in only, through `useContentStatus` in `features/admin`.
-- **Account:** your email and Log out. Log out loads `/` in full, so no page rendered for the session stays in the router cache.
-
-Pages stay prerendered; the toolbar is added in the browser:
-
-- **Room before the first paint.** A script in the root layout's `<head>` sets `data-signed-in` on `<html>` when the proxy's `signed-in=1` marker cookie exists ([`lib/signed-in-cookie.ts`](lib/signed-in-cookie.ts)). CSS then sets `--admin-bar-height` (32px, 0 for guests), pads the body, and paints a placeholder strip, so nothing moves when the toolbar loads.
-- **Offsets.** `--top-chrome` is the toolbar and header together. The sticky header sits below the toolbar, and the hero, jumped-to headings (`scroll-mt-chrome`) and sticky elements use `--top-chrome`, so use it for anything new that has to clear the top of the screen.
-- **Guests download nothing.** [`admin-bar-loader.tsx`](app/_components/admin-bar-loader.tsx) loads the toolbar with `next/dynamic` only when the cookie is there, and checks again after client navigations, such as the one after logging in.
+**Offsets.** `--top-chrome` is the height fixed at the top of the screen (the sticky header). The hero, jumped-to headings (`scroll-mt-chrome`) and sticky elements use it, so use it for anything new that has to clear the top of the screen.
 
 ## Styling
 
@@ -60,7 +46,7 @@ Projects and blog posts are documents in Spotcraft, edited in its dashboard. The
 
 Spotcraft searches the content: by words (Postgres full text), and by meaning too once `OPENAI_API_KEY` is set in `apps/dashboard/.env`. Saving a document re-indexes it; `pnpm search:sync` rebuilds the whole index.
 
-- **API.** `GET /api/search?q=…` with optional `type` and `limit` (1–10, default 5). [`search.ts`](features/search/api/search.ts) calls `cms.search`, keeps only results the site currently shows (Spotcraft would also return future-dated items), keeps one result per URL, and returns `{ results: [{ url, title, heading, type, snippet, score }] }`. URLs come from the type's route, so `/blog/<slug>#<heading-id>`; a match on the document itself links to the page. `score` is 0–1 and comparable within one search only. Until launch it answers 401 to guests; the proxy already hides it behind a 404.
+- **API.** `GET /api/search?q=…` with optional `type` and `limit` (1–10, default 5). [`search.ts`](features/search/api/search.ts) calls `cms.search`, keeps only results the site currently shows (Spotcraft would also return future-dated items), keeps one result per URL, and returns `{ results: [{ url, title, heading, type, snippet, score }] }`. URLs come from the type's route, so `/blog/<slug>#<heading-id>`; a match on the document itself links to the page. `score` is 0–1 and comparable within one search only. Until launch, production's proxy answers 404 here, as on every page but `/`.
 - **Limit.** Spotcraft returns at most 10 results, and the future-dated ones are dropped after that, so while scheduled posts exist a search can come back short.
 - **UI.** The search button in the header, or ⌘K / Ctrl+K, opens a command palette (shadcn `Dialog` with `Command`, filtering off since the server ranks). It searches 400 ms after typing stops, from 3 characters. Arrow keys pick a result and Enter opens it; Enter while a newer search is pending searches instead of opening a stale result. Results are real links, so ⌘-click opens a new tab. Results come from `useSearchResults` (TanStack Query): a newer query cancels the older request, and results are cached per query, case-insensitively, fresh for a minute.
 
@@ -68,7 +54,7 @@ Spotcraft searches the content: by words (Postgres full text), and by meaning to
 
 [Vercel Web Analytics](https://vercel.com/docs/analytics) and Speed Insights, rendered by [`vercel-insights.tsx`](app/_components/vercel-insights.tsx) in the root layout. It counts visitors without cookies, so there's no consent banner. It only reports from Vercel deployments, and needs Web Analytics enabled for the project in the Vercel dashboard.
 
-- **Your own visits don't count.** [`vercel-insights.tsx`](app/_components/vercel-insights.tsx) drops every page view, event and Speed Insights report while the `signed-in=1` marker exists (only people who work on vin.ski can sign in, so that's you) and on `/auth/*`. Before launch this keeps `/` meaning the teaser.
+- **Before launch, production is the teaser alone,** so every page view on `/` is the teaser. Previews report too, under their own environment in the dashboard.
 - **Events.** Mark an element with `trackAttributes({ event, …properties })` from [`lib/analytics/track.ts`](lib/analytics/track.ts) (`ButtonLink` takes it as `track`); one listener in [`analytics-events.tsx`](app/_components/analytics-events.tsx) sends it on click and adds `page` (`teaser`, `home`, `projects`, `blog`) and `path`. Plus allows 8 properties per event. No personal data goes into events.
 
   | Event | Properties | Fires on |
@@ -137,22 +123,11 @@ The teaser keeps the tags: the proxy rewrites on the server, so the address in t
 
 Act on a pattern only once it holds for more than a month: traffic is small, so single weeks are noise.
 
-## Sign-in
-
-Sign-in is a Spotcraft account (it was Supabase Auth until 2026-11-01).
-
-- **Who:** a Spotcraft superadmin, or a member of the `vinski` site. Members of other sites in the same Spotcraft are treated as signed out.
-- **Signing in:** `/auth/login` ([`route.ts`](app/auth/login/route.ts)) redirects to Spotcraft's sign-in, which has Turnstile and a limit on attempts, and comes back to `/`.
-- **Logging out:** the toolbar's Log out loads Spotcraft's logout, which ends the dashboard session too, then comes back to `/`.
-- **Checking it:** Spotcraft sets `spotcraft_token`, an httpOnly ES256 token that lasts 10 minutes. The proxy ([`session.ts`](features/auth/utils/session.ts)) checks it with `getSession` from `@spotcraft/client`, against Spotcraft's public keys (cached). That's no request to Spotcraft per page, except one renewal when the token has run out. Logging out or resetting your password ends the session within those 10 minutes.
-- **Passing it on:** the proxy sets an `x-vinski-user` header for route handlers (`currentUser()` in [`current-user.ts`](features/auth/utils/current-user.ts)). It replaces the header every time, so a browser can't fake it. It also sets the readable `signed-in=1` marker for the scripts that can't read the token. The toolbar gets your email from `/api/me`.
-
 ## Search engines
 
 - **Only production is indexable.** `isProduction` in [`config/site.ts`](config/site.ts) drives the robots meta tag in the root layout and the rules in [`app/robots.ts`](app/robots.ts). Vercel previews and local builds return `noindex` and `Disallow: /`.
 - **The teaser is indexable.** Nothing needs removing at launch, and Google doesn't have to rediscover the page.
 - **No site-wide canonical or `og:url`.** Every page would inherit it and point Google at `/`.
-- **`/auth/login` is only a redirect** to Spotcraft's sign-in, so there's no page for search engines to index.
 
 ## Architecture
 
@@ -162,7 +137,7 @@ The layout follows [bulletproof-react](https://github.com/alan2207/bulletproof-r
 - **Features** (`features/<name>/`) hold everything one part of the site needs, in `api/`, `components/`, `types.ts`, `utils/` or `data.ts`. A feature uses shared code and itself, **never another feature**.
 - **App** (`app/`) is routes plus the site chrome that composes features: the header uses search, and the footer uses profile.
 
-When two features need the same thing, it moves into shared code, as the content loading in `lib/content/` did, or `app/` composes them, as the admin toolbar does with `features/admin` and `features/auth`. Files are imported directly; there are no `index.ts` barrels. File and folder names are kebab-case; components keep PascalCase names.
+When two features need the same thing, it moves into shared code, as the content loading in `lib/content/` did, or `app/` composes them, as the header does with search. Files are imported directly; there are no `index.ts` barrels. File and folder names are kebab-case; components keep PascalCase names.
 
 ESLint enforces all of it (`pnpm lint`):
 - `import/no-restricted-paths` blocks cross-feature imports and imports that point the wrong way;
@@ -175,8 +150,8 @@ Adding a feature means adding its name to `features` in [`eslint.config.mjs`](es
 Content (projects, posts, profile) is read by server components and prerendered; it never goes through the browser. TanStack Query is only for what the browser asks for after the page loads, set up as in bulletproof-react:
 
 - **Setup.** [`app/provider.tsx`](app/provider.tsx) holds the `QueryClient`, with the devtools in development only. [`lib/react-query.ts`](lib/react-query.ts) sets the defaults (no refetch on focus, no retries, fresh for a minute) and the `QueryConfig` helper type.
-- **Requests.** [`lib/api-client.ts`](lib/api-client.ts) calls the site's own routes and throws `ApiError` with the status, so a 401 can be told apart from a failure.
-- **One file per request** in `features/<name>/api/`: the plain function, its query options (key and function), and a hook that takes `queryConfig`. For example [`get-search-results.ts`](features/search/api/get-search-results.ts) (`useSearchResults`) and [`get-user.ts`](features/auth/api/get-user.ts) (`useUser`). Server-only code can sit in the same folder, like [`search.ts`](features/search/api/search.ts), marked with `server-only`.
+- **Requests.** [`lib/api-client.ts`](lib/api-client.ts) calls the site's own routes and throws `ApiError` with the status, so a bad request can be told apart from a failure.
+- **One file per request** in `features/<name>/api/`: the plain function, its query options (key and function), and a hook that takes `queryConfig`. For example [`get-search-results.ts`](features/search/api/get-search-results.ts) (`useSearchResults`). Server-only code can sit in the same folder, like [`search.ts`](features/search/api/search.ts), marked with `server-only`.
 
 ## Folders
 
@@ -184,25 +159,20 @@ Content (projects, posts, profile) is read by server components and prerendered;
 app/                  Routes and site chrome (the app layer)
   layout.tsx          Root layout: html, body, fonts, metadata, analytics
   provider.tsx        TanStack Query client, devtools in development
-  _components/        admin-bar and its loader, analytics-events, vercel-insights
+  _components/        analytics-events, vercel-insights
   (site)/             The portfolio, with header and footer (group omitted from URLs)
     _components/      header, footer, nav-links, mobile-nav
     page.tsx          Home (/): composes profile, projects and blog
     projects/ blog/ Detail pages ([slug])
-  api/search/         Search route: session check and parameters, then features/search
+  api/search/         Search route: parameters, then features/search
   api/spotcraft/      Spotcraft's webhook: drops the content cache
-  api/admin/          The admin toolbar's content status
-  teaser/             Pre-launch page, shown at / to signed-out visitors
-  auth/login/         Redirects to Spotcraft's sign-in
-  api/me/             The signed-in user's email, for the toolbar
+  teaser/             Pre-launch page, shown at / in production
   robots.ts sitemap.ts
 features/
   profile/            Hero, services, experience, process, contact actions; their copy and getters
   projects/           Projects section and project cards
   blog/               Blog section and a post's table of contents
   search/             Search dialog and the search itself, through Spotcraft
-  admin/              The admin toolbar's content status query
-  auth/               The session gate used by proxy.ts, currentUser, useUser and log out
 components/
   ui/                 shadcn/ui components (add more with `pnpm dlx shadcn@latest add`, run in apps/website)
   layouts/            section, detail-page, prose
@@ -215,11 +185,10 @@ lib/
   content/            Reading from Spotcraft, schemas, publish rule, getters
   cms.ts              The Spotcraft client (server-only)
   analytics/          Tracking attributes for Vercel Analytics
-  signed-in-cookie.ts The before-paint check for the signed-in marker
   react-query.ts      Query defaults and helper types
   api-client.ts       Fetch for the site's own API routes
 types/                Shared types
-proxy.ts              Auth gate, from features/auth
+proxy.ts              The teaser in production, the full site anywhere else
 ```
 
 ## License

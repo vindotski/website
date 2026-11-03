@@ -2,9 +2,9 @@
 
 Portfolio site of Ivan Vinski, product engineer: frontend by trade, full-stack by habit, product by focus. Live at [www.vin.ski](https://www.vin.ski).
 
-A pnpm workspace with two apps: the site, in Next.js, and [Spotcraft](https://github.com/vindotski/spotcraft), the self-hosted CMS its content, search and sign-in come from. How the site works inside is in [`apps/website/README.md`](apps/website/README.md); deploying both is in [`DEPLOY.md`](DEPLOY.md).
+A pnpm workspace with two apps: the site, in Next.js, and [Spotcraft](https://github.com/vindotski/spotcraft), the self-hosted CMS its content and search come from. How the site works inside is in [`apps/website/README.md`](apps/website/README.md); deploying both is in [`DEPLOY.md`](DEPLOY.md).
 
-Until launch, visitors see a teaser at `/` and every other page answers 404. After logging in, you see the full site.
+Until launch, production shows a teaser at `/`, and every other page answers 404. Local development and Vercel previews show the full site; previews sit behind Vercel's Deployment Protection.
 
 ## Domains
 
@@ -13,8 +13,6 @@ Until launch, visitors see a teaser at `/` and every other page answers 404. Aft
 | `www.vin.ski` | The site, on Vercel. The canonical address (`siteUrl` in [`config/site.ts`](apps/website/config/site.ts))    |
 | `vin.ski`     | Redirects (301) to `www.vin.ski`                                                          |
 | `cms.vin.ski` | Spotcraft, on Vercel: the dashboard, the content API and sign-in. `SPOTCRAFT_URL` is `https://cms.vin.ski/vinski` |
-
-Spotcraft's sign-in cookies are set on `vin.ski` (`AUTH_COOKIE_DOMAIN`), so `www.vin.ski` receives them. Locally they need no domain: cookies ignore the port, so `localhost:3000` and `localhost:3001` share them.
 
 ## Requirements
 
@@ -37,11 +35,7 @@ pnpm dev                                # the site, http://localhost:3001
 
 `apps/dashboard/.env` (gitignored) holds Spotcraft's settings. In `apps/website/.env.local`, set `SPOTCRAFT_API_TOKEN` to its `SPOTCRAFT_API_TOKEN`, and `SPOTCRAFT_WEBHOOK_SECRET` to its `WEBHOOK_SECRET`. Its `WEBHOOK_URL` is `http://localhost:3001/api/spotcraft`.
 
-Then open [http://localhost:3001](http://localhost:3001). You'll see the teaser. To see the full site:
-
-1. Have a Spotcraft account that's a superadmin or a member of the `vinski` site. The account made at `/onboard` is a superadmin; others are invited from the dashboard's Users page. Sign-ups are off.
-2. In the dashboard, set the `vinski` site's URL to `http://localhost:3001` (Settings → Site). Sign-in only sends you back to a site's own address.
-3. Log in at [http://localhost:3001/auth/login](http://localhost:3001/auth/login), which goes to Spotcraft's sign-in and back.
+Then open [http://localhost:3001](http://localhost:3001), which shows the full site.
 
 **Spotcraft's Docker stack is shared** with the `../spotcraft` checkout: its compose file is named `spotcraft`, so both use the same containers and database. vin.ski is the `vinski` site in it, at `http://localhost:3000/vinski`; the checkout's `example` and `docs` sites sit beside it. Both dashboards serve on port 3000, so run one at a time.
 

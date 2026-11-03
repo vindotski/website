@@ -2,10 +2,10 @@
 title: Production shows only the teaser, decided by the environment, until Spotcraft has accounts
 number: 13
 status: accepted
-implementation: designed
+implementation: built
 date: 2026-11-03
 supersedes: [6]
-notes: Replaces only how record 6's gate decides; the teaser, the 404s and the indexing rules stand. The demo's step 3 builds it.
+notes: Replaces only how record 6's gate decides; the teaser, the 404s and the indexing rules stand. Built in the demo's step 2 (proxy.ts).
 ---
 
 ## Context

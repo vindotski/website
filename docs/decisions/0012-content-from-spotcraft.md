@@ -4,7 +4,7 @@ number: 12
 status: accepted
 implementation: designed
 date: 2026-11-03
-notes: The demo's steps 1, 2 and 5 build it (docs/roadmap.md); the 5-minute cache is a `content` profile with a week's expiry, set out in step 2. It follows Spotcraft's roadmap, stage 2, step 14.
+notes: The demo's steps 1, 3 and 5 build it (docs/roadmap.md); the 5-minute cache is a `content` profile with a week's expiry, set out in step 3. It follows Spotcraft's roadmap, stage 2, step 14.
 ---
 
 ## Context

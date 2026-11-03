@@ -195,11 +195,10 @@ The existing `portfolio` project. In its settings:
 
 Deploy with **Deployments → Create Deployment** from `main`, or a push. Redeploying an old deployment can reuse its old settings. The build lists the pages from Spotcraft, so Spotcraft and its content have to be up first.
 
-**Previews** show the content, but signing in on `*.vercel.app` doesn't work: the sign-in cookie belongs to `vin.ski`, and Spotcraft only redirects back to the site's own URL. That's expected; until launch, a preview shows only the teaser.
+**Previews** show the full site, so they need Vercel's Deployment Protection: **Settings → Deployment Protection → Vercel Authentication**, on preview deployments. Until launch, production shows only the teaser.
 
 ## 6. After the first deploy
 
-- [ ] Sign in through `https://www.vin.ski/auth/login`. It goes to Spotcraft and back, signed in. The old Supabase session is gone.
 - [ ] Edit and save a document in Spotcraft, then reload its page on the site: the webhook should have updated it within seconds. Failed deliveries show in the Spotcraft project's logs on Vercel.
 - [ ] Delete the hosted Supabase project and the `api.vin.ski` DNS record.
 - [ ] Turn on Web Analytics and Speed Insights for the website project.

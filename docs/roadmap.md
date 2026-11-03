@@ -43,17 +43,18 @@ The schemas include the candidates accepted in [parity.md](parity.md#what-this-m
 - [x] `.claude/skills/vinski-content`, a skill of our own (15): the content folders and their schemas, Spotcraft's rules (unknown keys are errors, a property declared once), and `content:check`, `content:import` and `content:export`, with the export-first rule.
 - [x] Imported into `vindotski` on api.vin.ski (`SPOTCRAFT_API_URL` and `SPOTCRAFT_ADMIN_SECRET` set).
 
-### Step 2: The site reads from api.vin.ski
+### Step 2: The teaser without accounts
+Done before the site reads from api.vin.ski, so that step can be checked in the browser without signing in to the old Spotcraft.
+- [x] `proxy.ts`: in production, `/` shows the teaser and every other page is a 404, as for guests today. Anywhere else, the full site.
+- [x] Removed: the sign-in feature (`features/auth`, `/auth/login`, `/api/me`, the signed-in marker), the admin toolbar (`features/admin`, `/api/admin/content-status`, its before-paint script and room in the layout), and the analytics rule that skipped signed-in visits.
+- [ ] Vercel's Deployment Protection on preview deployments.
+
+### Step 3: The site reads from api.vin.ski
 - [ ] `lib/cms.ts`: a small `fetch` client for `SPOTCRAFT_URL` (default `https://api.vin.ski`) and the `vindotski` project. It lists a folder (`/v1/projects/vindotski/content/{folder}/`) and gets one document (`/content/{path}`: `data`, `body` and `headings`).
 - [ ] `lib/content/api.ts` validates `data` with the site's schemas as it is, with no key mapping. The published filter (`isPublished`) stays.
 - [ ] A `content` cache profile in `next.config.ts` for everything read from Spotcraft: `stale` and `revalidate` of 5 minutes, and an `expire` of a week. A published edit shows within 5 minutes, and a quiet site keeps serving its last good content while it refreshes, even when api.vin.ski is down. Not the `minutes` preset: it expires after an hour without visits, and the next visitor would wait on api.vin.ski. An `expire` under 5 minutes would also make the pages dynamic instead of prerendered (`next/dist/docs`, `cacheLife`).
 - [ ] Heading ids from `github-slugger` in the body renderer, matching the API's `headings`.
 - [ ] Removed: the webhook route (`app/api/spotcraft`), the remote image pattern, `@spotcraft/client`, `SPOTCRAFT_API_TOKEN` and `SPOTCRAFT_WEBHOOK_SECRET`.
-
-### Step 3: The teaser without accounts
-- [ ] `proxy.ts`: in production, `/` shows the teaser and every other page is a 404, as for guests today. Anywhere else, the full site.
-- [ ] Removed: the sign-in feature (`features/auth`, `/auth/login`, `/api/me`, the signed-in marker), the admin toolbar (`features/admin`, `/api/admin/content-status`, its before-paint script and room in the layout), and the analytics rule that skipped signed-in visits.
-- [ ] Vercel's Deployment Protection on preview deployments.
 
 ### Step 4: No search
 - [ ] Removed: `features/search`, `/api/search`, the header's search button and ⌘K, and the `search` and `search_select` events.
