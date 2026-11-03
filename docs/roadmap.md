@@ -50,14 +50,14 @@ Done before the site reads from api.vin.ski, so that step can be checked in the 
 - [ ] Vercel's Deployment Protection on preview deployments.
 
 ### Step 3: The site reads from api.vin.ski
-- [ ] `lib/cms.ts`: a small `fetch` client for `SPOTCRAFT_URL` (default `https://api.vin.ski`) and the `vindotski` project. It lists a folder (`/v1/projects/vindotski/content/{folder}/`) and gets one document (`/content/{path}`: `data`, `body` and `headings`).
-- [ ] `lib/content/api.ts` validates `data` with the site's schemas as it is, with no key mapping. The published filter (`isPublished`) stays.
-- [ ] A `content` cache profile in `next.config.ts` for everything read from Spotcraft: `stale` and `revalidate` of 5 minutes, and an `expire` of a week. A published edit shows within 5 minutes, and a quiet site keeps serving its last good content while it refreshes, even when api.vin.ski is down. Not the `minutes` preset: it expires after an hour without visits, and the next visitor would wait on api.vin.ski. An `expire` under 5 minutes would also make the pages dynamic instead of prerendered (`next/dist/docs`, `cacheLife`).
-- [ ] Heading ids from `github-slugger` in the body renderer, matching the API's `headings`.
-- [ ] Removed: the webhook route (`app/api/spotcraft`), the remote image pattern, `@spotcraft/client`, `SPOTCRAFT_API_TOKEN` and `SPOTCRAFT_WEBHOOK_SECRET`.
+- [x] `lib/content/spotcraft.ts`: a small `fetch` client for `SPOTCRAFT_API_URL` (default `https://api.vin.ski`, the same variable as the `content:*` scripts) and the `vindotski` project, shaped like `@spotcraft/sdk`'s `content`. It lists a folder (`/v1/projects/vindotski/content/{folder}/`) and gets one document (`/content/{path}`: `data`, `body` and `headings`). Not `lib/cms.ts` or `SPOTCRAFT_URL`, which search uses for the old Spotcraft until step 4.
+- [x] `lib/content/api.ts` validates `data` with the site's schemas as it is, with no key mapping. The published filter (`isPublished`) stays.
+- [x] A `content` cache profile in `next.config.ts` for everything read from Spotcraft: `stale` and `revalidate` of 5 minutes, and an `expire` of a week. A published edit shows within 5 minutes, and a quiet site keeps serving its last good content while it refreshes, even when api.vin.ski is down. Not the `minutes` preset: it expires after an hour without visits, and the next visitor would wait on api.vin.ski. An `expire` under 5 minutes would also make the pages dynamic instead of prerendered (`next/dist/docs`, `cacheLife`).
+- [x] Heading ids from the API's `headings`, given to the body's headings in the order Spotcraft lists them, so they match by construction; no `github-slugger`.
+- [x] Removed: the webhook route (`app/api/spotcraft`), the remote image pattern and `SPOTCRAFT_WEBHOOK_SECRET`. `@spotcraft/client` and `SPOTCRAFT_API_TOKEN` go in step 4, with search.
 
 ### Step 4: No search
-- [ ] Removed: `features/search`, `/api/search`, the header's search button and ⌘K, and the `search` and `search_select` events.
+- [ ] Removed: `features/search`, `/api/search`, the header's search button and ⌘K, and the `search` and `search_select` events; with them `lib/cms.ts`, `@spotcraft/client`, `SPOTCRAFT_URL` and `SPOTCRAFT_API_TOKEN`.
 
 ### Step 5: The old Spotcraft removed
 - [ ] `apps/dashboard`, `packages/spotcraft-client`, the CI content fixture (`.github/ci/`), and the scripts that ran them (`dashboard`, `db:*`, `cms:*`, `search:sync`).
@@ -66,7 +66,7 @@ Done before the site reads from api.vin.ski, so that step can be checked in the 
 - [ ] Docs and repository files: the READMEs, `LICENSE`, `THIRD_PARTY_NOTICES.md`, `.gitattributes`, `.gitignore`, `CONTENT_TODO.md`, and `DEPLOY.md` rewritten for one Vercel project, then reviewed with `writing-guidelines` (15).
 
 ### Step 6: Deploy
-- [ ] Vercel: `SPOTCRAFT_URL=https://api.vin.ski`, the old variables removed, then deployed.
+- [ ] Vercel: the old variables removed (`SPOTCRAFT_URL`, `SPOTCRAFT_API_TOKEN`, `SPOTCRAFT_WEBHOOK_SECRET`), then deployed. `SPOTCRAFT_API_URL` defaults to `https://api.vin.ski`.
 - [ ] The old stack taken down: the Spotcraft Vercel project and `cms.vin.ski`, Neon, R2, Resend and Turnstile.
 
 ### Done when

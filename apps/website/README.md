@@ -11,7 +11,7 @@ Until launch, [`proxy.ts`](proxy.ts) decides by environment, on every request:
 - **Production** (`VERCEL_ENV=production`): `/` is rewritten to the teaser (200), and every other path, `/teaser` included, returns 404. Rewrites, not redirects, so every URL keeps an honest status.
 - **Anywhere else** (local development, `pnpm start`, Vercel previews): the request goes through to the real page. A content URL with nothing published behind it shows the not-found page (see [Content](#content)). Previews sit behind Vercel's Deployment Protection, so only people with access see the full site (decision 13).
 
-Robots, the sitemap, generated icons and Spotcraft's webhook (`/api/spotcraft`, which checks its own signature) skip the proxy, so crawlers always get the real files. That also means anything served at those paths is public before launch: keep `app/sitemap.ts` to `/`, and don't add per-page OG images, RSS or `llms.txt` until the site opens.
+Robots, the sitemap and generated icons skip the proxy, so crawlers always get the real files. That also means anything served at those paths is public before launch: keep `app/sitemap.ts` to `/`, and don't add per-page OG images, RSS or `llms.txt` until the site opens.
 
 **Offsets.** `--top-chrome` is the height fixed at the top of the screen (the sticky header). The hero, jumped-to headings (`scroll-mt-chrome`) and sticky elements use it, so use it for anything new that has to clear the top of the screen.
 
@@ -28,19 +28,17 @@ Tailwind CSS v4 and shadcn/ui, set up in [`app/globals.css`](app/globals.css). T
 
 ## Content
 
-Projects and blog posts are documents in Spotcraft, edited in its dashboard. The site reads them with `@spotcraft/client` ([`lib/cms.ts`](lib/cms.ts), server-only) and keeps its own routes and components.
+Projects and blog posts are Markdown in [`content/`](../../content) at the repository root, imported into the `vindotski` project on Spotcraft's API ([api.vin.ski](https://api.vin.ski)); the [repository README](../../README.md#content) has the scripts. The site reads them over HTTP with [`lib/content/spotcraft.ts`](lib/content/spotcraft.ts) (server-only), a small `fetch` client shaped like `@spotcraft/sdk`'s, and keeps its own routes and components (decision 12).
 
-- **Folders.** `posts/<slug>`, and `projects/work/<slug>` or `projects/play/<slug>`. The top folder is the type and the document's folder name is the slug. Each folder's `_config.json` in Spotcraft declares its fields; a document gets every config on its path, so work and play each keep their own required fields.
-- **Types** are defined once, in `CONTENT_TYPES` in [`config/content-types.ts`](config/content-types.ts): label, route, Zod schema and sort order. Nothing else should list them. Adding a type means a folder in Spotcraft, an entry there and a `[slug]` page.
-- **Fields.** [`lib/content/api.ts`](lib/content/api.ts) maps each document back into the shape [`lib/content/schemas.ts`](lib/content/schemas.ts) describes: snake_case keys become camelCase, `category` comes from the folder, play's `stage` becomes `status` (Spotcraft reserves `status`), and the date comes from `publishedAt`. The schemas then validate it, so a bad field fails the build and names the document. Every type has `title`, `date`, `tags`, `tldr` and optional `order`, `repoUrl`, `demoUrl`; projects add `work` (a job: `company`, `role`, `years`, `impact`) or `play` (a side project: `year`, `status`) fields.
-- **Publishing** follows `isPublished()` in [`lib/content/publish.ts`](lib/content/publish.ts): a Spotcraft draft has no date, a future date is scheduled, today or earlier (UTC) is public. Spotcraft has no scheduling of its own, so the site applies this rule. `next dev` fetches drafts too (with the API token) and shows them with a badge; builds leave drafts and scheduled items out everywhere.
-- **Caching.** Content is cached under the `spotcraft` tag. Publishing in Spotcraft sends a signed webhook to [`/api/spotcraft`](app/api/spotcraft/route.ts), which drops that cache, so the next visit shows the change without a deploy. Webhooks for Spotcraft's other sites are ignored. The published filter is also cached hourly, so a scheduled item goes live within the hour of its date.
-- **404s.** An unknown or unpublished slug shows the not-found page through `notFound()`. A page that isn't prebuilt starts streaming before that, so its status is 200 with `noindex`, not a real 404. Guests never see it: the gate gives them a 404 for everything but `/`.
-- **Body.** Spotcraft returns it as a Markdown syntax tree, and [`body.tsx`](components/detail/body.tsx) renders it: headings get Spotcraft's ids (`headingAnchors`, the same ones search links to), and an image alone in a paragraph renders in the 16:10 frame. The `##` headings are the table of contents.
-- **Images** are uploaded next to their document in Spotcraft and served from `<SPOTCRAFT_URL>/media/…`, which `next.config.ts` allows. SVGs skip the image optimizer.
+- **Folders.** `posts/<slug>`, and `projects/work/<slug>` or `projects/play/<slug>`. Each folder's `_schema.yaml` declares its fields; a document gets every schema on its path, so work and play each keep their own required fields.
+- **Types** are defined once, in `CONTENT_TYPES` in [`config/content-types.ts`](config/content-types.ts): label, route, Spotcraft folders, Zod schema and sort order. Nothing else should list them. Adding a type means a folder in `content/`, an entry there and a `[slug]` page.
+- **Fields.** [`lib/content/api.ts`](lib/content/api.ts) lists each folder and gets every document, then validates its front matter with [`lib/content/schemas.ts`](lib/content/schemas.ts) as it is: the keys in `content/` are the schemas' own, and `category` comes from the folder. A bad field fails the build and names the document. Every type has `title`, `date`, `tags`, `tldr` and optional `order`, `repoUrl`, `demoUrl`; projects add `work` (a job: `company`, `role`, `years`, `impact`, and optional `team`, `reach`, `results`) or `play` (a side project: `year`, `status`) fields. The Zod schemas and the `_schema.yaml` files describe the same fields, so change both.
+- **Publishing** follows `isPublished()` in [`lib/content/publish.ts`](lib/content/publish.ts): no date is a draft, a future date is scheduled, today or earlier (UTC) is public. Spotcraft has no scheduling of its own, so the site applies this rule. `next dev` shows drafts and scheduled items with a badge; builds leave them out everywhere.
+- **Caching.** Everything read from Spotcraft uses the `content` cache profile in [`next.config.ts`](next.config.ts): read again every 5 minutes, so a published edit or a scheduled item's date shows without a deploy, and kept for a week, so a quiet site still answers from its last good copy while api.vin.ski is down. There's no publish webhook yet.
+- **404s.** An unknown or unpublished slug shows the not-found page through `notFound()`. A page that isn't prebuilt starts streaming before that, so its status is 200 with `noindex`, not a real 404. In production the proxy gives a 404 for everything but `/` anyway.
+- **Body.** Spotcraft returns it as a Markdown syntax tree with its `headings` beside it. `getContent` gives the body's headings those ids, in the order Spotcraft lists them, so they match the table of contents (the `##` headings). [`body.tsx`](components/detail/body.tsx) renders it, and an image alone in a paragraph renders in the 16:10 frame.
+- **Images** live in the site, in [`public/images/projects/`](public/images/projects), and the content refers to them by their path (`/images/projects/huddleos.svg`). Spotcraft stores only Markdown for now. SVGs skip the image optimizer.
 - **When nothing is published** for a type, `generateStaticParams` returns a `__none__` placeholder that 404s, because Cache Components fails the build on an empty list.
-- **The client is vendored** in [`packages/spotcraft-client`](../../packages/spotcraft-client) (`workspace:*`), so the repo builds on its own, on Vercel too. `pnpm install` builds its `dist/` (its `prepare` script); `dist/` isn't committed.
-- **Backups.** `pnpm cms:export` writes every document and image out as files; `spotcraft-content/` is gitignored.
 
 ## Search
 
@@ -165,7 +163,6 @@ app/                  Routes and site chrome (the app layer)
     page.tsx          Home (/): composes profile, projects and blog
     projects/ blog/ Detail pages ([slug])
   api/search/         Search route: parameters, then features/search
-  api/spotcraft/      Spotcraft's webhook: drops the content cache
   teaser/             Pre-launch page, shown at / in production
   robots.ts sitemap.ts
 features/
@@ -183,7 +180,7 @@ config/
   content-types.ts    The content types: label, route, schema, sort order
 lib/
   content/            Reading from Spotcraft, schemas, publish rule, getters
-  cms.ts              The Spotcraft client (server-only)
+  cms.ts              The old Spotcraft's client, for search (server-only)
   analytics/          Tracking attributes for Vercel Analytics
   react-query.ts      Query defaults and helper types
   api-client.ts       Fetch for the site's own API routes

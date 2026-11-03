@@ -26,16 +26,15 @@ Until launch, production shows a teaser at `/`, and every other page answers 404
 
 ```bash
 pnpm install
-cp apps/website/.env.example apps/website/.env.local   # then fill in the two Spotcraft secrets, below
-pnpm db:start                           # Spotcraft's Postgres, Mailpit and S3 in Docker
-pnpm db:migrate
-pnpm dashboard                          # Spotcraft, http://localhost:3000
+cp apps/website/.env.example apps/website/.env.local
 pnpm dev                                # the site, http://localhost:3001
+# Only for search, the old Spotcraft:
+pnpm db:start                           # its Postgres, Mailpit and S3 in Docker
+pnpm db:migrate
+pnpm dashboard                          # http://localhost:3000
 ```
 
-`apps/dashboard/.env` (gitignored) holds Spotcraft's settings. In `apps/website/.env.local`, set `SPOTCRAFT_API_TOKEN` to its `SPOTCRAFT_API_TOKEN`, and `SPOTCRAFT_WEBHOOK_SECRET` to its `WEBHOOK_SECRET`. Its `WEBHOOK_URL` is `http://localhost:3001/api/spotcraft`.
-
-Then open [http://localhost:3001](http://localhost:3001), which shows the full site.
+The site reads its content from api.vin.ski (see [Content](#content)), so `pnpm dev` alone shows the full site at [http://localhost:3001](http://localhost:3001). The old Spotcraft is only for search until it's removed: `apps/dashboard/.env` (gitignored) holds its settings, and `apps/website/.env.local` sets `SPOTCRAFT_API_TOKEN` to its `SPOTCRAFT_API_TOKEN`.
 
 **Spotcraft's Docker stack is shared** with the `../spotcraft` checkout: its compose file is named `spotcraft`, so both use the same containers and database. vin.ski is the `vinski` site in it, at `http://localhost:3000/vinski`; the checkout's `example` and `docs` sites sit beside it. Both dashboards serve on port 3000, so run one at a time.
 
@@ -80,7 +79,7 @@ spotcraft-content/          pnpm cms:export's backup (gitignored)
 
 ## Content
 
-The site is moving to the new Spotcraft (the demo in [`docs/roadmap.md`](docs/roadmap.md)). Its content is in `content/`: one Markdown file per post or project, named by its slug, with each folder's fields typed by its `_schema.yaml`. The content's source is git. It's imported into the `vindotski` project on [api.vin.ski](https://api.vin.ski), and images live in the site, in `apps/website/public/images/projects/`.
+The site reads its content from the new Spotcraft (the demo in [`docs/roadmap.md`](docs/roadmap.md)). It's in `content/`: one Markdown file per post or project, named by its slug, with each folder's fields typed by its `_schema.yaml`. The content's source is git. It's imported into the `vindotski` project on [api.vin.ski](https://api.vin.ski), and images live in the site, in `apps/website/public/images/projects/`.
 
 The scripts run Spotcraft's CLI from a worktree of its `main` branch, since the CLI isn't on npm yet:
 
@@ -114,7 +113,7 @@ pnpm db:migrate
 
 ## Launch checklist
 
-- [ ] Finish [`DEPLOY.md`](DEPLOY.md)'s after-deploy checks: test the webhook, delete the Supabase project and the `api.vin.ski` record, and turn on Web Analytics and Speed Insights
+- [ ] Finish [`DEPLOY.md`](DEPLOY.md)'s after-deploy checks: delete the Supabase project and the `api.vin.ski` record, and turn on Web Analytics and Speed Insights
 
 ## Contributing
 
