@@ -1,4 +1,3 @@
-import { headingAnchors } from "@spotcraft/client";
 import { toJsxRuntime, type Components } from "hast-util-to-jsx-runtime";
 import type { Parent, Root } from "mdast";
 import { toHast } from "mdast-util-to-hast";
@@ -33,14 +32,11 @@ function unwrapImages(node: Parent) {
   }) as Parent["children"];
 }
 
-// A document's body, from Spotcraft's Markdown syntax tree. Headings get the
-// ids Spotcraft's search links to, the same ones the table of contents uses
+// A document's body, from Spotcraft's Markdown syntax tree. Its headings
+// already carry their ids, the ones the table of contents uses. getContent
+// gives each page its own copy, so it can be changed here
 export default function Body({ body }: { body: Root | null }) {
   if (!body) return null;
-  const tree = structuredClone(body);
-  for (const [heading, id] of headingAnchors(tree)) {
-    heading.data = { ...heading.data, hProperties: { id } };
-  }
-  unwrapImages(tree);
-  return toJsxRuntime(toHast(tree), { Fragment, jsx, jsxs, components });
+  unwrapImages(body);
+  return toJsxRuntime(toHast(body), { Fragment, jsx, jsxs, components });
 }

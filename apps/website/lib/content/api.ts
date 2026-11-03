@@ -1,39 +1,24 @@
-import type { SpotcraftDocument } from "@spotcraft/client";
-import type { Root } from "mdast";
-import { cacheLife, cacheTag } from "next/cache";
+import type { Nodes, Root } from "mdast";
+import { cacheLife } from "next/cache";
 import { z } from "zod";
 import { CONTENT_TYPES, type ContentType } from "@/config/content-types";
-import { cms } from "@/lib/cms";
 import { isPublished, showDrafts, todayUtc } from "./publish";
+import { content, type ContentDocument, type Heading } from "./spotcraft";
 import type { Entry, Item, Post, Project } from "./types";
 
-// Reads the content from Spotcraft: cached, sorted, with drafts and scheduled
-// items left out of production
+// Reads the content from Spotcraft (api.vin.ski): cached, sorted, with drafts
+// and scheduled items left out of production. Everything is cached with the
+// `content` profile (next.config.ts): read again every 5 minutes, so a
+// published edit shows without a deploy, and kept for a week, so the site
+// keeps serving while api.vin.ski is down
 
-// Spotcraft's webhook clears every entry tagged "spotcraft" when content
-// changes (app/api/spotcraft), so cache for as long as possible
-export const contentTag = "spotcraft";
-
-// Spotcraft's field keys are snake_case; the schemas' are camelCase
-const camelCase = (key: string) =>
-  key.replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
-
-// Back into the shape the schemas describe, then validated by them, so bad
-// data fails loudly, naming the document. Projects take their category from
-// their folder (projects/work/…), and play's `status` is Spotcraft's `stage`
-function toItem<T extends ContentType>(type: T, doc: SpotcraftDocument): Item<T> {
+// Validated by the type's schema, so bad data fails loudly, naming the
+// document. The keys are the schemas' own; projects take their category from
+// their folder (projects/work/…)
+function toItem<T extends ContentType>(type: T, doc: ContentDocument): Item<T> {
   const category = type === "projects" ? doc.path.split("/")[1] : undefined;
-  const fields: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(doc.attributes)) {
-    if (value === null) continue;
-    fields[category === "play" && key === "stage" ? "status" : camelCase(key)] = value;
-  }
   const result = CONTENT_TYPES[type].schema.safeParse({
-    ...fields,
-    title: doc.title,
-    // Drafts have no publish date
-    date: doc.publishedAt?.slice(0, 10),
-    tags: doc.tags,
+    ...doc.data,
     ...(category && { category }),
   });
   if (!result.success) {
@@ -43,31 +28,51 @@ function toItem<T extends ContentType>(type: T, doc: SpotcraftDocument): Item<T>
   }
   const sections = doc.headings
     .filter((heading) => heading.depth === 2)
-    .map((heading) => ({ id: heading.anchor, title: heading.text }));
-  return { ...result.data, slug: doc.slug, path: doc.path, sections } as Item<T>;
+    .map((heading) => ({ id: heading.id, title: heading.text }));
+  const slug = doc.path.split("/").at(-1)!;
+  return { ...result.data, slug, path: doc.path, sections } as Item<T>;
 }
 
-// The type's documents, bodies included. Drafts are fetched for `next dev`
-// only (they need the API token)
-async function loadDocuments(type: ContentType): Promise<SpotcraftDocument[]> {
+// The body's headings get the ids of Spotcraft's `headings`, the ones the
+// table of contents uses. Spotcraft lists them in the order this walk finds
+// them, so the nth heading here is its nth
+function withHeadingIds(body: Root, headings: Heading[]): Root {
+  const tree = structuredClone(body);
+  let index = 0;
+  const visit = (node: Nodes) => {
+    if (node.type === "heading") {
+      const id = headings[index++]?.id;
+      if (id) node.data = { ...node.data, hProperties: { id } };
+      return;
+    }
+    if ("children" in node) for (const child of node.children) visit(child);
+  };
+  visit(tree);
+  return tree;
+}
+
+// The type's documents, bodies included: each folder's list, then every
+// document in it. Drafts are on main too, without a date
+async function loadDocuments(type: ContentType): Promise<ContentDocument[]> {
   "use cache";
-  cacheTag(contentTag);
-  cacheLife("max");
-  return cms.list({ folder: type, deep: true, limit: 100, drafts: showDrafts });
+  cacheLife("content");
+  const lists = await Promise.all(
+    CONTENT_TYPES[type].folders.map((folder) => content.list(folder)),
+  );
+  return Promise.all(lists.flat().map((item) => content.get(item.path)));
 }
 
 async function loadAll<T extends ContentType>(type: T): Promise<Item<T>[]> {
   return (await loadDocuments(type)).map((doc) => toItem(type, doc));
 }
 
-// Drops drafts and scheduled items, except in `next dev`. Refreshed hourly, so
-// a scheduled item goes live within the hour of its date without a redeploy
+// Drops drafts and scheduled items, except in `next dev`. Refreshed with the
+// content, so a scheduled item goes live within minutes of its date
 async function loadPublished<T extends ContentType>(
   type: T,
 ): Promise<Entry<T>[]> {
   "use cache";
-  cacheTag(contentTag);
-  cacheLife("hours");
+  cacheLife("content");
   const today = todayUtc();
   const items = (await loadAll(type)).map((item) => ({
     ...item,
@@ -148,8 +153,10 @@ export async function getContent(
   type: ContentType,
   slug: string,
 ): Promise<Root | null> {
-  const doc = (await loadDocuments(type)).find((d) => d.slug === slug);
-  return doc?.body ?? null;
+  const doc = (await loadDocuments(type)).find(
+    (d) => d.path.split("/").at(-1) === slug,
+  );
+  return doc ? withHeadingIds(doc.body, doc.headings) : null;
 }
 
 export async function getPosts(): Promise<Post[]> {

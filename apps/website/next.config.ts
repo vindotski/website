@@ -1,23 +1,16 @@
 import type { NextConfig } from "next";
 
-// Spotcraft serves images at <site>/media/…, with a ?v= cache-buster
-const cms = new URL(process.env.SPOTCRAFT_URL ?? "http://localhost:3000/vinski");
-
 const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: cms.protocol.slice(0, -1) as "http" | "https",
-        hostname: cms.hostname,
-        port: cms.port,
-        pathname: `${cms.pathname.replace(/\/$/, "")}/media/**`,
-      },
-    ],
-    // Locally, Spotcraft is on localhost, which the optimizer refuses
-    dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
+  cacheLife: {
+    // Everything read from Spotcraft (lib/content/api.ts). Read again every
+    // 5 minutes, so a published edit shows without a deploy. Kept for a week
+    // without visits, so a quiet site still answers from its last good copy
+    // while it refreshes, even when api.vin.ski is down. An expire under 5
+    // minutes would make the pages dynamic instead of prerendered
+    content: { stale: 300, revalidate: 300, expire: 7 * 24 * 60 * 60 },
   },
   async redirects() {
     // Section paths have no page of their own; send them to the home section.
