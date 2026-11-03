@@ -3,19 +3,13 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter website dev",
-    "dashboard": "pnpm --filter dashboard dev",
     "build": "pnpm --filter website build",
     "start": "pnpm --filter website start",
     "lint": "pnpm --filter website lint",
     "content:check": "node --conditions=source ../spotcraft-main/packages/spotcraft/src/index.ts check content",
     "content:import": "node --conditions=source ../spotcraft-main/packages/spotcraft/src/index.ts import content --project vindotski --name vin.ski",
     "content:export": "node --conditions=source ../spotcraft-main/packages/spotcraft/src/index.ts export content --project vindotski --force",
-    "docs:check": "node --conditions=source ../spotcraft-main/bin/check-docs.ts docs",
-    "db:start": "pnpm --filter dashboard db:start",
-    "db:migrate": "pnpm --filter dashboard db:migrate",
-    "search:sync": "pnpm --filter dashboard search:sync --site vinski",
-    "cms:export": "pnpm --filter dashboard content:export ../../spotcraft-content --site vinski",
-    "cms:import": "pnpm --filter dashboard content:import ../../spotcraft-content --site vinski"
+    "docs:check": "node --conditions=source ../spotcraft-main/bin/check-docs.ts docs"
   },
   "packageManager": "pnpm@12.4.1"
 }

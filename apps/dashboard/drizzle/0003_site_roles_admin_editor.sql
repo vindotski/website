@@ -1,2 +1,0 @@
-ALTER TABLE "site_members" DROP CONSTRAINT "site_members_role";--> statement-breakpoint
-ALTER TABLE "site_members" ADD CONSTRAINT "site_members_role" CHECK ("site_members"."role" in ('admin', 'editor'));
