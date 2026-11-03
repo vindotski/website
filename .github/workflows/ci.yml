@@ -21,22 +21,30 @@ jobs:
   # checks run Spotcraft's CLI from its main branch, checked out next to this
   # repository as locally (../spotcraft-main, see README: Content). Spotcraft's
   # repository is private: SPOTCRAFT_READ_TOKEN is a fine-grained token with
-  # read-only Contents access to it. The build reads api.vin.ski, whose reads
-  # are open
+  # read-only Contents access to it. Pull requests from forks don't get
+  # secrets, so they skip the two checks; lint and the build still run, since
+  # the build reads api.vin.ski, whose reads are open
   website:
     name: website
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Whether the token is there, not the token: only the checkout gets that
+    env:
+      HAS_SPOTCRAFT_TOKEN: ${{ secrets.SPOTCRAFT_READ_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
+        if: env.HAS_SPOTCRAFT_TOKEN == 'true'
         with:
           repository: vindotski/spotcraft
           ref: main
           token: ${{ secrets.SPOTCRAFT_READ_TOKEN }}
+          # Not kept in its git config, where later steps could read it
+          persist-credentials: false
           path: .spotcraft-main
       # actions/checkout only writes inside the workspace
       - run: mv .spotcraft-main ../spotcraft-main
+        if: env.HAS_SPOTCRAFT_TOKEN == 'true'
 
       - uses: pnpm/action-setup@v4
         with:
@@ -47,9 +55,12 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm install --frozen-lockfile
+        if: env.HAS_SPOTCRAFT_TOKEN == 'true'
         working-directory: ../spotcraft-main
 
       - run: pnpm content:check
+        if: env.HAS_SPOTCRAFT_TOKEN == 'true'
       - run: pnpm docs:check
+        if: env.HAS_SPOTCRAFT_TOKEN == 'true'
       - run: pnpm lint
       - run: pnpm build
