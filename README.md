@@ -22,6 +22,7 @@ Spotcraft's sign-in cookies are set on `vin.ski` (`AUTH_COOKIE_DOMAIN`), so `www
 - pnpm 12 (the exact version is pinned in `package.json` under `packageManager`)
 - Docker, for Spotcraft's services (Postgres, Mailpit and S3)
 - Optional: a Spotcraft checkout at `../spotcraft`, only to update the vendored copies (see [Updating Spotcraft](#updating-spotcraft))
+- For `content:*` and `docs:check`: a `../spotcraft-main` worktree (see [Content](#content))
 
 ## Getting started
 
@@ -54,6 +55,10 @@ Run from the repository root.
 | `pnpm build` | Create a production build of the site (Spotcraft must be running) |
 | `pnpm start` | Serve the production build, on port 3001 |
 | `pnpm lint`  | Run ESLint on the site               |
+| `pnpm content:check` | Check `content/` against its schemas, with Spotcraft's CLI |
+| `pnpm content:import` | Publish `content/` to the `vindotski` project on the new Spotcraft (see [Content](#content)) |
+| `pnpm content:export` | Write the `vindotski` project back into `content/`, after an edit in Spotcraft's dashboard |
+| `pnpm docs:check` | Check `docs/` against its schemas, and that every decision record has a number, status and date |
 | `pnpm dashboard` | Start Spotcraft, on port 3000     |
 | `pnpm db:start` | Start Spotcraft's Postgres, Mailpit and S3 in Docker |
 | `pnpm db:migrate` | Apply Spotcraft's database migrations |
@@ -69,6 +74,7 @@ Arguments after a script are passed on, e.g. `pnpm cms:import --apply`. Spotcraf
 apps/website/               The site (Next.js); see its README
 apps/dashboard/             Spotcraft: the CMS, its API, search and sign-in (TanStack Start); see its README
 packages/spotcraft-client/  @spotcraft/client, which the site reads content and sessions with
+content/                    The content in the new Spotcraft's format: Markdown typed by _schema.yaml files
 .github/                    CI (build checks), issue and pull request templates, CI sample content
 docs/                       The roadmap, the content parity, and the decision records
 DEPLOY.md                   Deploying both apps to Vercel, with Neon, R2 and Resend
@@ -77,6 +83,20 @@ spotcraft-content/          pnpm cms:export's backup (gitignored)
 ```
 
 `apps/dashboard` and `packages/spotcraft-client` are copies of Spotcraft's `main` branch; see [Updating Spotcraft](#updating-spotcraft). The workspace root holds only what both apps share: the scripts above, the pnpm settings and the lockfile, the shared `.gitignore`, and the agent skills in `.claude/`. Each app keeps its own TypeScript, lint, shadcn and env settings, since they're built with different tools.
+
+## Content
+
+The site is moving to the new Spotcraft (the demo in [`docs/roadmap.md`](docs/roadmap.md)). Its content is in `content/`: one Markdown file per post or project, named by its slug, with each folder's fields typed by its `_schema.yaml`. The content's source is git. It's imported into the `vindotski` project on [api.vin.ski](https://api.vin.ski), and images live in the site, in `apps/website/public/images/projects/`.
+
+The scripts run Spotcraft's CLI from a worktree of its `main` branch, since the CLI isn't on npm yet:
+
+```bash
+git -C ../spotcraft worktree add ../spotcraft-main main
+pnpm --dir ../spotcraft-main install
+git -C ../spotcraft-main pull                  # to update it later; it stays on main
+```
+
+`content:import` and `content:export` need `SPOTCRAFT_API_URL` (`https://api.vin.ski`) and `SPOTCRAFT_ADMIN_SECRET` in the environment. An import makes the project's `main` match `content/`, so an edit made in the dashboard since the last import would be lost. **Export and commit first:** `pnpm content:export`, commit, then `pnpm content:import`.
 
 ## Updating Spotcraft
 

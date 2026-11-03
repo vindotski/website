@@ -8,6 +8,8 @@
     "start": "pnpm --filter website start",
     "lint": "pnpm --filter website lint",
     "content:check": "node --conditions=source ../spotcraft-main/packages/spotcraft/src/index.ts check content",
+    "content:import": "node --conditions=source ../spotcraft-main/packages/spotcraft/src/index.ts import content --project vindotski --name vin.ski",
+    "content:export": "node --conditions=source ../spotcraft-main/packages/spotcraft/src/index.ts export content --project vindotski --force",
     "docs:check": "node --conditions=source ../spotcraft-main/bin/check-docs.ts docs",
     "db:start": "pnpm --filter dashboard db:start",
     "db:migrate": "pnpm --filter dashboard db:migrate",
