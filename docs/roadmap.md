@@ -25,17 +25,18 @@ The Spotcraft in this repository today (`apps/dashboard`, `packages/spotcraft-cl
 - **Each step is checked in the running app** with `next-dev-loop` (15): the pages it changes (home, a project, a post, the teaser) render, and the console and Next's errors are clean. Lint and the build still run too.
 
 ### Step 0: Tools
-- [ ] `agent-browser` 0.31.1 or later (`npm i -g agent-browser@latest`), for `next-dev-loop`. That skill also needs Next.js 16.3 or later (the site has 16.4.3) and Turbopack in `next dev`, which is Next 16's default.
-- [ ] A `../spotcraft-main` worktree on Spotcraft's `main` (`git -C ../spotcraft worktree add ../spotcraft-main main`), with `pnpm install` run in it. Steps 1 and 5 run Spotcraft's CLI from it, and it's only ever updated with `git pull` on `main`.
+- [x] `agent-browser` 0.31.1 or later (`npm i -g agent-browser@latest`), for `next-dev-loop`. That skill also needs Next.js 16.3 or later (the site has 16.4.3) and Turbopack in `next dev`, which is Next 16's default.
+- [x] A `../spotcraft-main` worktree on Spotcraft's `main` (`git -C ../spotcraft worktree add ../spotcraft-main main`), with `pnpm install` run in it. Steps 1 and 5 run Spotcraft's CLI from it, and it's only ever updated with `git pull` on `main`.
 
 ### Step 1: Content in Spotcraft's format
 The schemas include the candidates accepted in [parity.md](parity.md#what-this-means-for-step-1).
 - [ ] `content/` with a `_schema.yaml` per folder (Spotcraft's decision 8: JSON Schema as YAML, unknown keys are errors, a property declared once from the root down):
   - the root: `title` and `tldr` (required), `date`, `tags`, `order`, `repoUrl` and `demoUrl`;
   - `projects/`: `summary`, `kind`, `stack` and `image`;
-  - `projects/work/`: `company`, `role`, `years`, `impact` and `productUrl`;
+  - `projects/work/`: `company`, `role`, `years`, `impact` and `productUrl`, and the optional `team` and `reach` (one line each) and `results` (a list of `label`, `value` and `measured`, a boolean, all three required in each item);
   - `projects/play/`: `year` and `status`, with `demoUrl` required.
 - [ ] One Markdown file per document, named by its slug: `posts/<slug>.md`, `projects/work/<slug>.md` and `projects/play/<slug>.md`, converted from old Spotcraft's export. The keys are the site's own (camelCase, `status`), so the site's mapping layer goes. A document without a `date` is a draft.
+- [ ] Every work project's body has a "Decisions" section: each decision with the options rejected and why. It's a writing convention, so the schema doesn't check it.
 - [ ] Images in `apps/website/public/images/projects/`, referred to by their site path.
 - [ ] `content:check`, `content:import` and `content:export` scripts running the CLI from the step 0 worktree, as Sokobanko's do, with the worktree's setup in the README.
 - [ ] `docs:check`: `docs/` checked as Spotcraft content (its `_schema.yaml` files), plus the decision-record rule: every `NNNN-*.md` has `number`, `status` and `date`, and its number matches the file name. Spotcraft's `bin/check-docs.ts` is the model.

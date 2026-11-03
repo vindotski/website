@@ -26,7 +26,7 @@ Other product designers' case studies couldn't be read: [Simon Pan](https://simo
 
 **Others:** ✅ yes · ◐ partly · ✖ no · ? not visible on the page checked
 
-**vin.ski:** ✅ in content (Spotcraft) · 💻 in code (`features/profile/data.ts`), not content · ◐ partly · 💡 candidate, see [what this means for step 1](#what-this-means-for-step-1) · ✖ not planned
+**vin.ski:** ✅ in content (Spotcraft) · 💻 in code (`features/profile/data.ts`), not content · ◐ partly · ➕ accepted, comes in step 1 · 💡 candidate, see [what this means for step 1](#what-this-means-for-step-1) · ✖ not planned
 
 ## Content types
 
@@ -68,8 +68,8 @@ What a project page states up front: the details that front matter holds. Only t
 | Client or company | ✅ `company` | ✖ his own | ✅ in the text | ? | ◐ |
 | Role | ✅ `role` | ✖ always his | ✅ "Fractional Product Designer" | ? | ✅ |
 | Timeframe | ✅ `years` | ✅ `year` | ✅ "~6 weeks" | ? | ◐ |
-| Team | 💡 | ✖ | ✅ three roles | ? | ◐ |
-| Reach or scale | 💡 | ✖ | ✅ "~50k users" | ? | ◐ |
+| Team | ➕ `team` | ✖ | ✅ three roles | ? | ◐ |
+| Reach or scale | ➕ `reach` | ✖ | ✅ "~50k users" | ? | ◐ |
 | Industry, platform | ◐ `kind` and `tags` | ◐ `kind` and `tags` | ✅ as tags | ? | ◐ |
 | Tags | ✅ | ✅ | ✅ | ? | ? |
 | Stack | ✅ `stack` | ✅ `stack` | ✖ | ✖ | ✖ |
@@ -86,8 +86,8 @@ What the body tells, in order. vin.ski's sections are conventions in the Markdow
 | The problem, as a constraint | ◐ "Context" | ◐ "Why I built it" | ◐ "The starting point" | ✅ "Problem", the constraint first | ✅ |
 | Your role | ✅ "My role" | ✖ | ✅ in the details block | ◐ | ✅ |
 | Process, briefly | ✖ | ◐ "Architecture" | ✅ audit, workshops, personas | ✅ under 200 words | ✅ research and iterations |
-| Decisions, with the options rejected | 💡 | ◐ "Key decisions", without alternatives | ◐ decisions as headings, without alternatives | ✅ the part that earns callbacks | ◐ |
-| Results, and how they were measured | ◐ the `impact` line | ✖ | ◐ "Projected Results", not measured | ✅ what changed, and how it was measured | ✅ |
+| Decisions, with the options rejected | ➕ a "Decisions" section | ◐ "Key decisions", without alternatives | ◐ decisions as headings, without alternatives | ✅ the part that earns callbacks | ◐ |
+| Results, and how they were measured | ◐ the `impact` line, ➕ `results` with `measured` | ✖ | ◐ "Projected Results", not measured | ✅ what changed, and how it was measured | ✅ |
 | Visuals | ◐ a cover, images in the body | ✅ a diagram | ✅ screens, audit, style guide | ? | ✅ iterations |
 | Testimonial | 💡 | ✖ | ✖ on the case study, ✅ on the home page | ✖ | ✖ |
 | Reflection, what's next | ✖ | ✅ "What I'd do next" | ◐ "What I'd bring to your team" | ✖ | ✅ next steps |
@@ -116,11 +116,11 @@ What a project card shows on the home page.
 
 ## What this means for step 1
 
-Each 💡 above, with a recommendation. Accepted ones go into step 1's schemas; rejected ones stay here, marked ✖ with the reason.
+Each candidate above, with a recommendation. Accepted ones (➕) go into step 1's schemas; rejected ones stay here, marked ✖ with the reason.
 
-1. **Decisions with the options rejected:** recommended. Make "Decisions" a section every work project has, like play's "Key decisions", and write each one with what was rejected and why (the cold read's strongest point). It's a writing convention in the body, so it needs no schema field; the content to-do list tracks it.
-2. **`team` and `reach` on work projects:** recommended, both optional. `team` as a short line ("PM, two engineers, a designer"), `reach` as a scale line ("~50k users"). They place the role in context the way Goldman's details block does.
-3. **Results with how they were measured:** recommended, as an optional `results` list on work projects: each item a `label`, a `value` and `measured` (true, or false for projected or estimated). It replaces nothing: `impact` stays the one-line result on the card. Goldman labels hers "projected", and the cold read asks how they were measured, so the flag keeps that honest.
+1. **Decisions with the options rejected:** accepted (2026-11-03). Make "Decisions" a section every work project has, like play's "Key decisions", and write each one with what was rejected and why (the cold read's strongest point). It's a writing convention in the body, so it needs no schema field; the content to-do list tracks it.
+2. **`team` and `reach` on work projects:** accepted (2026-11-03), both optional. `team` as a short line ("PM, two engineers, a designer"), `reach` as a scale line ("~50k users"). They place the role in context the way Goldman's details block does.
+3. **Results with how they were measured:** accepted (2026-11-03), as an optional `results` list on work projects: each item a `label`, a `value` and `measured` (true, or false for projected or estimated). It replaces nothing: `impact` stays the one-line result on the card. Goldman labels hers "projected", and the cold read asks how they were measured, so the flag keeps that honest.
 4. **Testimonials:** recommended later, not in the demo. A `testimonials/` folder (quote, name, title, company, and the project it's about) once there are quotes to put in it.
 5. **Services and experience as content:** not in the demo. They're in `features/profile/data.ts` today, and moving them is a new folder and schema each. Revisit once the demo is done.
 

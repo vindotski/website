@@ -13,7 +13,7 @@ Tick one off when it's done, and delete this file when the list is empty.
 
 - [ ] `tldr`
 - [ ] `image`: the real cover
-- [ ] Body: Context, My role
+- [ ] Body: Context, My role, Decisions (with what was rejected)
 
 ## Kalistenio (work)
 
@@ -23,14 +23,14 @@ Tick one off when it's done, and delete this file when the list is empty.
 - [ ] `years`: start 2025, no end
 - [ ] `image`: the real cover
 - [ ] `impact`
-- [ ] Body: Context, My role
+- [ ] Body: Context, My role, Decisions (with what was rejected)
 
 ## Odjeca.hr (work)
 
 - [ ] `tldr`
 - [ ] `image`: the real cover
 - [ ] `impact`
-- [ ] Body: Context, My role
+- [ ] Body: Context, My role, Decisions (with what was rejected)
 
 ## Sokobanko (play)
 
