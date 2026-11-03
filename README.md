@@ -2,7 +2,7 @@
 
 Portfolio site of Ivan Vinski, product engineer: frontend by trade, full-stack by habit, product by focus. Live at [www.vin.ski](https://www.vin.ski).
 
-A pnpm workspace with two apps: the site, in Next.js, and [Spotcraft](https://github.com/vindotski/spotcraft), the self-hosted CMS its content and search come from. How the site works inside is in [`apps/website/README.md`](apps/website/README.md); deploying both is in [`DEPLOY.md`](DEPLOY.md).
+A pnpm workspace with two apps: the site, in Next.js, and [Spotcraft](https://github.com/vindotski/spotcraft), the self-hosted CMS its content came from until the demo (see [Content](#content)). How the site works inside is in [`apps/website/README.md`](apps/website/README.md); deploying both is in [`DEPLOY.md`](DEPLOY.md).
 
 Until launch, production shows a teaser at `/`, and every other page answers 404. Local development and Vercel previews show the full site; previews sit behind Vercel's Deployment Protection.
 
@@ -28,13 +28,9 @@ Until launch, production shows a teaser at `/`, and every other page answers 404
 pnpm install
 cp apps/website/.env.example apps/website/.env.local
 pnpm dev                                # the site, http://localhost:3001
-# Only for search, the old Spotcraft:
-pnpm db:start                           # its Postgres, Mailpit and S3 in Docker
-pnpm db:migrate
-pnpm dashboard                          # http://localhost:3000
 ```
 
-The site reads its content from api.vin.ski (see [Content](#content)), so `pnpm dev` alone shows the full site at [http://localhost:3001](http://localhost:3001). The old Spotcraft is only for search until it's removed: `apps/dashboard/.env` (gitignored) holds its settings, and `apps/website/.env.local` sets `SPOTCRAFT_API_TOKEN` to its `SPOTCRAFT_API_TOKEN`.
+The site reads its content from api.vin.ski (see [Content](#content)), so `pnpm dev` alone shows the full site at [http://localhost:3001](http://localhost:3001), and `.env.local` needs nothing. The old Spotcraft (`apps/dashboard`) no longer serves the site; it stays until the demo's step 5 removes it, run with `pnpm db:start`, `pnpm db:migrate` and `pnpm dashboard`.
 
 **Spotcraft's Docker stack is shared** with the `../spotcraft` checkout: its compose file is named `spotcraft`, so both use the same containers and database. vin.ski is the `vinski` site in it, at `http://localhost:3000/vinski`; the checkout's `example` and `docs` sites sit beside it. Both dashboards serve on port 3000, so run one at a time.
 

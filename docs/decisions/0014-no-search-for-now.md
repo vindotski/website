@@ -2,9 +2,9 @@
 title: No search until Spotcraft has search
 number: 14
 status: accepted
-implementation: designed
+implementation: built
 date: 2026-11-03
-notes: The demo's step 4 removes it.
+notes: Built in the demo's step 4, which removed search and the TanStack Query setup only it used.
 ---
 
 ## Context

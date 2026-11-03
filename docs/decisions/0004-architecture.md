@@ -2,8 +2,9 @@
 title: Code flows shared → features → app, enforced by ESLint; TanStack Query only for browser requests
 number: 4
 status: accepted
-implementation: built
+implementation: partly-built
 date: 2026-10-31
+notes: The layers and ESLint are built. TanStack Query was removed with search (14), its only user, and comes back with the next browser request.
 ---
 
 ## Context

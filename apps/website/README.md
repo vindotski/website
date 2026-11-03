@@ -1,6 +1,6 @@
 # Website
 
-The portfolio site at [www.vin.ski](https://www.vin.ski): Next.js 16 (App Router, Cache Components), React 19 and TypeScript, styled with Tailwind CSS v4 and shadcn/ui (Base UI primitives). Content and search come from Spotcraft (`apps/dashboard`).
+The portfolio site at [www.vin.ski](https://www.vin.ski): Next.js 16 (App Router, Cache Components), React 19 and TypeScript, styled with Tailwind CSS v4 and shadcn/ui (Base UI primitives). Content comes from Spotcraft, on [api.vin.ski](https://api.vin.ski).
 
 This is how the site works inside. Setup, scripts and deploying are in the [repository README](../../README.md) and [`DEPLOY.md`](../../DEPLOY.md); run the commands from the repository root.
 
@@ -42,11 +42,7 @@ Projects and blog posts are Markdown in [`content/`](../../content) at the repos
 
 ## Search
 
-Spotcraft searches the content: by words (Postgres full text), and by meaning too once `OPENAI_API_KEY` is set in `apps/dashboard/.env`. Saving a document re-indexes it; `pnpm search:sync` rebuilds the whole index.
-
-- **API.** `GET /api/search?q=…` with optional `type` and `limit` (1–10, default 5). [`search.ts`](features/search/api/search.ts) calls `cms.search`, keeps only results the site currently shows (Spotcraft would also return future-dated items), keeps one result per URL, and returns `{ results: [{ url, title, heading, type, snippet, score }] }`. URLs come from the type's route, so `/blog/<slug>#<heading-id>`; a match on the document itself links to the page. `score` is 0–1 and comparable within one search only. Until launch, production's proxy answers 404 here, as on every page but `/`.
-- **Limit.** Spotcraft returns at most 10 results, and the future-dated ones are dropped after that, so while scheduled posts exist a search can come back short.
-- **UI.** The search button in the header, or ⌘K / Ctrl+K, opens a command palette (shadcn `Dialog` with `Command`, filtering off since the server ranks). It searches 400 ms after typing stops, from 3 characters. Arrow keys pick a result and Enter opens it; Enter while a newer search is pending searches instead of opening a stale result. Results are real links, so ⌘-click opens a new tab. Results come from `useSearchResults` (TanStack Query): a newer query cancels the older request, and results are cached per query, case-insensitively, fresh for a minute.
+None for now: it comes back with Spotcraft's own search (decision 14). The old search (a ⌘K dialog over the old Spotcraft's index, with TanStack Query) is in git history before `15f780b` (`refactor(website): remove search until spotcraft has it`).
 
 ## Analytics
 
@@ -61,10 +57,8 @@ Spotcraft searches the content: by words (Postgres full text), and by meaning to
   | `outbound_click` | `kind` (`linkedin`, `github`, `figma`, `product`, `demo`, `source`, `repo`), `location` (`hero`, `footer`, `teaser`, `intro`) | Social links; project and post links |
   | `section_view` | `section` (`projects`, `services`, `experience`, `process`, `blog`) | A home section seen: half of it visible, or filling half the screen. Once per page load |
   | `post_read` | `slug` | Reaching the end of a post. Once per page load |
-  | `search` | `results` (count) | A completed search, once per distinct query. Never the query text |
-  | `search_select` | `type` (`projects`, `blog`), `position` (1-based) | Opening a search result |
 
-  Views are marked with `trackViewAttributes()` and sent by the same listener; search events are sent from [`search-dialog.tsx`](features/search/components/search-dialog.tsx) with `track()`.
+  Views are marked with `trackViewAttributes()` and sent by the same listener.
 - **Speed Insights** reports Core Web Vitals from real visits. The data shows under **Speed Insights** in the project, after it's enabled there.
 - **Checking it:** in production, the Network tab shows a request to `/_vercel/insights/view` on every page and `/_vercel/insights/event` on a contact click; the data shows under **Analytics** in the project.
 
@@ -77,7 +71,7 @@ The site has one job: get the right people to get in touch. Analytics is there t
 | Question | Answered by |
 | --- | --- |
 | Who comes, and from where? | Visitors, referrers, countries and devices; UTM source and medium (see below) |
-| What do they look at? | Page views per route (projects, blog); `section_view`, `post_read` and `search` |
+| What do they look at? | Page views per route (projects, blog); `section_view` and `post_read` |
 | Do they get in touch, and from where on the site? | `contact_click` split by `method`, `location` and `page` |
 | Where do they go instead? | `outbound_click` split by `kind`: LinkedIn and GitHub (checking me out) vs product and demo links (checking the work out) |
 | Is it fast for them? | Speed Insights (Core Web Vitals from real visits) |
@@ -133,9 +127,9 @@ The layout follows [bulletproof-react](https://github.com/alan2207/bulletproof-r
 
 - **Shared** (`components/`, `config/`, `lib/`, `types/`) can be used anywhere, and imports neither features nor `app/`.
 - **Features** (`features/<name>/`) hold everything one part of the site needs, in `api/`, `components/`, `types.ts`, `utils/` or `data.ts`. A feature uses shared code and itself, **never another feature**.
-- **App** (`app/`) is routes plus the site chrome that composes features: the header uses search, and the footer uses profile.
+- **App** (`app/`) is routes plus the site chrome that composes features: the footer uses profile.
 
-When two features need the same thing, it moves into shared code, as the content loading in `lib/content/` did, or `app/` composes them, as the header does with search. Files are imported directly; there are no `index.ts` barrels. File and folder names are kebab-case; components keep PascalCase names.
+When two features need the same thing, it moves into shared code, as the content loading in `lib/content/` did, or `app/` composes them. Files are imported directly; there are no `index.ts` barrels. File and folder names are kebab-case; components keep PascalCase names.
 
 ESLint enforces all of it (`pnpm lint`):
 - `import/no-restricted-paths` blocks cross-feature imports and imports that point the wrong way;
@@ -145,31 +139,24 @@ Adding a feature means adding its name to `features` in [`eslint.config.mjs`](es
 
 ### Data fetching
 
-Content (projects, posts, profile) is read by server components and prerendered; it never goes through the browser. TanStack Query is only for what the browser asks for after the page loads, set up as in bulletproof-react:
-
-- **Setup.** [`app/provider.tsx`](app/provider.tsx) holds the `QueryClient`, with the devtools in development only. [`lib/react-query.ts`](lib/react-query.ts) sets the defaults (no refetch on focus, no retries, fresh for a minute) and the `QueryConfig` helper type.
-- **Requests.** [`lib/api-client.ts`](lib/api-client.ts) calls the site's own routes and throws `ApiError` with the status, so a bad request can be told apart from a failure.
-- **One file per request** in `features/<name>/api/`: the plain function, its query options (key and function), and a hook that takes `queryConfig`. For example [`get-search-results.ts`](features/search/api/get-search-results.ts) (`useSearchResults`). Server-only code can sit in the same folder, like [`search.ts`](features/search/api/search.ts), marked with `server-only`.
+Content (projects, posts, profile) is read by server components and prerendered; it never goes through the browser. Nothing is fetched in the browser today. When something is again (search, with Spotcraft's), it uses TanStack Query, set up as in bulletproof-react, with one file per request in `features/<name>/api/` (decision 4). The search that used it is in git history.
 
 ## Folders
 
 ```
 app/                  Routes and site chrome (the app layer)
   layout.tsx          Root layout: html, body, fonts, metadata, analytics
-  provider.tsx        TanStack Query client, devtools in development
   _components/        analytics-events, vercel-insights
   (site)/             The portfolio, with header and footer (group omitted from URLs)
     _components/      header, footer, nav-links, mobile-nav
     page.tsx          Home (/): composes profile, projects and blog
     projects/ blog/ Detail pages ([slug])
-  api/search/         Search route: parameters, then features/search
   teaser/             Pre-launch page, shown at / in production
   robots.ts sitemap.ts
 features/
   profile/            Hero, services, experience, process, contact actions; their copy and getters
   projects/           Projects section and project cards
   blog/               Blog section and a post's table of contents
-  search/             Search dialog and the search itself, through Spotcraft
 components/
   ui/                 shadcn/ui components (add more with `pnpm dlx shadcn@latest add`, run in apps/website)
   layouts/            section, detail-page, prose
@@ -180,10 +167,7 @@ config/
   content-types.ts    The content types: label, route, schema, sort order
 lib/
   content/            Reading from Spotcraft, schemas, publish rule, getters
-  cms.ts              The old Spotcraft's client, for search (server-only)
   analytics/          Tracking attributes for Vercel Analytics
-  react-query.ts      Query defaults and helper types
-  api-client.ts       Fetch for the site's own API routes
 types/                Shared types
 proxy.ts              The teaser in production, the full site anywhere else
 ```

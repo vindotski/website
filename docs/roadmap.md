@@ -57,7 +57,7 @@ Done before the site reads from api.vin.ski, so that step can be checked in the 
 - [x] Removed: the webhook route (`app/api/spotcraft`), the remote image pattern and `SPOTCRAFT_WEBHOOK_SECRET`. `@spotcraft/client` and `SPOTCRAFT_API_TOKEN` go in step 4, with search.
 
 ### Step 4: No search
-- [ ] Removed: `features/search`, `/api/search`, the header's search button and ⌘K, and the `search` and `search_select` events; with them `lib/cms.ts`, `@spotcraft/client`, `SPOTCRAFT_URL` and `SPOTCRAFT_API_TOKEN`.
+- [x] Removed: `features/search`, `/api/search`, the header's search button and ⌘K, and the `search` and `search_select` events; with them `lib/cms.ts`, `@spotcraft/client`, `SPOTCRAFT_URL` and `SPOTCRAFT_API_TOKEN`. TanStack Query, `cmdk` and the shadcn `command`, `dialog`, `input-group` and `input` components went too, since only search used them.
 
 ### Step 5: The old Spotcraft removed
 - [ ] `apps/dashboard`, `packages/spotcraft-client`, the CI content fixture (`.github/ci/`), and the scripts that ran them (`dashboard`, `db:*`, `cms:*`, `search:sync`).
