@@ -1,0 +1,22 @@
+# Projects (adds to the root's schema): work in work/, side projects in play/. The folder is the
+# category, so there's no category field.
+type: object
+required: [summary, kind, stack, image]
+properties:
+  summary:
+    type: string
+    minLength: 1
+    description: One line, on the card.
+  kind: { enum: [Frontend, Fullstack, Product] }
+  stack:
+    type: array
+    minItems: 1
+    items: { type: string, minLength: 1 }
+  image:
+    description: The cover. `src` is a site path, such as /images/projects/huddleos.svg.
+    type: object
+    required: [src, alt]
+    additionalProperties: false
+    properties:
+      src: { type: string, pattern: "^/images/" }
+      alt: { type: string, minLength: 1 }

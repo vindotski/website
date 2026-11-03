@@ -1,0 +1,39 @@
+# Work projects (adds to projects/_schema.yaml). The body's ## sections are Context, My role and
+# Decisions, each decision with the options rejected and why (docs/parity.md).
+type: object
+required: [company, role, years, impact]
+properties:
+  company: { type: string, minLength: 1 }
+  role:
+    type: string
+    minLength: 1
+    description: The job title, on the project page; `kind` is the kind of work, on the card.
+  years:
+    type: object
+    required: [start]
+    additionalProperties: false
+    properties:
+      start: { type: integer }
+      end: { type: integer, description: Left out while ongoing. }
+  impact:
+    type: string
+    minLength: 1
+    description: The one-line result, on the card.
+  productUrl: { type: string, format: uri }
+  team:
+    type: string
+    description: Who else was on it, in one line, such as "PM, two engineers, a designer".
+  reach:
+    type: string
+    description: The scale, in one line, such as "~50k users".
+  results:
+    description: What changed. `measured` is false for a projected or estimated result.
+    type: array
+    items:
+      type: object
+      required: [label, value, measured]
+      additionalProperties: false
+      properties:
+        label: { type: string, minLength: 1 }
+        value: { type: string, minLength: 1 }
+        measured: { type: boolean }

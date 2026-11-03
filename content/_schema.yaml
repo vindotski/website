@@ -1,0 +1,24 @@
+# Every document on vin.ski: posts and projects, imported into the `vindotski` project on
+# api.vin.ski (docs/roadmap.md, the demo's step 1). One Markdown file per document, named by its
+# slug. The site's Zod schemas (apps/website/lib/content/schemas.ts) describe the same fields.
+type: object
+required: [title, tags, tldr]
+properties:
+  title: { type: string, minLength: 1 }
+  date:
+    type: string
+    format: date
+    description: The publish date. None means a draft, a future one means scheduled.
+  tags:
+    description: Without "#".
+    type: array
+    items: { type: string, minLength: 1 }
+  tldr:
+    type: string
+    minLength: 1
+    description: One or two sentences, the meta description.
+  order:
+    type: integer
+    description: Display order where items aren't sorted by date; lowest first.
+  repoUrl: { type: string, format: uri }
+  demoUrl: { type: string, format: uri }

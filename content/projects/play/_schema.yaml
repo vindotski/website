@@ -1,0 +1,7 @@
+# Side projects (adds to projects/_schema.yaml), each with a demo. The body's ## sections are
+# Why I built it, Architecture (with its diagram), Key decisions and What I'd do next.
+type: object
+required: [year, status, demoUrl]
+properties:
+  year: { type: integer }
+  status: { enum: [Live, In progress, Archived] }

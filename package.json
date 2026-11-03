@@ -7,6 +7,7 @@
     "build": "pnpm --filter website build",
     "start": "pnpm --filter website start",
     "lint": "pnpm --filter website lint",
+    "content:check": "node --conditions=source ../spotcraft-main/packages/spotcraft/src/index.ts check content",
     "db:start": "pnpm --filter dashboard db:start",
     "db:migrate": "pnpm --filter dashboard db:migrate",
     "search:sync": "pnpm --filter dashboard search:sync --site vinski",
