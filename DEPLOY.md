@@ -8,10 +8,10 @@ In the project's settings:
 
 - **Build and Deployment → Root Directory:** `apps/website`, with **Include files outside the root directory in the Build Step** on, since the lockfile and pnpm settings are at the repository root.
 - **Build and Deployment → Framework Preset:** Next.js, with no **Build Command**, **Output Directory** or **Install Command** overrides. Vercel installs with the pnpm version in the root `packageManager`.
-- **Build and Deployment → Ignored Build Step:** "Only build production", so pushes to `dev` don't deploy. Pull requests still get previews.
+- **Build and Deployment → Ignored Build Step:** "Only build production", so pushes to `dev` and pull requests don't deploy. To get a preview, turn this off for a while.
 - **Node.js Version:** 26.x (also pinned in `apps/website/package.json`).
 - **Environment variables:** none are needed. `SPOTCRAFT_API_URL` defaults to `https://api.vin.ski`; set it only to read from another Spotcraft.
-- **Domains:** `www.vin.ski` as the main domain, and `vin.ski` redirecting to it with a 301.
+- **Domains:** `www.vin.ski` as the main domain, and `vin.ski` redirecting to it (Vercel answers with a permanent 308).
 - **Deployment Protection → Vercel Authentication,** on preview deployments. Previews show the full site, and until launch only the teaser is public.
 - **Analytics** and **Speed Insights:** turned on, so the site's reports have somewhere to go.
 

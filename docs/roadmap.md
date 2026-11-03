@@ -66,13 +66,13 @@ Done before the site reads from api.vin.ski, so that step can be checked in the 
 - [x] Docs and repository files: the READMEs, `LICENSE`, `.gitattributes`, `.gitignore`, `CONTENT_TODO.md`, the templates, `CONTRIBUTING.md` and `SECURITY.md`, and `DEPLOY.md` rewritten for one Vercel project, then reviewed with `writing-guidelines` (15). `THIRD_PARTY_NOTICES.md` needed no change.
 
 ### Step 6: Deploy
-- [ ] Vercel: the old variables removed (`SPOTCRAFT_URL`, `SPOTCRAFT_API_TOKEN`, `SPOTCRAFT_WEBHOOK_SECRET`), then deployed. `SPOTCRAFT_API_URL` defaults to `https://api.vin.ski`.
-- [ ] The old stack taken down: the Spotcraft Vercel project and `cms.vin.ski`, Neon, R2, Resend and Turnstile.
+- [x] Vercel: the old variables removed (`SPOTCRAFT_URL`, `SPOTCRAFT_API_TOKEN`, `SPOTCRAFT_WEBHOOK_SECRET`), then deployed. `SPOTCRAFT_API_URL` defaults to `https://api.vin.ski`.
+- [x] The old stack taken down: the Spotcraft Vercel project and `cms.vin.ski`, Neon, R2, Resend and Turnstile.
 
 ### Done when
-- [ ] https://www.vin.ski serves the teaser, and a preview deployment serves the full site from api.vin.ski.
-- [ ] A document edited and published in Spotcraft's dashboard against api.vin.ski shows on a preview within 5 minutes. Then `pnpm content:export` brings the edit back into git.
-- [ ] CI is green.
+- [x] https://www.vin.ski serves the teaser, and a preview deployment serves the full site from api.vin.ski.
+- [x] A document edited and published in Spotcraft's dashboard against api.vin.ski shows within 5 minutes, without a rebuild (checked on a local production build, since previews are off). Then `pnpm content:export` brings the edit back into git, and nothing else changes.
+- [x] CI is green.
 
 ### Later, for the integration
 - Sign-in and the admin toolbar, on Spotcraft's accounts (its stage 3).

@@ -11,7 +11,7 @@ Until launch, production shows a teaser at `/`, and every other page answers 404
 | Domain | What it is |
 | --- | --- |
 | `www.vin.ski` | The site, on Vercel. The canonical address (`siteUrl` in [`config/site.ts`](apps/website/config/site.ts)) |
-| `vin.ski` | Redirects (301) to `www.vin.ski` |
+| `vin.ski` | Redirects (308, permanent) to `www.vin.ski` |
 | `api.vin.ski` | Spotcraft's API, where the site reads its content. Not part of this repository |
 
 ## Requirements

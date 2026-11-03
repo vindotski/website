@@ -1,5 +1,5 @@
 ---
-title: HuddleOS
+title: HuddleOS 123
 date: 2026-10-30
 tags:
   - vue
