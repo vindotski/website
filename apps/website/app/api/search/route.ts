@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { CONTENT_TYPES, isContentType } from "@/config/content-types";
-import { currentUser } from "@/features/auth/utils/current-user";
 import {
   defaultLimit,
   maxLimit,
@@ -15,19 +14,14 @@ import {
 // `type` is optional: one content type, or all. Returns { results: [{ url,
 // title, heading, type, snippet, score }] }, best match first, one per page
 // section. The search itself is in features/search; this checks access and
-// parameters
+// parameters. Until launch, production's proxy answers 404 here, as on every
+// page but /
 
 function badRequest(error: string) {
   return NextResponse.json({ error }, { status: 400 });
 }
 
 export async function GET(request: NextRequest) {
-  // Until launch, search is for signed-in users only, like every page but /.
-  // The proxy already hides it; this keeps it closed if the proxy changes
-  if (!(await currentUser())) {
-    return NextResponse.json({ error: "Sign in to search" }, { status: 401 });
-  }
-
   const params = request.nextUrl.searchParams;
   const query = params.get("q")?.trim() ?? "";
   if (query.length < 2 || query.length > maxQueryLength) {

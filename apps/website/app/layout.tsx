@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { isProduction, siteUrl } from "@/config/site";
-import { sessionCookie } from "@/lib/signed-in-cookie";
-import AdminBarLoader from "./_components/admin-bar-loader";
 import AnalyticsEvents from "./_components/analytics-events";
 import VercelInsights from "./_components/vercel-insights";
 import AppProvider from "./provider";
@@ -34,32 +32,17 @@ export const metadata: Metadata = {
     : { index: false, follow: false },
 };
 
-// Runs before the first paint, so a signed-in page lays out with room for the
-// admin toolbar from the start (see globals.css)
-const markSignedIn = `if (${sessionCookie}.test(document.cookie)) document.documentElement.setAttribute("data-signed-in", "")`;
-
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // globals.css scrolls smoothly for in-page links; the attribute has Next
-    // jump instantly on page changes instead of animating to the top.
-    // data-signed-in is added before React hydrates, hence the warning off
+    // jump instantly on page changes instead of animating to the top
     <html
       lang="en"
       className={`${geist.variable} ${geistMono.variable}`}
       data-scroll-behavior="smooth"
-      suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: markSignedIn }} />
-      </head>
       <body>
-        <AppProvider>
-          {children}
-          {/* Reads the URL, like AnalyticsEvents */}
-          <Suspense fallback={null}>
-            <AdminBarLoader />
-          </Suspense>
-        </AppProvider>
+        <AppProvider>{children}</AppProvider>
         <VercelInsights />
         {/* Reads the URL, which waits on pages with dynamic params */}
         <Suspense fallback={null}>

@@ -53,15 +53,13 @@
 
 :root {
   /* Layout. --header-height is the sticky header's height, including its
-     border. --admin-bar-height is the admin toolbar's, 0 for guests.
-     --top-chrome is both together, the part of the screen they cover: the
+     border. --top-chrome is the part of the screen fixed at the top: the
      hero fills the screen below it, and jumped-to headings stop just under
-     it. The section menu adds the two up in JS */
+     it */
   --content-width: 1080px;
   --gutter: 16px;
   --header-height: 52px;
-  --admin-bar-height: 0px;
-  --top-chrome: calc(var(--admin-bar-height) + var(--header-height));
+  --top-chrome: var(--header-height);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -205,25 +203,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-}
-
-/* Signed in: room for the admin toolbar, set by the script in the root
-   layout before the first paint. The strip stands in for the toolbar until
-   it loads, in its colour, so nothing moves when it does. Outside @layer
-   base, where :root's 0px above would win */
-html[data-signed-in] {
-  --admin-bar-height: 32px;
-}
-html[data-signed-in] body {
-  padding-top: var(--admin-bar-height);
-}
-html[data-signed-in] body::before {
-  content: "";
-  position: fixed;
-  inset: 0 0 auto;
-  z-index: 20;
-  height: var(--admin-bar-height);
-  background: oklch(0.145 0 0);
 }
 
 @layer base {

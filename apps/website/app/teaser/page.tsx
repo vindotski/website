@@ -1,16 +1,15 @@
 import Image from "next/image";
-import Link from "next/link";
 import portrait from "@/public/images/portrait-teaser.png";
 import ButtonLink from "@/components/button-link";
 import { MailIcon } from "@/components/contact-icons";
 import SocialIcon from "@/components/social-icon";
 
-// Shown by the auth guard at / until launch. A copy of the site's hero, made
-// to stand alone: no header to carry the name, no footer to scroll to, and
-// nothing below it to see. Indexable, so it has real text for search engines.
-// The text, links and portrait are hardcoded on purpose, so the public page
-// stays fixed while the site's data and images change. The layout follows the
-// Hero's: see its comments for the variants
+// Shown by proxy.ts at / in production until launch. A copy of the site's
+// hero, made to stand alone: no header to carry the name, no footer to scroll
+// to, and nothing below it to see. Indexable, so it has real text for search
+// engines. The text, links and portrait are hardcoded on purpose, so the
+// public page stays fixed while the site's data and images change. The layout
+// follows the Hero's: see its comments for the variants
 export default function TeaserPage() {
   return (
     // The dark theme, filling the screen
@@ -19,15 +18,6 @@ export default function TeaserPage() {
       // Shares "/" with the home page; events say which one
       data-track-page="teaser"
     >
-      {/* For me, so it stays quiet: top right, where nothing else sits at
-          any width. Nofollow, since the login page is noindex */}
-      <Link
-        href="/auth/login"
-        rel="nofollow"
-        className="absolute top-3 right-[calc(var(--gutter)-8px)] z-10 rounded-md px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        Log in
-      </Link>
       <section
         // svh is the height with the phone toolbars showing, so the hero
         // never hides under them or jumps on scroll

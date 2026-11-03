@@ -10,7 +10,7 @@ import SearchDialog from "@/features/search/components/search-dialog";
 // and Get in touch move into a sheet behind ☰
 export default function Header() {
   return (
-    <header className="sticky top-(--admin-bar-height) z-10 border-b bg-background">
+    <header className="sticky top-0 z-10 border-b bg-background">
       <div className="mx-auto flex h-[calc(var(--header-height)-1px)] max-w-content items-center gap-4 px-gutter">
         <ScrollLink href="/" className="flex-none font-semibold">
           Ivan Vinski
