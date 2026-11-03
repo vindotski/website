@@ -4,9 +4,8 @@ import { ChatIcon } from "@/components/contact-icons";
 import MobileNav from "./mobile-nav";
 import NavLinks, { NavLinksFallback } from "./nav-links";
 import ScrollLink from "@/components/scroll-link";
-import SearchDialog from "@/features/search/components/search-dialog";
 
-// The name, the section links, search and Get in touch. Below md the links
+// The name, the section links and Get in touch. Below md the links
 // and Get in touch move into a sheet behind ☰
 export default function Header() {
   return (
@@ -23,7 +22,6 @@ export default function Header() {
           </Suspense>
         </nav>
         <div className="ml-auto flex items-center gap-2">
-          <SearchDialog />
           <span className="hidden md:block">
             {/* Leads to the contact prompt in the footer, on any page */}
             <ButtonLink href="#contact" icon={<ChatIcon />} track={{ event: "contact_click", method: "contact_open", location: "header" }}>

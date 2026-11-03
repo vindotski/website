@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { isProduction, siteUrl } from "@/config/site";
 import AnalyticsEvents from "./_components/analytics-events";
 import VercelInsights from "./_components/vercel-insights";
-import AppProvider from "./provider";
 import "./globals.css";
 
 // Self-hosted at build time; exposed as CSS variables used in globals.css
@@ -42,7 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-scroll-behavior="smooth"
     >
       <body>
-        <AppProvider>{children}</AppProvider>
+        {children}
         <VercelInsights />
         {/* Reads the URL, which waits on pages with dynamic params */}
         <Suspense fallback={null}>
