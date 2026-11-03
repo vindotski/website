@@ -1,9 +1,8 @@
 Copyright (c) 2026-present Ivan Vinski. All rights reserved.
 
-This repository holds vin.ski, Ivan Vinski's personal site, and the tools
-that run it. Unless a part below says otherwise, everything in it (the site,
-its content, the documentation and the configuration) is covered by this
-notice. The site and its content are also covered, in more detail, by
+This repository holds vin.ski, Ivan Vinski's personal site, and its content.
+Unless a part below says otherwise, everything in it (the site, its content,
+the documentation and the configuration) is covered by this notice. The site and its content are also covered, in more detail, by
 apps/website/LICENSE.
 
 The source code is public so that it can be read. That grants no license.
@@ -13,13 +12,6 @@ allows it.
 
 As GitHub's Terms of Service provide, GitHub users may view and fork this
 repository on GitHub; that grants no other rights.
-
-Parts under their own licenses:
-
-- apps/dashboard/: Spotcraft, GNU Affero General Public License v3.0 or any
-  later version. See apps/dashboard/LICENSE.
-- packages/spotcraft-client/: @spotcraft/client, MIT License. See
-  packages/spotcraft-client/LICENSE.
 
 Third-party code copied into this repository is listed, with its licenses,
 in THIRD_PARTY_NOTICES.md. Third-party packages installed as dependencies are

@@ -1,13 +1,13 @@
 # Content TODOs
 
-Placeholders left in the projects. They were `# TODO` comments in the old MDX
-files' front matter, which Spotcraft dropped on import, so they live here until
-each is filled in the dashboard. Field names are Spotcraft's.
-Tick one off when it's done, and delete this file when the list is empty.
+Placeholders left in the projects, in `content/projects/`. Fill each in the
+document's Markdown file, then `pnpm content:check` and `pnpm content:import`
+(the vinski-content skill has the order). Tick one off when it's done, and
+delete this file when the list is empty.
 
 ## Every project
 
-- [ ] `published_at`: every project has the placeholder `2026-10-30`
+- [ ] `date`: every project has the placeholder `2026-10-30`
 
 ## HuddleOS (work)
 
@@ -36,8 +36,8 @@ Tick one off when it's done, and delete this file when the list is empty.
 
 - [ ] `tldr`
 - [ ] `year`
-- [ ] `demo_url`: placeholder `https://example.com/sokoban`
-- [ ] `repo_url`: placeholder `https://github.com/example/sokoban`
+- [ ] `demoUrl`: placeholder `https://example.com/sokoban`
+- [ ] `repoUrl`: placeholder `https://github.com/example/sokoban`
 - [ ] `image`: the real cover
 - [ ] Body: Why I built it, Architecture and its diagram, Key decisions, What I'd do next
 
@@ -49,8 +49,8 @@ Tick one off when it's done, and delete this file when the list is empty.
 - [ ] `stack`
 - [ ] `year`
 - [ ] `stage`
-- [ ] `demo_url`: placeholder `https://example.com/spotcraft`
-- [ ] `repo_url`: placeholder `https://github.com/example/spotcraft`
+- [ ] `demoUrl`: placeholder `https://example.com/spotcraft`
+- [ ] `repoUrl`: placeholder `https://github.com/example/spotcraft`
 - [ ] `image`: the real cover
 - [ ] Body: Why I built it, Architecture and its diagram, Key decisions, What I'd do next
 
@@ -60,7 +60,7 @@ Tick one off when it's done, and delete this file when the list is empty.
 - [ ] `summary`
 - [ ] `year`
 - [ ] `stage`
-- [ ] `demo_url`: placeholder `https://example.com/strongfives`
+- [ ] `demoUrl`: placeholder `https://example.com/strongfives`
 - [ ] `image`: the real cover
 - [ ] Body: Why I built it, Architecture and its diagram, Key decisions, What I'd do next
 

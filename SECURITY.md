@@ -16,10 +16,8 @@ Only what runs at [www.vin.ski](https://www.vin.ski), built from the `main` bran
 
 Especially relevant, given what the site does:
 
-- the sign-in gate in `apps/website/proxy.ts`: reaching pages a guest shouldn't see before launch, or faking the signed-in user (the `x-vinski-user` header)
-- drafts or scheduled content visible to guests
-- the signed-in routes: `/api/me` and `/api/admin/content-status`
-- Spotcraft's webhook at `/api/spotcraft`: anything that gets past its signature check
-- secrets reaching the browser
+- the teaser gate in `apps/website/proxy.ts`: reaching any page but the teaser on www.vin.ski before launch
+- drafts or scheduled content shown on www.vin.ski
+- secrets reaching the browser or the repository
 
-**Spotcraft itself** (`apps/dashboard` and `packages/spotcraft-client`, at `cms.vin.ski`) is reported through [Spotcraft's security policy](https://github.com/vindotski/spotcraft/security/advisories/new). Issues in Next.js, Vercel or other dependencies themselves should be reported to those projects.
+**Spotcraft** (the API at api.vin.ski) is reported the same way, by email to ivan@vin.ski. Issues in Next.js, Vercel or other dependencies themselves should be reported to those projects.

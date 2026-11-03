@@ -117,12 +117,8 @@ Fixes are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) for what to send where
 
 ## License & Trademarks
 
-The repository is Copyright (c) 2026-present Ivan Vinski, all rights reserved, except the parts listed below ([`LICENSE`](LICENSE)). The site (`apps/website`) and **all of vin.ski's content** (its text, posts, project write-ups, images and portraits, including what's stored in Spotcraft) are Copyright (c) 2026-present Ivan Vinski. **All rights reserved** ([`apps/website/LICENSE`](apps/website/LICENSE)). The source is public so it can be read, not reused.
+The repository is Copyright (c) 2026-present Ivan Vinski, all rights reserved ([`LICENSE`](LICENSE)). The site (`apps/website`) and **all of vin.ski's content** (its text, posts, project write-ups, images and portraits, in `content/` and in Spotcraft) are Copyright (c) 2026-present Ivan Vinski. **All rights reserved** ([`apps/website/LICENSE`](apps/website/LICENSE)). The source is public so it can be read, not reused.
 
-The other parts keep their own licenses:
-
-- **Spotcraft** (`apps/dashboard`) is open source under the [GNU Affero General Public License Version 3 (AGPLv3)](apps/dashboard/LICENSE) or any later version. It's a separate program the site talks to over HTTP, so its license doesn't extend to the site. Its **Source code** link points at this repository, as the AGPL asks of a copy that people use over a network.
-- **`@spotcraft/client`** (`packages/spotcraft-client`) is [MIT licensed](packages/spotcraft-client/LICENSE), so the site can include it.
-- **Third-party code** copied into the repo (shadcn/ui components, Lucide's icon shapes, agent skills) keeps its own licenses: see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+**Third-party code** copied into the repo (shadcn/ui components, Lucide's icon shapes, agent skills) keeps its own licenses: see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Spotcraft, which serves the content from api.vin.ski, is a separate program the site reads over HTTP; none of it is in this repository.
 
 The vin.ski and Spotcraft names and logos are trademarks of Ivan Vinski.

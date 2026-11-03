@@ -3,9 +3,6 @@ contact_links:
   - name: Report a security vulnerability
     url: https://github.com/vindotski/portfolio/security/advisories/new
     about: Please report security issues privately, never in a public issue.
-  - name: Spotcraft (the CMS behind vin.ski)
-    url: https://github.com/vindotski/spotcraft/issues/new/choose
-    about: Bugs and ideas for the dashboard at cms.vin.ski go to Spotcraft's own repository.
   - name: Get in touch
     url: mailto:ivan@vin.ski
     about: Anything else, by email.

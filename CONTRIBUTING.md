@@ -10,22 +10,21 @@ vin.ski is Ivan Vinski's personal site. Its source is public so people can read 
 
 - **Welcome in `apps/website`:** bug fixes, accessibility, performance, typos and broken links. Send a pull request.
 - **Open an issue first** for anything about design, copy, structure or content. Those are decisions about Ivan's site, and he makes them; an issue saves you work on something that won't be merged.
-- **Spotcraft** (`apps/dashboard` and `packages/spotcraft-client`): not here. Both are copies of [Spotcraft](https://github.com/vindotski/spotcraft)'s `main` branch, so a change here would be overwritten by the next copy. Contribute to Spotcraft itself, under its AGPL terms, where you keep your copyright.
 
 ## Setup
 
-See [Getting started](README.md#getting-started): Node 26, pnpm 12 and Docker, then the local Spotcraft and the site. How the site is organized is in [`apps/website/README.md`](apps/website/README.md).
+See [Getting started](README.md#getting-started): Node 26 and pnpm 12, then `pnpm dev`. The site reads its content from api.vin.ski, so nothing else needs to run. How the site is organized is in [`apps/website/README.md`](apps/website/README.md).
 
 ## Before opening a pull request
 
 ```bash
 pnpm lint
-pnpm build     # needs the local Spotcraft running (pnpm dashboard)
+pnpm build
 ```
 
 For visual changes, add before and after screenshots, on a phone and a wide screen.
 
-CI runs the same checks on every pull request (`website`: lint and build, against sample content; `dashboard`: Spotcraft's typecheck and tests), and they must pass.
+CI runs the same checks on every pull request (the `website` job), and they must pass. On pull requests from forks it skips `content:check` and `docs:check`, which need access to Spotcraft's private repository; they run once the change is merged.
 
 ## Guidelines
 
