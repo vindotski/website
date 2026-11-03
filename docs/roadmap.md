@@ -30,18 +30,18 @@ The Spotcraft in this repository today (`apps/dashboard`, `packages/spotcraft-cl
 
 ### Step 1: Content in Spotcraft's format
 The schemas include the candidates accepted in [parity.md](parity.md#what-this-means-for-step-1).
-- [ ] `content/` with a `_schema.yaml` per folder (Spotcraft's decision 8: JSON Schema as YAML, unknown keys are errors, a property declared once from the root down):
-  - the root: `title` and `tldr` (required), `date`, `tags`, `order`, `repoUrl` and `demoUrl`;
+- [x] `content/` with a `_schema.yaml` per folder (Spotcraft's decision 8: JSON Schema as YAML, unknown keys are errors, a property declared once from the root down):
+  - the root: `title`, `tags` and `tldr` (required, as the site's schemas require them), `date`, `order`, `repoUrl` and `demoUrl`;
   - `projects/`: `summary`, `kind`, `stack` and `image`;
   - `projects/work/`: `company`, `role`, `years`, `impact` and `productUrl`, and the optional `team` and `reach` (one line each) and `results` (a list of `label`, `value` and `measured`, a boolean, all three required in each item);
   - `projects/play/`: `year` and `status`, with `demoUrl` required.
-- [ ] One Markdown file per document, named by its slug: `posts/<slug>.md`, `projects/work/<slug>.md` and `projects/play/<slug>.md`, converted from old Spotcraft's export. The keys are the site's own (camelCase, `status`), so the site's mapping layer goes. A document without a `date` is a draft.
-- [ ] Every work project's body has a "Decisions" section: each decision with the options rejected and why. It's a writing convention, so the schema doesn't check it.
-- [ ] Images in `apps/website/public/images/projects/`, referred to by their site path.
-- [ ] `content:check`, `content:import` and `content:export` scripts running the CLI from the step 0 worktree, as Sokobanko's do, with the worktree's setup in the README.
-- [ ] `docs:check`: `docs/` checked as Spotcraft content (its `_schema.yaml` files), plus the decision-record rule: every `NNNN-*.md` has `number`, `status` and `date`, and its number matches the file name. Spotcraft's `bin/check-docs.ts` is the model.
-- [ ] `.claude/skills/vinski-content`, a skill of our own (15): the content folders and their schemas, Spotcraft's rules (unknown keys are errors, a property declared once), and `content:check`, `content:import` and `content:export`, with the export-first rule.
-- [ ] Imported into `vindotski` on api.vin.ski (`SPOTCRAFT_API_URL` and `SPOTCRAFT_ADMIN_SECRET` set).
+- [x] One Markdown file per document, named by its slug: `posts/<slug>.md`, `projects/work/<slug>.md` and `projects/play/<slug>.md`, converted from old Spotcraft's export. The keys are the site's own (camelCase, `status`), so the site's mapping layer goes. A document without a `date` is a draft.
+- [x] The convention that every work project's body has a "Decisions" section: each decision with the options rejected and why. The schema can't check it, so `work/_schema.yaml` and the `vinski-content` skill state it, and `CONTENT_TODO.md` tracks writing the sections.
+- [x] Images in `apps/website/public/images/projects/`, referred to by their site path.
+- [x] `content:check`, `content:import` and `content:export` scripts running the CLI from the step 0 worktree, as Sokobanko's do, with the worktree's setup in the README.
+- [x] `docs:check`: `docs/` checked as Spotcraft content (its `_schema.yaml` files), plus the decision-record rule: every `NNNN-*.md` has `number`, `status` and `date`, and its number matches the file name. It runs Spotcraft's `bin/check-docs.ts` from the worktree, pointed at `docs/`.
+- [x] `.claude/skills/vinski-content`, a skill of our own (15): the content folders and their schemas, Spotcraft's rules (unknown keys are errors, a property declared once), and `content:check`, `content:import` and `content:export`, with the export-first rule.
+- [x] Imported into `vindotski` on api.vin.ski (`SPOTCRAFT_API_URL` and `SPOTCRAFT_ADMIN_SECRET` set).
 
 ### Step 2: The site reads from api.vin.ski
 - [ ] `lib/cms.ts`: a small `fetch` client for `SPOTCRAFT_URL` (default `https://api.vin.ski`) and the `vindotski` project. It lists a folder (`/v1/projects/vindotski/content/{folder}/`) and gets one document (`/content/{path}`: `data`, `body` and `headings`).
