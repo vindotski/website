@@ -22,6 +22,11 @@ The Spotcraft in this repository today (`apps/dashboard`, `packages/spotcraft-cl
 - **No search.** It comes back with Spotcraft's search (its stage 4) (14).
 - **Images live in the site** (`apps/website/public/`). Spotcraft stores only Markdown and schemas until its stage 3 (12).
 - **The site reads with `fetch`.** `@spotcraft/sdk` isn't published yet (12).
+- **Each step is checked in the running app** with `next-dev-loop` (15): the pages it changes (home, a project, a post, the teaser) render, and the console and Next's errors are clean. Lint and the build still run too.
+
+### Step 0: Tools
+- [ ] `agent-browser` 0.31.1 or later (`npm i -g agent-browser@latest`), for `next-dev-loop`. That skill also needs Next.js 16.3 or later (the site has 16.4.3) and Turbopack in `next dev`, which is Next 16's default.
+- [ ] A `../spotcraft-main` worktree on Spotcraft's `main` (`git -C ../spotcraft worktree add ../spotcraft-main main`), with `pnpm install` run in it. Steps 1 and 5 run Spotcraft's CLI from it, and it's only ever updated with `git pull` on `main`.
 
 ### Step 1: Content in Spotcraft's format
 The schemas include the candidates accepted in [parity.md](parity.md#what-this-means-for-step-1).
@@ -32,14 +37,15 @@ The schemas include the candidates accepted in [parity.md](parity.md#what-this-m
   - `projects/play/`: `year` and `status`, with `demoUrl` required.
 - [ ] One Markdown file per document, named by its slug: `posts/<slug>.md`, `projects/work/<slug>.md` and `projects/play/<slug>.md`, converted from old Spotcraft's export. The keys are the site's own (camelCase, `status`), so the site's mapping layer goes. A document without a `date` is a draft.
 - [ ] Images in `apps/website/public/images/projects/`, referred to by their site path.
-- [ ] `content:check`, `content:import` and `content:export` scripts running the CLI from a `../spotcraft-main` worktree, as Sokobanko's do, with its setup in the README.
+- [ ] `content:check`, `content:import` and `content:export` scripts running the CLI from the step 0 worktree, as Sokobanko's do, with the worktree's setup in the README.
 - [ ] `docs:check`: `docs/` checked as Spotcraft content (its `_schema.yaml` files), plus the decision-record rule: every `NNNN-*.md` has `number`, `status` and `date`, and its number matches the file name. Spotcraft's `bin/check-docs.ts` is the model.
 - [ ] `.claude/skills/vinski-content`, a skill of our own (15): the content folders and their schemas, Spotcraft's rules (unknown keys are errors, a property declared once), and `content:check`, `content:import` and `content:export`, with the export-first rule.
 - [ ] Imported into `vindotski` on api.vin.ski (`SPOTCRAFT_API_URL` and `SPOTCRAFT_ADMIN_SECRET` set).
 
 ### Step 2: The site reads from api.vin.ski
 - [ ] `lib/cms.ts`: a small `fetch` client for `SPOTCRAFT_URL` (default `https://api.vin.ski`) and the `vindotski` project. It lists a folder (`/v1/projects/vindotski/content/{folder}/`) and gets one document (`/content/{path}`: `data`, `body` and `headings`).
-- [ ] `lib/content/api.ts` validates `data` with the site's schemas as it is, with no key mapping, and caches for 5 minutes. The published filter (`isPublished`) stays.
+- [ ] `lib/content/api.ts` validates `data` with the site's schemas as it is, with no key mapping. The published filter (`isPublished`) stays.
+- [ ] A `content` cache profile in `next.config.ts` for everything read from Spotcraft: `stale` and `revalidate` of 5 minutes, and an `expire` of a week. A published edit shows within 5 minutes, and a quiet site keeps serving its last good content while it refreshes, even when api.vin.ski is down. Not the `minutes` preset: it expires after an hour without visits, and the next visitor would wait on api.vin.ski. An `expire` under 5 minutes would also make the pages dynamic instead of prerendered (`next/dist/docs`, `cacheLife`).
 - [ ] Heading ids from `github-slugger` in the body renderer, matching the API's `headings`.
 - [ ] Removed: the webhook route (`app/api/spotcraft`), the remote image pattern, `@spotcraft/client`, `SPOTCRAFT_API_TOKEN` and `SPOTCRAFT_WEBHOOK_SECRET`.
 
@@ -53,8 +59,9 @@ The schemas include the candidates accepted in [parity.md](parity.md#what-this-m
 
 ### Step 5: The old Spotcraft removed
 - [ ] `apps/dashboard`, `packages/spotcraft-client`, the CI content fixture (`.github/ci/`), and the scripts that ran them (`dashboard`, `db:*`, `cms:*`, `search:sync`).
-- [ ] CI: one `website` job that checks out Spotcraft's `main` next to this repository, runs `content:check` and lint, and builds against api.vin.ski (reads are open, so no secrets).
-- [ ] Docs and repository files: the READMEs, `LICENSE`, `THIRD_PARTY_NOTICES.md`, `.gitattributes`, `.gitignore`, `CONTENT_TODO.md`, and `DEPLOY.md` rewritten for one Vercel project.
+- [ ] CI: one `website` job that checks out Spotcraft's `main` next to this repository and runs `pnpm install` there, then runs `content:check`, `docs:check` and lint, and builds against api.vin.ski (reads are open, so no secrets).
+- [ ] `allowBuilds` in `pnpm-workspace.yaml` pruned to what the remaining packages build (`koffi` came with the old dashboard), checked with `pnpm approve-builds`.
+- [ ] Docs and repository files: the READMEs, `LICENSE`, `THIRD_PARTY_NOTICES.md`, `.gitattributes`, `.gitignore`, `CONTENT_TODO.md`, and `DEPLOY.md` rewritten for one Vercel project, then reviewed with `writing-guidelines` (15).
 
 ### Step 6: Deploy
 - [ ] Vercel: `SPOTCRAFT_URL=https://api.vin.ski`, the old variables removed, then deployed.
@@ -75,5 +82,6 @@ The schemas include the candidates accepted in [parity.md](parity.md#what-this-m
 
 ### Later, agent skills (15)
 - `next-partial-prefetching-optimizer` and `next-bundle-optimizer` (vercel/next.js), for a performance pass before launch.
+- In the same pass, `next-cache-components-optimizer` (installed) adds `@next/playwright` `instant()` tests for home and the project and post pages, bringing Playwright into the repository and CI.
 - `vercel-optimize` (vercel-labs/agent-skills), once there's traffic to measure.
 - `webapp-testing` (anthropics/skills), when the site gets tests.
