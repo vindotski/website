@@ -1,6 +1,6 @@
 # Contributing to vin.ski
 
-vin.ski is Ivan Vinski's personal site. Its source is public so people can read it and learn from it, and fixes are welcome. It isn't open source: the site and its content are all rights reserved (see [License & Trademarks](README.md#license--trademarks)), and the terms below keep it that way.
+vin.ski is Ivan Vinski's personal site. Its source is public so people can read it and learn from it, and fixes are welcome. It isn't open source: the site and its content are all rights reserved (see [License and trademarks](README.md#license-and-trademarks)), and the terms below keep it that way.
 
 - **Bugs and suggestions:** open an [issue](https://github.com/vindotski/portfolio/issues/new/choose).
 - **Security problems:** never in a public issue. See [SECURITY.md](SECURITY.md).

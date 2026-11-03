@@ -174,4 +174,4 @@ proxy.ts              The teaser in production, the full site anywhere else
 
 ## License
 
-Copyright (c) 2026-present Ivan Vinski. All rights reserved: the code and all of vin.ski's content. See [`LICENSE`](LICENSE) for the details and the exceptions (shadcn/ui's components in `components/ui` are MIT), and [License & Trademarks](../../README.md#license--trademarks) for the whole repository. Sending a change? See [CONTRIBUTING.md](../../CONTRIBUTING.md) first.
+Copyright (c) 2026-present Ivan Vinski. All rights reserved: the code and all of vin.ski's content. See [`LICENSE`](LICENSE) for the details and the exceptions (shadcn/ui's components in `components/ui` are MIT), and [License and trademarks](../../README.md#license-and-trademarks) for the whole repository. Sending a change? See [CONTRIBUTING.md](../../CONTRIBUTING.md) first.

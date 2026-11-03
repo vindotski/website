@@ -60,10 +60,10 @@ Done before the site reads from api.vin.ski, so that step can be checked in the 
 - [x] Removed: `features/search`, `/api/search`, the header's search button and ⌘K, and the `search` and `search_select` events; with them `lib/cms.ts`, `@spotcraft/client`, `SPOTCRAFT_URL` and `SPOTCRAFT_API_TOKEN`. TanStack Query, `cmdk` and the shadcn `command`, `dialog`, `input-group` and `input` components went too, since only search used them.
 
 ### Step 5: The old Spotcraft removed
-- [ ] `apps/dashboard`, `packages/spotcraft-client`, the CI content fixture (`.github/ci/`), and the scripts that ran them (`dashboard`, `db:*`, `cms:*`, `search:sync`).
-- [ ] CI: one `website` job that checks out Spotcraft's `main` next to this repository and runs `pnpm install` there, then runs `content:check`, `docs:check` and lint, and builds against api.vin.ski (reads are open, so no secrets).
-- [ ] `allowBuilds` in `pnpm-workspace.yaml` pruned to what the remaining packages build (`koffi` came with the old dashboard), checked with `pnpm approve-builds`.
-- [ ] Docs and repository files: the READMEs, `LICENSE`, `THIRD_PARTY_NOTICES.md`, `.gitattributes`, `.gitignore`, `CONTENT_TODO.md`, and `DEPLOY.md` rewritten for one Vercel project, then reviewed with `writing-guidelines` (15).
+- [x] `apps/dashboard`, `packages/spotcraft-client`, the CI content fixture (`.github/ci/`), and the scripts that ran them (`dashboard`, `db:*`, `cms:*`, `search:sync`).
+- [x] CI: one `website` job that checks out Spotcraft's `main` next to this repository and runs `pnpm install` there, then runs `content:check`, `docs:check` and lint, and builds against api.vin.ski. Spotcraft's repository is private, so the checkout uses `SPOTCRAFT_READ_TOKEN` (a read-only token, given to that step alone); pull requests from forks get no secrets and skip the two checks.
+- [x] `allowBuilds` in `pnpm-workspace.yaml` pruned to `lightningcss` and `unrs-resolver`: `koffi` and `esbuild` came with the old dashboard, and neither is in the lockfile now.
+- [x] Docs and repository files: the READMEs, `LICENSE`, `.gitattributes`, `.gitignore`, `CONTENT_TODO.md`, the templates, `CONTRIBUTING.md` and `SECURITY.md`, and `DEPLOY.md` rewritten for one Vercel project, then reviewed with `writing-guidelines` (15). `THIRD_PARTY_NOTICES.md` needed no change.
 
 ### Step 6: Deploy
 - [ ] Vercel: the old variables removed (`SPOTCRAFT_URL`, `SPOTCRAFT_API_TOKEN`, `SPOTCRAFT_WEBHOOK_SECRET`), then deployed. `SPOTCRAFT_API_URL` defaults to `https://api.vin.ski`.
