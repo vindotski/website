@@ -34,6 +34,7 @@ The schemas include the candidates accepted in [parity.md](parity.md#what-this-m
 - [ ] Images in `apps/website/public/images/projects/`, referred to by their site path.
 - [ ] `content:check`, `content:import` and `content:export` scripts running the CLI from a `../spotcraft-main` worktree, as Sokobanko's do, with its setup in the README.
 - [ ] `docs:check`: `docs/` checked as Spotcraft content (its `_schema.yaml` files), plus the decision-record rule: every `NNNN-*.md` has `number`, `status` and `date`, and its number matches the file name. Spotcraft's `bin/check-docs.ts` is the model.
+- [ ] `.claude/skills/vinski-content`, a skill of our own (15): the content folders and their schemas, Spotcraft's rules (unknown keys are errors, a property declared once), and `content:check`, `content:import` and `content:export`, with the export-first rule.
 - [ ] Imported into `vindotski` on api.vin.ski (`SPOTCRAFT_API_URL` and `SPOTCRAFT_ADMIN_SECRET` set).
 
 ### Step 2: The site reads from api.vin.ski
@@ -71,3 +72,8 @@ The schemas include the candidates accepted in [parity.md](parity.md#what-this-m
 - A publish webhook instead of the 5-minute cache.
 - `@spotcraft/sdk` instead of `fetch`, once it's published.
 - Drafts on Spotcraft branches (`?ref=`) instead of "no date".
+
+### Later, agent skills (15)
+- `next-partial-prefetching-optimizer` and `next-bundle-optimizer` (vercel/next.js), for a performance pass before launch.
+- `vercel-optimize` (vercel-labs/agent-skills), once there's traffic to measure.
+- `webapp-testing` (anthropics/skills), when the site gets tests.

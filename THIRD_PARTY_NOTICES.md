@@ -86,30 +86,18 @@ SOFTWARE.
 
 ## Agent skills
 
-- **Where:** [`.claude/skills/`](.claude/skills). Their sources are in [`skills-lock.json`](skills-lock.json), and each skill is under its author's terms.
-- **shadcn:** MIT, Copyright (c) 2023 shadcn ([`LICENSE`](.claude/skills/shadcn/LICENSE)), the same text as shadcn/ui's above.
-- **vercel-react-best-practices:** MIT, Copyright (c) 2026 Vercel Engineering ([`LICENSE`](.claude/skills/vercel-react-best-practices/LICENSE))
+- **Where:** [`.claude/skills/`](.claude/skills), installed with the `skills` CLI. Their sources are in [`skills-lock.json`](skills-lock.json); why each is here is [decision 15](docs/decisions/0015-agent-skills.md).
+- **Licenses:** each skill below keeps its own, and its full text is in the skill's folder. Skills not listed are under their authors' terms.
 
-```text
-MIT License
+| Skill | Source | License |
+| --- | --- | --- |
+| `frontend-design` | anthropics/skills | Apache-2.0 ([`LICENSE.txt`](.claude/skills/frontend-design/LICENSE.txt)) |
+| `next-cache-components-optimizer` | vercel/next.js | MIT, Copyright (c) 2025 Vercel, Inc. ([`LICENSE`](.claude/skills/next-cache-components-optimizer/LICENSE)) |
+| `next-dev-loop` | vercel/next.js | MIT, Copyright (c) 2025 Vercel, Inc. ([`LICENSE`](.claude/skills/next-dev-loop/LICENSE)) |
+| `pnpm` | antfu/skills | MIT, Copyright (c) 2025-present Anthony Fu ([`LICENSE`](.claude/skills/pnpm/LICENSE)) |
+| `shadcn` | shadcn/ui | MIT, Copyright (c) 2023 shadcn ([`LICENSE`](.claude/skills/shadcn/LICENSE)), the same text as shadcn/ui's above |
+| `vercel-composition-patterns` | vercel-labs/agent-skills | MIT, Copyright (c) 2026 Vercel, Inc. ([`LICENSE`](.claude/skills/vercel-composition-patterns/LICENSE)) |
+| `vercel-react-best-practices` | vercel-labs/agent-skills | MIT, Copyright (c) 2026 Vercel Engineering ([`LICENSE`](.claude/skills/vercel-react-best-practices/LICENSE)) |
+| `writing-guidelines` | vercel-labs/agent-skills | MIT, Copyright (c) 2026 Vercel, Inc. ([`LICENSE`](.claude/skills/writing-guidelines/LICENSE)) |
 
-Copyright (c) 2026 Vercel Engineering
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+The `pnpm` and Next.js notices are copied from their repositories. vercel-labs/agent-skills states MIT in its README but has no license file, so its skills carry the standard MIT text naming Vercel.
