@@ -1,0 +1,16 @@
+# The decision records (adds to docs/_schema.yaml). Optional here, because the index
+# (README.md) shares this folder: `pnpm docs:check` (from the demo's step 1) requires number,
+# status and date on every NNNN-*.md record, with number matching its file name.
+type: object
+properties:
+  number: { type: integer, minimum: 1 }
+  status:
+    enum: [accepted, superseded]
+    description: Superseded means wholly replaced; a partly replaced record stays accepted and lists superseded_by.
+  implementation:
+    enum: [built, partly-built, designed]
+    description: Left out for a principle with nothing to build.
+  date: { type: string, format: date }
+  supersedes: { type: array, items: { type: integer, minimum: 1 }, uniqueItems: true }
+  superseded_by: { type: array, items: { type: integer, minimum: 1 }, uniqueItems: true }
+  notes: { type: string, description: What the status alone doesn't say. }

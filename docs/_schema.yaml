@@ -1,0 +1,6 @@
+# Every page under docs/: its title, and a one-line summary.
+type: object
+required: [title]
+properties:
+  title: { type: string, minLength: 1 }
+  description: { type: string }

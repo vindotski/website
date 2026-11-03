@@ -5,6 +5,8 @@ description: The demo (vin.ski's content from Spotcraft on api.vin.ski), then wh
 
 # Roadmap
 
+**Numbering:** a bare number in parentheses, like "(12)", is one of this repository's [decision records](decisions/README.md). Spotcraft's are written out as "Spotcraft's decision N", since the two sets of numbers overlap.
+
 **References:** Spotcraft's plan for vin.ski is its roadmap, stage 2, step 14 (`docs/roadmap.md` on Spotcraft's `main`). Sokobanko made the same move first; its roadmap and `SPOTCRAFT_SUGGESTIONS.md` are the pattern followed here. What integrating turns up that Spotcraft could support better goes in [`SPOTCRAFT_SUGGESTIONS.md`](../SPOTCRAFT_SUGGESTIONS.md). The Spotcraft repository isn't changed from here.
 
 ## Demo: vin.ski on Spotcraft
@@ -14,12 +16,12 @@ description: The demo (vin.ski's content from Spotcraft on api.vin.ski), then wh
 The Spotcraft in this repository today (`apps/dashboard`, `packages/spotcraft-client`, copied from Spotcraft's `main` at `cfc4db5`) no longer exists on Spotcraft's `main`, which has moved to the new architecture: a git-like content model, `@spotcraft/core`, the `spotcraft` CLI and the hosted API. This demo moves vin.ski onto it and removes the old copy.
 
 **Decided for the demo:**
-- **The content's source is git.** `content/` in this repository is checked and imported with Spotcraft's CLI, as Sokobanko's levels are. A document edited in the dashboard is exported back and committed.
-- **The site reads at build time and every 5 minutes.** Pages are prerendered from api.vin.ski, and Next's cache reads it again every 5 minutes, so a published edit shows without a deploy. There's no publish webhook yet.
-- **No sign-in.** The new Spotcraft has no accounts until its stage 3. Production shows only the teaser; local development and Vercel previews show the full site, with previews behind Vercel's Deployment Protection.
-- **No search.** It comes back with Spotcraft's search (its stage 4).
-- **Images live in the site** (`apps/website/public/`). Spotcraft stores only Markdown and schemas until its stage 3.
-- **The site reads with `fetch`.** `@spotcraft/sdk` isn't published yet.
+- **The content's source is git.** `content/` in this repository is checked and imported with Spotcraft's CLI, as Sokobanko's levels are. A document edited in the dashboard is exported back and committed (12).
+- **The site reads at build time and every 5 minutes.** Pages are prerendered from api.vin.ski, and Next's cache reads it again every 5 minutes, so a published edit shows without a deploy. There's no publish webhook yet (12).
+- **No sign-in.** The new Spotcraft has no accounts until its stage 3. Production shows only the teaser; local development and Vercel previews show the full site, with previews behind Vercel's Deployment Protection (13).
+- **No search.** It comes back with Spotcraft's search (its stage 4) (14).
+- **Images live in the site** (`apps/website/public/`). Spotcraft stores only Markdown and schemas until its stage 3 (12).
+- **The site reads with `fetch`.** `@spotcraft/sdk` isn't published yet (12).
 
 ### Step 1: Content in Spotcraft's format
 The schemas include the candidates accepted in [parity.md](parity.md#what-this-means-for-step-1).
@@ -31,6 +33,7 @@ The schemas include the candidates accepted in [parity.md](parity.md#what-this-m
 - [ ] One Markdown file per document, named by its slug: `posts/<slug>.md`, `projects/work/<slug>.md` and `projects/play/<slug>.md`, converted from old Spotcraft's export. The keys are the site's own (camelCase, `status`), so the site's mapping layer goes. A document without a `date` is a draft.
 - [ ] Images in `apps/website/public/images/projects/`, referred to by their site path.
 - [ ] `content:check`, `content:import` and `content:export` scripts running the CLI from a `../spotcraft-main` worktree, as Sokobanko's do, with its setup in the README.
+- [ ] `docs:check`: `docs/` checked as Spotcraft content (its `_schema.yaml` files), plus the decision-record rule: every `NNNN-*.md` has `number`, `status` and `date`, and its number matches the file name. Spotcraft's `bin/check-docs.ts` is the model.
 - [ ] Imported into `vindotski` on api.vin.ski (`SPOTCRAFT_API_URL` and `SPOTCRAFT_ADMIN_SECRET` set).
 
 ### Step 2: The site reads from api.vin.ski
