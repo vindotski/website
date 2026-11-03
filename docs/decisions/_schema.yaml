@@ -1,6 +1,6 @@
 # The decision records (adds to docs/_schema.yaml). Optional here, because the index
-# (README.md) shares this folder: `pnpm docs:check` (from the demo's step 1) requires number,
-# status and date on every NNNN-*.md record, with number matching its file name.
+# (README.md) shares this folder: `pnpm docs:check` requires number, status and date on every
+# NNNN-*.md record, with number matching its file name.
 type: object
 properties:
   number: { type: integer, minimum: 1 }
