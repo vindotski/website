@@ -4,7 +4,7 @@ number: 15
 status: accepted
 implementation: built
 date: 2026-11-03
-notes: Four more are planned for later roadmap moments (docs/roadmap.md, Later). The vinski-content skill is written in the demo's step 1.
+notes: Four more are planned for later roadmap moments (docs/roadmap.md, Later). The vinski-content skill, written in the demo's step 1, is in .claude/skills/vinski-content.
 ---
 
 ## Context
